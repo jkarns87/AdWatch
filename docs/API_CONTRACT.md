@@ -133,6 +133,13 @@ keyword,,,coffee subscription
 
 A `type` column is honoured when present; without one, a row with a domain is a competitor and a row with a term is a keyword. URLs and `www.` are reduced to a domain, duplicates dropped, and a competitor with no name gets one from its domain. Caps: 50 competitors, 100 keywords, 1 MB — a run costs `competitors + 3 × keywords` searches. Bad input returns 400 naming the row and the problem.
 
+`services/api/seed/bay_area_coffee.csv` is a ready-made Bay Area coffee watchlist in this shape — 4 competitors and 5 keywords, so a run costs 4 + 3×5 = **19 searches**. Every row came out of `GET /coffee/keywords` rather than guesswork: the four advertisers were observed in the San Francisco paid block, and each keyword had advertisers behind it there (`coffee roasters san francisco` returned 14 ads from 8 advertisers; `coffee subscription`, `best coffee subscription` and `specialty coffee beans` were recovered from advertisers' own ad URLs).
+
+```bash
+curl -X POST 'localhost:8000/api/v1/watchlists/import.csv?name=Specialty%20Coffee%20%E2%80%94%20Bay%20Area&vertical=specialty%20coffee&location=San%20Francisco,%20California,%20United%20States' \
+     -H 'Content-Type: text/csv' --data-binary @services/api/seed/bay_area_coffee.csv
+```
+
 These three routes are additive: they live in `app/coffee/` on their own router and change nothing in `routers/watchlists.py`, the collectors, the diff engine or the seed. Registering them is one line in `main.py`.
 
 `GET /watchlists/{id}/trends?keyword_id=21`
