@@ -1,0 +1,1958 @@
+openapi: 3.1.0
+info:
+  title: AdWatch API
+  version: 0.1.0
+paths:
+  /api/v1/watchlists:
+    get:
+      tags:
+      - watchlists
+      summary: List Watchlists
+      operationId: list_watchlists_api_v1_watchlists_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WatchlistSummary'
+                title: Response List Watchlists Api V1 Watchlists Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - watchlists
+      summary: Create Watchlist
+      operationId: create_watchlist_api_v1_watchlists_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistDetail'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}:
+    get:
+      tags:
+      - watchlists
+      summary: Get One
+      operationId: get_one_api_v1_watchlists__watchlist_id__get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistDetail'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/competitors:
+    post:
+      tags:
+      - watchlists
+      summary: Add Competitor
+      operationId: add_competitor_api_v1_watchlists__watchlist_id__competitors_post
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompetitorCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompetitorOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/competitors/{competitor_id}:
+    delete:
+      tags:
+      - watchlists
+      summary: Delete Competitor
+      operationId: delete_competitor_api_v1_watchlists__watchlist_id__competitors__competitor_id__delete
+      parameters:
+      - name: competitor_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Competitor Id
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/keywords:
+    post:
+      tags:
+      - watchlists
+      summary: Add Keyword
+      operationId: add_keyword_api_v1_watchlists__watchlist_id__keywords_post
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeywordCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeywordOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/keywords/{keyword_id}:
+    delete:
+      tags:
+      - watchlists
+      summary: Delete Keyword
+      operationId: delete_keyword_api_v1_watchlists__watchlist_id__keywords__keyword_id__delete
+      parameters:
+      - name: keyword_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Keyword Id
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/collect:
+    post:
+      tags:
+      - runs
+      summary: Collect
+      operationId: collect_api_v1_watchlists__watchlist_id__collect_post
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: fresh
+        in: query
+        required: false
+        schema:
+          type: boolean
+          description: bypass the local SerpApi cache
+          default: false
+          title: Fresh
+        description: bypass the local SerpApi cache
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/analyze:
+    post:
+      tags:
+      - runs
+      summary: Analyze
+      operationId: analyze_api_v1_watchlists__watchlist_id__analyze_post
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyzeOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/collect-and-analyze:
+    post:
+      tags:
+      - runs
+      summary: Collect And Analyze
+      operationId: collect_and_analyze_api_v1_watchlists__watchlist_id__collect_and_analyze_post
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: fresh
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Fresh
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectAnalyzeOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/creatives:
+    get:
+      tags:
+      - reads
+      summary: Creatives
+      operationId: creatives_api_v1_watchlists__watchlist_id__creatives_get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: competitor_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Competitor Id
+      - name: active
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          default: true
+          title: Active
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreativeOut'
+                title: Response Creatives Api V1 Watchlists  Watchlist Id  Creatives Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/serp:
+    get:
+      tags:
+      - reads
+      summary: Serp
+      operationId: serp_api_v1_watchlists__watchlist_id__serp_get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: keyword_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Keyword Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SerpOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/trends:
+    get:
+      tags:
+      - reads
+      summary: Trends
+      operationId: trends_api_v1_watchlists__watchlist_id__trends_get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: keyword_id
+        in: query
+        required: true
+        schema:
+          type: integer
+          title: Keyword Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendsOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/changes:
+    get:
+      tags:
+      - reads
+      summary: Changes
+      operationId: changes_api_v1_watchlists__watchlist_id__changes_get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Since
+      - name: kind
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Kind
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          default: 50
+          title: Limit
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChangeOut'
+                title: Response Changes Api V1 Watchlists  Watchlist Id  Changes Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/insights:
+    get:
+      tags:
+      - reads
+      summary: Insights
+      operationId: insights_api_v1_watchlists__watchlist_id__insights_get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          default: 20
+          title: Limit
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InsightOut'
+                title: Response Insights Api V1 Watchlists  Watchlist Id  Insights Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/demo/seed:
+    post:
+      tags:
+      - demo
+      summary: Seed
+      operationId: seed_api_v1_demo_seed_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeedIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeedOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/demo/reset:
+    post:
+      tags:
+      - demo
+      summary: Reset All
+      operationId: reset_all_api_v1_demo_reset_post
+      responses:
+        '204':
+          description: Successful Response
+  /api/v1/usage:
+    get:
+      tags:
+      - usage
+      summary: Usage
+      operationId: usage_api_v1_usage_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      - name: x-plan
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Plan
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/report:
+    get:
+      tags:
+      - reports
+      summary: Report
+      operationId: report_api_v1_watchlists__watchlist_id__report_get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: audience
+        in: query
+        required: false
+        schema:
+          enum:
+          - cfo
+          - marketing
+          type: string
+          default: marketing
+          title: Audience
+      - name: format
+        in: query
+        required: false
+        schema:
+          enum:
+          - pdf
+          - docx
+          - md
+          type: string
+          default: pdf
+          title: Format
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 90
+          minimum: 1
+          default: 7
+          title: Days
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/watchlists/{watchlist_id}/report/data:
+    get:
+      tags:
+      - reports
+      summary: Report Data
+      description: The assembled report payload as JSON (handy for the frontend preview and for tests).
+      operationId: report_data_api_v1_watchlists__watchlist_id__report_data_get
+      parameters:
+      - name: watchlist_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Watchlist Id
+      - name: audience
+        in: query
+        required: false
+        schema:
+          enum:
+          - cfo
+          - marketing
+          type: string
+          default: marketing
+          title: Audience
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 90
+          minimum: 1
+          default: 7
+          title: Days
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      - name: x-workspace-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: X-Workspace-Id
+      - name: x-dataplane-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Dataplane-Secret
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/health:
+    get:
+      tags:
+      - health
+      summary: Health
+      operationId: health_api_v1_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    AnalyzeOut:
+      properties:
+        insights:
+          items:
+            $ref: '#/components/schemas/InsightOut'
+          type: array
+          title: Insights
+        alerts_sent:
+          type: integer
+          title: Alerts Sent
+      type: object
+      required:
+      - insights
+      - alerts_sent
+      title: AnalyzeOut
+    ChangeOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        run_id:
+          type: integer
+          title: Run Id
+        kind:
+          type: string
+          title: Kind
+        severity:
+          type: string
+          title: Severity
+        subject_type:
+          type: string
+          title: Subject Type
+        subject_id:
+          type: integer
+          title: Subject Id
+        subject_label:
+          type: string
+          title: Subject Label
+        detected_at:
+          type: string
+          format: date-time
+          title: Detected At
+        insight_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Insight Id
+        payload:
+          additionalProperties: true
+          type: object
+          title: Payload
+      type: object
+      required:
+      - id
+      - run_id
+      - kind
+      - severity
+      - subject_type
+      - subject_id
+      - subject_label
+      - detected_at
+      - insight_id
+      - payload
+      title: ChangeOut
+    CollectAnalyzeOut:
+      properties:
+        run:
+          $ref: '#/components/schemas/RunOut'
+        snapshots:
+          type: integer
+          title: Snapshots
+        changes:
+          items:
+            $ref: '#/components/schemas/ChangeOut'
+          type: array
+          title: Changes
+        insights:
+          items:
+            $ref: '#/components/schemas/InsightOut'
+          type: array
+          title: Insights
+        alerts_sent:
+          type: integer
+          title: Alerts Sent
+      type: object
+      required:
+      - run
+      - snapshots
+      - changes
+      - insights
+      - alerts_sent
+      title: CollectAnalyzeOut
+    CollectOut:
+      properties:
+        run:
+          $ref: '#/components/schemas/RunOut'
+        snapshots:
+          type: integer
+          title: Snapshots
+        changes:
+          items:
+            $ref: '#/components/schemas/ChangeOut'
+          type: array
+          title: Changes
+      type: object
+      required:
+      - run
+      - snapshots
+      - changes
+      title: CollectOut
+    CompetitorCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Name
+        domain:
+          type: string
+          maxLength: 255
+          minLength: 3
+          title: Domain
+        advertiser_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Advertiser Id
+      type: object
+      required:
+      - name
+      - domain
+      title: CompetitorCreate
+    CompetitorOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        domain:
+          type: string
+          title: Domain
+        advertiser_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Advertiser Id
+        active_creatives:
+          type: integer
+          title: Active Creatives
+          default: 0
+      type: object
+      required:
+      - id
+      - name
+      - domain
+      - advertiser_id
+      title: CompetitorOut
+    CreativeOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        competitor_id:
+          type: integer
+          title: Competitor Id
+        creative_id:
+          type: string
+          title: Creative Id
+        format:
+          type: string
+          title: Format
+        platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Platform
+        target_domain:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Target Domain
+        image_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Url
+        details_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Details Url
+        first_shown:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: First Shown
+        last_shown:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Last Shown
+        active:
+          type: boolean
+          title: Active
+        first_seen_run_id:
+          type: integer
+          title: First Seen Run Id
+        last_seen_run_id:
+          type: integer
+          title: Last Seen Run Id
+        text:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Text
+      type: object
+      required:
+      - id
+      - competitor_id
+      - creative_id
+      - format
+      - platform
+      - target_domain
+      - image_url
+      - details_url
+      - first_shown
+      - last_shown
+      - active
+      - first_seen_run_id
+      - last_seen_run_id
+      - text
+      title: CreativeOut
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    InsightOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        run_id:
+          type: integer
+          title: Run Id
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        model:
+          type: string
+          title: Model
+        confidence:
+          type: number
+          title: Confidence
+        summary:
+          type: string
+          title: Summary
+        why_it_matters:
+          type: string
+          title: Why It Matters
+        recommended_actions:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Recommended Actions
+        change_ids:
+          items:
+            type: integer
+          type: array
+          title: Change Ids
+          default: []
+        changes:
+          items:
+            $ref: '#/components/schemas/ChangeOut'
+          type: array
+          title: Changes
+          default: []
+      type: object
+      required:
+      - id
+      - run_id
+      - created_at
+      - model
+      - confidence
+      - summary
+      - why_it_matters
+      - recommended_actions
+      title: InsightOut
+    KeywordCreate:
+      properties:
+        term:
+          type: string
+          maxLength: 255
+          minLength: 1
+          title: Term
+      type: object
+      required:
+      - term
+      title: KeywordCreate
+    KeywordOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        term:
+          type: string
+          title: Term
+      type: object
+      required:
+      - id
+      - term
+      title: KeywordOut
+    RelatedOut:
+      properties:
+        query:
+          type: string
+          title: Query
+        value_text:
+          type: string
+          title: Value Text
+        value_num:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Value Num
+      type: object
+      required:
+      - query
+      - value_text
+      - value_num
+      title: RelatedOut
+    RunOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        started_at:
+          type: string
+          format: date-time
+          title: Started At
+        finished_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Finished At
+        status:
+          type: string
+          title: Status
+        searches_used:
+          type: integer
+          title: Searches Used
+        error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error
+      type: object
+      required:
+      - id
+      - started_at
+      - finished_at
+      - status
+      - searches_used
+      title: RunOut
+    SeedIn:
+      properties:
+        mode:
+          type: string
+          enum:
+          - synthetic
+          - live
+          title: Mode
+          default: synthetic
+        vertical:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Vertical
+      type: object
+      title: SeedIn
+    SeedOut:
+      properties:
+        watchlist_id:
+          type: integer
+          title: Watchlist Id
+        runs:
+          items:
+            type: integer
+          type: array
+          title: Runs
+        changes:
+          type: integer
+          title: Changes
+        insights:
+          type: integer
+          title: Insights
+      type: object
+      required:
+      - watchlist_id
+      - runs
+      - changes
+      - insights
+      title: SeedOut
+    SerpAdOut:
+      properties:
+        position:
+          type: integer
+          title: Position
+        block:
+          type: string
+          title: Block
+        advertiser_domain:
+          type: string
+          title: Advertiser Domain
+        title:
+          type: string
+          title: Title
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        displayed_link:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Displayed Link
+        is_tracked_competitor:
+          type: boolean
+          title: Is Tracked Competitor
+        competitor_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Competitor Id
+      type: object
+      required:
+      - position
+      - block
+      - advertiser_domain
+      - title
+      - description
+      - displayed_link
+      - is_tracked_competitor
+      - competitor_id
+      title: SerpAdOut
+    SerpOut:
+      properties:
+        keyword:
+          $ref: '#/components/schemas/KeywordOut'
+        run_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Run Id
+        ads:
+          items:
+            $ref: '#/components/schemas/SerpAdOut'
+          type: array
+          title: Ads
+        share_of_voice:
+          items:
+            $ref: '#/components/schemas/ShareOfVoice'
+          type: array
+          title: Share Of Voice
+      type: object
+      required:
+      - keyword
+      - run_id
+      - ads
+      - share_of_voice
+      title: SerpOut
+    ShareOfVoice:
+      properties:
+        advertiser_domain:
+          type: string
+          title: Advertiser Domain
+        appearances:
+          type: integer
+          title: Appearances
+        avg_position:
+          type: number
+          title: Avg Position
+      type: object
+      required:
+      - advertiser_domain
+      - appearances
+      - avg_position
+      title: ShareOfVoice
+    TrendPointOut:
+      properties:
+        date:
+          type: string
+          format: date
+          title: Date
+        value:
+          type: integer
+          title: Value
+      type: object
+      required:
+      - date
+      - value
+      title: TrendPointOut
+    TrendsOut:
+      properties:
+        keyword:
+          $ref: '#/components/schemas/KeywordOut'
+        run_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Run Id
+        timeline:
+          items:
+            $ref: '#/components/schemas/TrendPointOut'
+          type: array
+          title: Timeline
+        related_rising:
+          items:
+            $ref: '#/components/schemas/RelatedOut'
+          type: array
+          title: Related Rising
+        related_top:
+          items:
+            $ref: '#/components/schemas/RelatedOut'
+          type: array
+          title: Related Top
+      type: object
+      required:
+      - keyword
+      - run_id
+      - timeline
+      - related_rising
+      - related_top
+      title: TrendsOut
+    UsageOut:
+      properties:
+        workspace_id:
+          type: integer
+          title: Workspace Id
+        plan:
+          type: string
+          title: Plan
+        period_start:
+          type: string
+          format: date-time
+          title: Period Start
+        period_end:
+          type: string
+          format: date-time
+          title: Period End
+        searches_used:
+          type: integer
+          title: Searches Used
+        searches_budget:
+          type: integer
+          title: Searches Budget
+        searches_remaining:
+          type: integer
+          title: Searches Remaining
+        budget_used_pct:
+          type: number
+          title: Budget Used Pct
+        runs:
+          type: integer
+          title: Runs
+        cost_to_date_usd:
+          type: number
+          title: Cost To Date Usd
+        projected_month_current_cadence:
+          type: integer
+          title: Projected Month Current Cadence
+        projected_month_plan_cadence:
+          type: integer
+          title: Projected Month Plan Cadence
+        projected_cost_current_usd:
+          type: number
+          title: Projected Cost Current Usd
+        projected_cost_plan_usd:
+          type: number
+          title: Projected Cost Plan Usd
+        rate_per_search_usd:
+          type: number
+          title: Rate Per Search Usd
+        watchlists_used:
+          type: integer
+          title: Watchlists Used
+        watchlists_limit:
+          type: integer
+          title: Watchlists Limit
+        by_watchlist:
+          items:
+            $ref: '#/components/schemas/WatchlistUsage'
+          type: array
+          title: By Watchlist
+        plans:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Plans
+      type: object
+      required:
+      - workspace_id
+      - plan
+      - period_start
+      - period_end
+      - searches_used
+      - searches_budget
+      - searches_remaining
+      - budget_used_pct
+      - runs
+      - cost_to_date_usd
+      - projected_month_current_cadence
+      - projected_month_plan_cadence
+      - projected_cost_current_usd
+      - projected_cost_plan_usd
+      - rate_per_search_usd
+      - watchlists_used
+      - watchlists_limit
+      - by_watchlist
+      - plans
+      title: UsageOut
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WatchlistCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Name
+        vertical:
+          type: string
+          title: Vertical
+          default: ''
+        geo:
+          type: string
+          title: Geo
+          default: US
+        location:
+          anyOf:
+          - type: string
+            maxLength: 120
+          - type: 'null'
+          title: Location
+      type: object
+      required:
+      - name
+      title: WatchlistCreate
+    WatchlistDetail:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        vertical:
+          type: string
+          title: Vertical
+        geo:
+          type: string
+          title: Geo
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        competitors:
+          items:
+            $ref: '#/components/schemas/CompetitorOut'
+          type: array
+          title: Competitors
+        keywords:
+          items:
+            $ref: '#/components/schemas/KeywordOut'
+          type: array
+          title: Keywords
+        last_run:
+          anyOf:
+          - $ref: '#/components/schemas/RunOut'
+          - type: 'null'
+      type: object
+      required:
+      - id
+      - name
+      - vertical
+      - geo
+      - created_at
+      - competitors
+      - keywords
+      - last_run
+      title: WatchlistDetail
+    WatchlistSummary:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        vertical:
+          type: string
+          title: Vertical
+        geo:
+          type: string
+          title: Geo
+        location:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Location
+        competitor_count:
+          type: integer
+          title: Competitor Count
+        keyword_count:
+          type: integer
+          title: Keyword Count
+        last_run_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Run At
+        open_changes:
+          type: integer
+          title: Open Changes
+      type: object
+      required:
+      - id
+      - name
+      - vertical
+      - geo
+      - competitor_count
+      - keyword_count
+      - last_run_at
+      - open_changes
+      title: WatchlistSummary
+    WatchlistUsage:
+      properties:
+        watchlist_id:
+          type: integer
+          title: Watchlist Id
+        name:
+          type: string
+          title: Name
+        competitors:
+          type: integer
+          title: Competitors
+        keywords:
+          type: integer
+          title: Keywords
+        searches_used:
+          type: integer
+          title: Searches Used
+        runs:
+          type: integer
+          title: Runs
+        last_run_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Run At
+        searches_per_run:
+          type: integer
+          title: Searches Per Run
+        projected_month_current:
+          type: integer
+          title: Projected Month Current
+        projected_month_plan:
+          type: integer
+          title: Projected Month Plan
+        over_plan_limits:
+          type: boolean
+          title: Over Plan Limits
+      type: object
+      required:
+      - watchlist_id
+      - name
+      - competitors
+      - keywords
+      - searches_used
+      - runs
+      - last_run_at
+      - searches_per_run
+      - projected_month_current
+      - projected_month_plan
+      - over_plan_limits
+      title: WatchlistUsage

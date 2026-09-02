@@ -28,3 +28,4 @@ npm-debug.log*
 # bundles / snapshots
 *.tgz
 _to_delete/
+.superpowers*
