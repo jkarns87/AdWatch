@@ -5,7 +5,7 @@ primary_region = "sjc"
 
 [build]
   [build.args]
-    NEXT_PUBLIC_API_BASE_URL = "https://adwatch-api.fly.dev/api/v1"
+    NEXT_PUBLIC_API_BASE_URL = "https://api.adwatch.dev/api/v1"
     NEXT_PUBLIC_AUTH_PROVIDER = "xano"
     NEXT_PUBLIC_XANO_BASE_URL = "https://xcne-4ruo-ej7c.n7e.xano.io/api:adwatch-control"
 

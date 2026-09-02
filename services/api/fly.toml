@@ -14,8 +14,9 @@ primary_region = "sjc"
   AUTH_PROVIDER = "xano"
   XANO_BASE_URL = "https://xcne-4ruo-ej7c.n7e.xano.io/api:adwatch-control"
   ALERT_DISPATCHER = "xano"
-  DASHBOARD_URL = "https://adwatch-web.fly.dev"
-  CORS_ORIGINS = "https://adwatch-web.fly.dev,http://localhost:3000"
+  DASHBOARD_URL = "https://adwatch.dev"
+  # fly.dev origin kept during the cutover; drop it once the custom domain is live.
+  CORS_ORIGINS = "https://adwatch.dev,https://adwatch-web.fly.dev,http://localhost:3000"
 
 [http_service]
   internal_port = 8000
