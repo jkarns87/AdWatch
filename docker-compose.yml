@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: adwatch
+      POSTGRES_PASSWORD: adwatch
+      POSTGRES_DB: adwatch
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U adwatch"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./services/api
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://adwatch:adwatch@db:5432/adwatch
+      SERPAPI_CACHE_DIR: /app/.cache/serpapi
+      CORS_ORIGINS: http://localhost:3000
+    ports: ["8000:8000"]
+    volumes:
+      - ./services/api/app:/app/app          # hot reload in dev
+      - ./services/api/seed:/app/seed
+      - serpcache:/app/.cache
+    depends_on:
+      db: { condition: service_healthy }
+    command: sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api/v1
+    environment:
+      PORT: "3000"
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  serpcache:

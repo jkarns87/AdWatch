@@ -1,0 +1,26 @@
+# secrets / local
+.env
+.env.*
+!.env.example
+apps/web/.env.local
+services/api/seed/demo_config.json
+.cache/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# node
+node_modules/
+apps/web/.next/
+apps/web/out/
+*.tsbuildinfo
+npm-debug.log*
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/

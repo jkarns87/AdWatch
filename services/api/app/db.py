@@ -1,0 +1,42 @@
+from collections.abc import Generator
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+
+from .config import get_settings
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+_engine = None
+_SessionLocal = None
+
+
+def get_engine():
+    global _engine, _SessionLocal
+    if _engine is None:
+        _engine = create_engine(get_settings().database_url, pool_pre_ping=True, future=True)
+        _SessionLocal = sessionmaker(bind=_engine, autoflush=False, expire_on_commit=False)
+    return _engine
+
+
+def session_factory() -> sessionmaker:
+    get_engine()
+    return _SessionLocal  # type: ignore[return-value]
+
+
+def get_db() -> Generator[Session, None, None]:
+    db = session_factory()()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def init_db() -> None:
+    """Hackathon-grade migrations: create what's missing. Swap for Alembic post-event."""
+    from . import models  # noqa: F401  (register tables)
+
+    Base.metadata.create_all(get_engine())

@@ -1,0 +1,17 @@
+{
+  "name": "Meal Kit Delivery",
+  "vertical": "meal kits",
+  "geo": "US",
+  "competitors": [
+    { "name": "Competitor A", "domain": "competitor-a.example" },
+    { "name": "Competitor B", "domain": "competitor-b.example" },
+    { "name": "Competitor C", "domain": "competitor-c.example" }
+  ],
+  "keywords": [
+    "meal kit delivery",
+    "healthy meal kits",
+    "meal kit for two",
+    "cheap meal kit",
+    "vegetarian meal kit"
+  ]
+}
