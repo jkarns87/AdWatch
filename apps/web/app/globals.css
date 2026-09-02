@@ -1,6 +1,43 @@
 @import "tailwindcss";
 
+/* Colour tokens — three states: light (default), system-dark, explicit-dark.
+   Every token has a value on bare :root. Never define a colour only inside a
+   media query or attribute selector, or the toggle breaks in one direction.
+   See docs/BRAND.md for provenance and measured contrast. */
 :root {
+  color-scheme: light;
+  --bg: #f7f9fc;
+  --panel: #ffffff;
+  --panel-2: #eef3fa;
+  --line: #d9e2f0;
+  --text: #0b1020;
+  --muted: #55607d;
+  --accent: #1f4fd8;
+  --on-accent: #ffffff;
+  --high: #c62828;
+  --medium: #8a5a00;
+  --low: #1a7f4b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b1020;
+    --panel: #121a2e;
+    --panel-2: #182238;
+    --line: #24304d;
+    --text: #e6ebf5;
+    --muted: #8b96b3;
+    --accent: #6ea8fe;
+    --on-accent: #0b1020;
+    --high: #ff6b6b;
+    --medium: #ffb454;
+    --low: #7dd3a0;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
   --bg: #0b1020;
   --panel: #121a2e;
   --panel-2: #182238;
@@ -8,6 +45,7 @@
   --text: #e6ebf5;
   --muted: #8b96b3;
   --accent: #6ea8fe;
+  --on-accent: #0b1020;
   --high: #ff6b6b;
   --medium: #ffb454;
   --low: #7dd3a0;
@@ -21,12 +59,23 @@ a { color: var(--accent); }
 .muted { color: var(--muted); }
 .btn { border: 1px solid var(--line); background: var(--panel-2); color: var(--text); border-radius: 8px; padding: 6px 12px; font-size: 14px; }
 .btn:hover { border-color: var(--accent); }
-.btn-primary { background: var(--accent); color: #0b1020; border-color: var(--accent); font-weight: 600; }
+.btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; }
-.sev-high { background: rgba(255,107,107,.15); color: var(--high); }
-.sev-medium { background: rgba(255,180,84,.15); color: var(--medium); }
-.sev-low { background: rgba(125,211,160,.15); color: var(--low); }
-.kind { background: rgba(110,168,254,.12); color: var(--accent); text-transform: none; }
+.sev-high { background: color-mix(in srgb, var(--high) 15%, transparent); color: var(--high); }
+.sev-medium { background: color-mix(in srgb, var(--medium) 15%, transparent); color: var(--medium); }
+.sev-low { background: color-mix(in srgb, var(--low) 15%, transparent); color: var(--low); }
+.kind { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); text-transform: none; }
 .tab { padding: 8px 14px; border-bottom: 2px solid transparent; color: var(--muted); }
 .tab[data-active="true"] { color: var(--text); border-color: var(--accent); }
+
+/* Theme-aware logo lockup. <picture> with prefers-color-scheme can't see
+   data-theme, so an explicit override would show the wrong variant. */
+.logo-dark { display: none; }
+.logo-light { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logo-dark { display: block; }
+  :root:not([data-theme="light"]) .logo-light { display: none; }
+}
+:root[data-theme="dark"] .logo-dark { display: block; }
+:root[data-theme="dark"] .logo-light { display: none; }
