@@ -49,7 +49,7 @@ test.describe("light / dark / system", () => {
     await page.goto("/watchlists");
     await page.getByRole("button", { name: "Light" }).click();
 
-    const attrAtStart: string[] = [];
+    const attrAtStart: (string | null)[] = [];
     await page.addInitScript(() => {
       document.addEventListener("readystatechange", () => {
         (window as unknown as { __themeAtParse?: string | null }).__themeAtParse ??=
