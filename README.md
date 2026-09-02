@@ -50,7 +50,7 @@ make analyze WATCHLIST=1
 | `/login` | Sign in / sign up on the Xano control plane (`NEXT_PUBLIC_AUTH_PROVIDER=xano`); local mode skips it |
 | `/` | Watchlists with unreviewed-change badges · **New watchlist** |
 | `/onboarding` | 4-step wizard: watchlist (vertical, geo, search location) → competitors → keywords → review + baseline run |
-| `/w/[id]` | Insights · Changes · Competitors (creative grid, add) · Keywords (paid block, share of voice, demand, add) · **Collect now** · **Export report** |
+| `/watchlists/[id]` | Insights · Changes · Competitors (creative grid, add) · Keywords (paid block, share of voice, demand, add) · **Collect now** · **Export report** |
 | `/alerts` | In-app alert inbox (served by the Xano control plane) |
 | `/usage` | Usage & plan: searches spent vs budget, month-end projection, plan switch |
 | `/settings/integrations` | Alert destinations: in-app, Slack, Teams, Discord, email, webhook |

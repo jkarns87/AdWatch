@@ -30,7 +30,7 @@ def dispatch_via_xano(db: Session, watchlist: m.Watchlist, insight: m.Insight, c
         "summary": insight.summary,
         "why_it_matters": insight.why_it_matters or "",
         "actions": insight.recommended_actions or [],
-        "dashboard_url": f"{s.dashboard_url.rstrip('/')}/w/{watchlist.id}",
+        "dashboard_url": f"{s.dashboard_url.rstrip('/')}/watchlists/{watchlist.id}",
     }
     alert = m.Alert(insight_id=insight.id, channel="xano", target="control-plane")
     db.add(alert)

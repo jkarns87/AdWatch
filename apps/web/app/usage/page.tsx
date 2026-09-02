@@ -119,7 +119,7 @@ export default function UsagePage() {
               )}
               {u.by_watchlist.map((w) => (
                 <tr key={w.watchlist_id} className="border-t" style={{ borderColor: "var(--line)" }}>
-                  <td className="p-3"><Link href={`/w/${w.watchlist_id}`}>{w.name}</Link></td>
+                  <td className="p-3"><Link href={`/watchlists/${w.watchlist_id}`}>{w.name}</Link></td>
                   <td className="p-3 muted">
                     {w.competitors} competitors · {w.keywords} keywords
                     {w.over_plan_limits && <span className="badge sev-medium ml-2" title="exceeds plan limits">over plan</span>}

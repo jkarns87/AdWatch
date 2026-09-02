@@ -27,7 +27,7 @@ def _top_severity(changes: list[m.Change]) -> str:
 
 
 def _dashboard_link(watchlist: m.Watchlist) -> str:
-    return f"{get_settings().dashboard_url.rstrip('/')}/w/{watchlist.id}"
+    return f"{get_settings().dashboard_url.rstrip('/')}/watchlists/{watchlist.id}"
 
 
 def format_insight(watchlist: m.Watchlist, insight: m.Insight, changes: list[m.Change]) -> str:
