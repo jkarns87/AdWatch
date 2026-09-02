@@ -125,6 +125,16 @@ def test_advertiser_falls_back_through_googles_redirector():
     assert ck.advertiser_of(dict(AD, displayed_link=None)) == "drinktrade.example"
 
 
+def test_a_breadcrumb_display_link_is_one_advertiser_not_two():
+    # Google renders these as "vervecoffee.com › coffee-beans"; both forms are one advertiser.
+    bare = {"displayed_link": "https://www.vervecoffee.com"}
+    crumb = {"displayed_link": "vervecoffee.com › coffee-beans"}
+    assert ck.advertiser_of(bare) == ck.advertiser_of(crumb) == "vervecoffee.com"
+
+    report = ck.discover(StubClient({"coffee beans": [dict(AD, **bare), dict(AD, **crumb)]}), "coffee beans", depth=0)
+    assert report["summary"]["advertisers"] == 1
+
+
 def test_copy_phrases_stay_on_topic_and_do_not_cross_a_sentence():
     got = ck.copy_phrases({"title": "Cold brew coffee delivered", "description": "Free shipping. Buy coffee online or pick up in store."}, {"coffee"})
     assert "cold brew coffee" in got

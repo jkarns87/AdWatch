@@ -1,0 +1,85 @@
+rank,keyword,score,evidence,recovered_from_ad,advertiser_count,advertisers,match_types,competition,ads,seen_on_queries,from_seed
+1,coffee subscription gift,75.0,targeting_keyword,yes,4,atlascoffeeclub.com;beanbox.com;favy.com;roastycoffee.com,,medium,7,coffee subscription gift,coffee subscription
+2,coffee subscription,40.0,sponsored_query,no,4,atlascoffeeclub.com;drinktrade.com;favy.com;roastycoffee.com,,medium,2,coffee subscription;coffee subscription gift,coffee subscription
+3,cold brew delivery deals,40.0,sponsored_query,no,4,amazon.com;atlascoffeeclub.com;drink.noblbeverages.com;stokbrew.com,,medium,6,cold brew delivery deals,cold brew delivery
+4,espresso machine,35.0,sponsored_query,no,3,amazon.com;foodandwine.com;merakitech.com,,medium,2,espresso machine;espresso machine price,espresso machine
+5,best coffee beans,20.0,sponsored_query,no,2,bonescoffee.com;walmart.com,,low,2,best coffee beans,coffee beans
+6,best coffee subscription box,20.0,targeting_keyword,yes,1,roastycoffee.com,,low,1,coffee subscription gift,coffee subscription
+7,buy cold brew delivery online,20.0,sponsored_query,no,2,drink.noblbeverages.com;stokbrew.com,,low,2,buy cold brew delivery online,cold brew delivery
+8,cold brew,20.0,ad_copy,no,4,amazon.com;atlascoffeeclub.com;drink.noblbeverages.com;stokbrew.com,,medium,0,best cold brew delivery;buy cold brew delivery online;cold brew delivery;cold brew delivery deals;cold brew delivery price;cold brew delivery service,cold brew delivery
+9,espresso machine price,20.0,sponsored_query,no,2,foodandwine.com;reviews.chicagotribune.com,,low,2,espresso machine price,espresso machine
+10,cold brew delivery service,16.7,sponsored_query,no,1,stokbrew.com,,low,1,cold brew delivery service,cold brew delivery
+11,best cold brew delivery,16.4,sponsored_query,no,1,stokbrew.com,,low,1,best cold brew delivery,cold brew delivery
+12,coffee beans for sale,16.2,sponsored_query,no,1,athome.starbucks.com,,low,1,coffee beans for sale,coffee beans
+13,espresso machines,15.0,ad_copy,no,3,amazon.com;foodandwine.com;reviews.chicagotribune.com,,medium,0,espresso machine;espresso machine price,espresso machine
+14,coffee subscription box,10.3,ad_copy,no,1,favy.com,,low,0,coffee subscription gift,coffee subscription
+15,buy coffee online,10.0,sponsored_query,no,1,athome.starbucks.com,,low,1,buy coffee online,coffee nearby
+16,coffee subscription boxes,10.0,ad_copy,no,2,favy.com;roastycoffee.com,,low,0,coffee subscription gift,coffee subscription
+17,coffee subscriptions,10.0,ad_copy,no,2,favy.com;roastycoffee.com,,low,0,coffee subscription gift,coffee subscription
+18,cold brew delivery,10.0,sponsored_query,no,1,stokbrew.com,,low,1,cold brew delivery,cold brew delivery
+19,cold brew delivery price,10.0,sponsored_query,no,1,stokbrew.com,,low,1,cold brew delivery price,cold brew delivery
+20,espresso machine breville,10.0,autocomplete,no,0,,,none,0,,espresso machine
+21,espresso machine for home,10.0,autocomplete,no,0,,,none,0,,espresso machine
+22,coffee nearby near me,9.6,autocomplete,no,0,,,none,0,,coffee nearby
+23,coffee nearby open now,9.6,autocomplete,no,0,,,none,0,,coffee nearby
+24,espresso machine ninja,9.6,autocomplete,no,0,,,none,0,,espresso machine
+25,espresso machine with grinder,9.6,autocomplete,no,0,,,none,0,,espresso machine
+26,coffee beans nearby,9.5,autocomplete,no,0,,,none,0,,coffee beans
+27,espresso machine commercial,9.5,autocomplete,no,0,,,none,0,,espresso machine
+28,coffee beans walmart,9.4,autocomplete,no,0,,,none,0,,coffee beans
+29,espresso machine nespresso,9.4,autocomplete,no,0,,,none,0,,espresso machine
+30,coffee subscription near me,8.3,autocomplete,no,0,,,none,0,,coffee subscription
+31,coffee subscription reddit,8.3,autocomplete,no,0,,,none,0,,coffee subscription
+32,coffee subscription gift reddit,8.2,autocomplete,no,0,,,none,0,,coffee subscription
+33,coffee beans near me,6.7,autocomplete,no,0,,,none,0,,coffee beans
+34,coffee beans phoenix,6.7,autocomplete,no,0,,,none,0,,coffee beans
+35,coffee crested butte,6.7,autocomplete,no,0,,,none,0,,coffee nearby
+36,coffee gunnison,6.7,autocomplete,no,0,,,none,0,,coffee nearby
+37,cold brew delivery near me,6.7,autocomplete,no,0,,,none,0,,cold brew delivery
+38,cold brew keg delivery,6.4,autocomplete,no,0,,,none,0,,cold brew delivery
+39,coffee beans costco,6.2,autocomplete,no,0,,,none,0,,coffee beans
+40,coffee beans dreamlight valley,6.2,autocomplete,no,0,,,none,0,,coffee beans
+41,coffee beans from poop,6.2,autocomplete,no,0,,,none,0,,coffee beans
+42,coffee beans grinder,6.2,autocomplete,no,0,,,none,0,,coffee beans
+43,coffee beans in spanish,6.2,autocomplete,no,0,,,none,0,,coffee beans
+44,coffee beans stardew valley,6.2,autocomplete,no,0,,,none,0,,coffee beans
+45,coffee beans vs espresso beans,6.2,autocomplete,no,0,,,none,0,,coffee beans
+46,coffee near me,6.2,autocomplete,no,0,,,none,0,,coffee nearby
+47,coffee nearby drive thru,6.2,autocomplete,no,0,,,none,0,,coffee nearby
+48,coffee nearby open,6.2,autocomplete,no,0,,,none,0,,coffee nearby
+49,coffee nearby within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,coffee nearby
+50,coffee nearby within 1 mi,6.2,autocomplete,no,0,,,none,0,,coffee nearby
+51,coffee nearby within 5 mi,6.2,autocomplete,no,0,,,none,0,,coffee nearby
+52,espresso machine accessories,6.2,autocomplete,no,0,,,none,0,,espresso machine
+53,espresso machine delonghi,6.2,autocomplete,no,0,,,none,0,,espresso machine
+54,espresso machine la marzocco,6.2,autocomplete,no,0,,,none,0,,espresso machine
+55,espresso machine parts,6.2,autocomplete,no,0,,,none,0,,espresso machine
+56,espresso machine sale,6.2,autocomplete,no,0,,,none,0,,espresso machine
+57,coffee beans bulk,6.1,autocomplete,no,0,,,none,0,,coffee beans
+58,coffee beans for espresso,6.1,autocomplete,no,0,,,none,0,,coffee beans
+59,coffee nearby my location,6.1,autocomplete,no,0,,,none,0,,coffee nearby
+60,coffee nearby walking distance,6.1,autocomplete,no,0,,,none,0,,coffee nearby
+61,coffee nearby within 0.2 mi,6.1,autocomplete,no,0,,,none,0,,coffee nearby
+62,espresso machine brands,6.1,autocomplete,no,0,,,none,0,,espresso machine
+63,espresso machine near me,6.1,autocomplete,no,0,,,none,0,,espresso machine
+64,coffee subscription service,5.3,autocomplete,no,0,,,none,0,,coffee subscription
+65,coffee subscription from around the world,5.0,autocomplete,no,0,,,none,0,,coffee subscription
+66,coffee subscription reviews,5.0,autocomplete,no,0,,,none,0,,coffee subscription
+67,coffee subscriptions best,5.0,autocomplete,no,0,,,none,0,,coffee subscription
+68,coffee subscription companies,4.9,autocomplete,no,0,,,none,0,,coffee subscription
+69,coffee subscription nyc,4.9,autocomplete,no,0,,,none,0,,coffee subscription
+70,coffee subscription panera,4.9,autocomplete,no,0,,,none,0,,coffee subscription
+71,coffee subscription trade,4.9,autocomplete,no,0,,,none,0,,coffee subscription
+72,coffee subscription wirecutter,4.9,autocomplete,no,0,,,none,0,,coffee subscription
+73,coffee subscriptions with free shipping,4.9,autocomplete,no,0,,,none,0,,coffee subscription
+74,best cold brew delivery california,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+75,best cold brew delivery deals,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+76,best cold brew delivery price,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+77,best cold brew delivery reddit,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+78,best cold brew delivery service,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+79,best cold brew delivery usa,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+80,best cold brew subscription,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+81,best place to buy cold brew delivery online,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+82,buy cold brew delivery online free shipping,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+83,buy cold brew delivery online near me,3.3,autocomplete,no,0,,,none,0,,cold brew delivery
+84,buy cold brew delivery online reddit,3.3,autocomplete,no,0,,,none,0,,cold brew delivery

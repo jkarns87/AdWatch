@@ -112,6 +112,8 @@ Every keyword carries the evidence it was scored on, and `scoring` returns the f
   "warnings": [] }
 ```
 
+`docs/samples/coffee-keywords-scan.csv` is real output: 84 keywords from five seeds (`coffee subscription`, `coffee nearby`, `cold brew delivery`, `espresso machine`, `coffee beans`) scanned at `location="United States"`, in the `output=csv` columns plus a `from_seed` column. 19 of the 84 had advertisers behind them; the rest are autocomplete suggestions and are marked as such.
+
 `output=md` returns Markdown, `output=html` a standalone report page, `output=csv` a spreadsheet (`rank,keyword,score,evidence,recovered_from_ad,advertiser_count,advertisers,match_types,competition,ads,seen_on_queries`; list cells joined with `;`). Errors are always JSON: `400` bad parameter or off-market keyword · `401` invalid SerpApi key · `429` SerpApi rate limit or quota · `502` SerpApi failed.
 
 `GET /watchlists/{id}/export.csv` → the watchlist's competitors and keywords as CSV (`Content-Disposition: attachment`).

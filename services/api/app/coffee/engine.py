@@ -277,20 +277,31 @@ def targeting_from_ad(ad: dict[str, Any]) -> tuple[list[str], list[str]]:
     return sorted(keywords), sorted(matches)
 
 
+def clean_domain(value: str | None) -> str:
+    """`normalize.domain_of`, plus the breadcrumb trim it does not do.
+
+    Google renders a displayed_link as "vervecoffee.com › coffee-beans"; that whole
+    string survives urlparse into netloc, so without this the same advertiser counts
+    twice - once bare, once with its breadcrumb - and inflates advertiser_count.
+    """
+    host = domain_of(value)
+    return re.split(r"[\s›>/]", host, maxsplit=1)[0].strip(". ") if host else ""
+
+
 def advertiser_of(ad: dict[str, Any]) -> str:
     """Landing domain, same value `normalize.serp_ads_from_google` stores.
 
     Falls back to the `adurl` inside the tracking link when the displayed link
     is missing or is Google's own redirector, so an advertiser is never lost.
     """
-    domain = domain_of(ad.get("displayed_link") or ad.get("link"))
+    domain = clean_domain(ad.get("displayed_link") or ad.get("link"))
     if domain and domain != "google.com":
         return domain
     for field in ("tracking_link", "link"):
         for qs in _walk_params(ad.get(field)):
             for key in ("adurl", "url", "q"):
                 for raw in qs.get(key, []):
-                    d = domain_of(unquote(raw))
+                    d = clean_domain(unquote(raw))
                     if d and d != "google.com":
                         return d
     return domain
