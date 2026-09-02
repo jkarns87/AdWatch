@@ -89,7 +89,42 @@ query "internal/dispatch" verb=POST {
           elseif ($pref.channel == "webhook") {
             var $payload { value = { text: $text, content: $text } }
             conditional {
-              if ($pref.provider == "teams") {
+              if ($pref.provider == "slack") {
+                var $sev_icon { value = ":large_orange_circle:" }
+                conditional {
+                  if ($input.severity == "high") {
+                    var.update $sev_icon { value = ":red_circle:" }
+                  }
+                  elseif ($input.severity == "low") {
+                    var.update $sev_icon { value = ":large_green_circle:" }
+                  }
+                }
+                var $why_block { value = "_Why it matters:_ " ~ $input.why_it_matters }
+                conditional {
+                  if ($input.why_it_matters == null || $input.why_it_matters == "") {
+                    var.update $why_block { value = " " }
+                  }
+                }
+                var $link { value = $input.dashboard_url }
+                conditional {
+                  if ($link == null || $link == "") {
+                    var.update $link { value = "https://adwatch.example" }
+                  }
+                }
+                var.update $payload {
+                  value = {
+                    text: "AdWatch · " ~ $input.title ~ " — " ~ ($input.severity|to_upper) ~ ": " ~ $input.summary,
+                    blocks: [
+                      { type: "header", text: { type: "plain_text", text: "AdWatch · " ~ $input.title, emoji: true } },
+                      { type: "context", elements: [ { type: "mrkdwn", text: $sev_icon ~ " *" ~ ($input.severity|to_upper) ~ "* severity · insight #" ~ ($input.insight_id|to_text) } ] },
+                      { type: "section", text: { type: "mrkdwn", text: $input.summary } },
+                      { type: "section", text: { type: "mrkdwn", text: $why_block } },
+                      { type: "actions", elements: [ { type: "button", text: { type: "plain_text", text: "Open in AdWatch", emoji: true }, url: $link, style: "primary" } ] }
+                    ]
+                  }
+                }
+              }
+              elseif ($pref.provider == "teams") {
                 var.update $payload {
                   value = {
                     type: "message",
