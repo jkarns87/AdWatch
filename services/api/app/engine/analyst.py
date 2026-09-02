@@ -111,13 +111,17 @@ class Analyst:
         except Exception as e:  # network, auth, model-not-found
             log.exception("analyst call failed")
             return self._fallback(changes, reason=f"model error: {e}")
+        # Tokens were spent whether or not the output parsed. `_usage` is transport to
+        # the llm_calls ledger; run_analyze pops it and it is never persisted.
+        usage = getattr(msg, "usage", None)
         parsed = _extract_json(text)
         if not parsed:
-            return {"summary": text[:2000], "why_it_matters": "", "recommended_actions": [], "confidence": 0.0, "model": self.model}
+            return {"summary": text[:2000], "why_it_matters": "", "recommended_actions": [], "confidence": 0.0, "model": self.model, "_usage": usage}
         parsed.setdefault("recommended_actions", [])
         parsed.setdefault("why_it_matters", "")
         parsed["confidence"] = float(parsed.get("confidence") or 0.0)
         parsed["model"] = self.model
+        parsed["_usage"] = usage
         return parsed
 
     def analyze(self, context: dict[str, Any], changes: list[dict[str, Any]]) -> list[tuple[list[int], dict[str, Any]]]:

@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 from .. import models as m
 from ..config import get_settings
 from ..engine.analyst import _extract_json
+from ..metering import record_call
 
 log = logging.getLogger(__name__)
 
@@ -201,7 +202,20 @@ def build_report_data(db: Session, w: m.Watchlist, *, audience: str = "marketing
         "competitors": competitors,
         "keywords": keywords,
     }
-    data["executive_summary"] = executive_summary(data)
+    summary = executive_summary(data)
+    # This call site produces no Insight and no Run — the reason spend is tracked in a
+    # ledger table rather than columns on Insight.
+    summary_model = summary.get("model", "")
+    record_call(
+        db,
+        workspace_id=w.workspace_id,
+        model=summary_model,
+        feature="report",
+        usage=summary.pop("_usage", None),
+        watchlist_id=w.id,
+        status="fallback" if summary_model == "fallback" else "ok",
+    )
+    data["executive_summary"] = summary
     return data
 
 
@@ -258,6 +272,9 @@ def executive_summary(data: dict[str, Any]) -> dict[str, Any]:
         parsed.setdefault("paragraphs", [])
         parsed.setdefault("decisions", [])
         parsed["model"] = s.anthropic_model
+        # Transport to the llm_calls ledger; build_report_data pops it before the
+        # payload reaches a renderer. Never persisted.
+        parsed["_usage"] = getattr(msg, "usage", None)
         return parsed
     except Exception as e:  # noqa: BLE001
         log.exception("executive summary failed")

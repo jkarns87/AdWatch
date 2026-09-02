@@ -222,6 +222,32 @@ class WatchlistUsage(BaseModel):
     projected_month_current: int
     projected_month_plan: int
     over_plan_limits: bool
+    llm_cost_usd: float = 0.0  # Claude spend attributed to this watchlist
+
+
+class LlmFeatureCost(BaseModel):
+    feature: str
+    calls: int
+    cost_usd: float
+
+
+class LlmModelCost(BaseModel):
+    model: str
+    calls: int
+    cost_usd: float
+
+
+class LlmUsage(BaseModel):
+    calls: int
+    cost_usd: float
+    unpriced_calls: int  # models with no published rate; tokens recorded, cost unknown
+    input_tokens: int
+    output_tokens: int
+    cache_read_tokens: int
+    cache_write_tokens: int
+    by_feature: list[LlmFeatureCost]
+    by_model: list[LlmModelCost]
+    metering_since: datetime | None  # None until the first call is recorded
 
 
 class UsageOut(BaseModel):
@@ -244,3 +270,5 @@ class UsageOut(BaseModel):
     watchlists_limit: int
     by_watchlist: list[WatchlistUsage]
     plans: list[dict[str, Any]]
+    llm: LlmUsage
+    total_cost_usd: float  # SerpApi searches + Claude tokens

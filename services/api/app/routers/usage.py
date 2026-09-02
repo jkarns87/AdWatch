@@ -16,6 +16,7 @@ from .. import models as m
 from .. import schemas as s
 from ..auth import current_plan, current_workspace_id
 from ..db import get_db
+from ..metering import cost_by_watchlist, summarize
 from ..plans import CURRENT_CADENCE, PLANS, RATE_PER_SEARCH_USD, cost_usd, plan_dict, searches_per_month, searches_per_run
 
 router = APIRouter(prefix="/usage", tags=["usage"])
@@ -34,6 +35,9 @@ def usage(
     now = datetime.now(UTC)
     start = _month_start(now)
     plan = PLANS.get(plan_key, PLANS["team"])
+
+    llm = summarize(db, workspace_id=workspace_id, since=start)
+    llm_by_watchlist = cost_by_watchlist(db, workspace_id=workspace_id, since=start)
 
     watchlists = db.scalars(select(m.Watchlist).where(m.Watchlist.workspace_id == workspace_id).order_by(m.Watchlist.id)).all()
     rows: list[s.WatchlistUsage] = []
@@ -68,6 +72,7 @@ def usage(
                 projected_month_current=cur,
                 projected_month_plan=opt,
                 over_plan_limits=(c > plan.competitors_per_watchlist or k > plan.keywords_per_watchlist),
+                llm_cost_usd=llm_by_watchlist.get(w.id, 0.0),
             )
         )
 
@@ -91,4 +96,6 @@ def usage(
         watchlists_limit=plan.watchlists,
         by_watchlist=rows,
         plans=[plan_dict(p) for p in PLANS.values()],
+        llm=s.LlmUsage(**llm),
+        total_cost_usd=round(cost_usd(total_searches) + llm["cost_usd"], 6),
     )

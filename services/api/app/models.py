@@ -178,6 +178,32 @@ class Insight(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
+class LlmCall(Base):
+    """One row per Claude call, from every call site. Cost is frozen at write time so
+    historical spend stays correct when Anthropic changes prices; tokens are kept so it
+    can be recomputed if a rate was ever wrong.
+
+    A ledger rather than columns on Insight because reports/data.py calls Claude without
+    producing an Insight — columns there would miss report generation entirely.
+    """
+
+    __tablename__ = "llm_calls"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    workspace_id: Mapped[int] = mapped_column(Integer, index=True)
+    watchlist_id: Mapped[int | None] = mapped_column(ForeignKey("watchlists.id"), index=True)
+    run_id: Mapped[int | None] = mapped_column(ForeignKey("runs.id"), index=True)
+    feature: Mapped[str] = mapped_column(String(20))  # analyst | report
+    model: Mapped[str] = mapped_column(String(100), default="")
+    input_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    cache_read_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    cache_write_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
+    priced: Mapped[bool] = mapped_column(Boolean, default=True)  # False = model has no published rate
+    status: Mapped[str] = mapped_column(String(12), default="ok")  # ok | error | fallback
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+
+
 class Alert(Base):
     __tablename__ = "alerts"
     id: Mapped[int] = mapped_column(primary_key=True)

@@ -7,6 +7,7 @@ from .. import models as m
 from ..alerts.webhook import dispatch_insight
 from ..alerts.xano import dispatch_via_xano
 from ..config import get_settings
+from ..metering import record_call
 from .analyst import Analyst
 
 
@@ -44,6 +45,19 @@ def run_analyze(db: Session, watchlist: m.Watchlist, *, analyst: Analyst | None 
     insights: list[m.Insight] = []
     sent = 0
     for change_ids, result in analyst.analyze(watchlist_context(watchlist), as_dicts):
+        # Pop before building the Insight so the marker cannot reach a persisted field.
+        usage = result.pop("_usage", None)
+        model = result.get("model", "")
+        record_call(
+            db,
+            workspace_id=watchlist.workspace_id,
+            model=model,
+            feature="analyst",
+            usage=usage,
+            watchlist_id=watchlist.id,
+            run_id=latest_run_id,
+            status="fallback" if model == "fallback" else "ok",
+        )
         ins = m.Insight(
             watchlist_id=watchlist.id,
             run_id=latest_run_id,
