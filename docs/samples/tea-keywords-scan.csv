@@ -1,0 +1,306 @@
+rank,keyword,score,evidence,recovered_from_ad,advertiser_count,advertisers,match_types,competition,ads,seen_on_queries,from_seed,market
+1,loose leaf tea,90.0,targeting_keyword,yes,5,artoftea.com;fullleafteacompany.com;looseleafteamarket.com;mountainroseherbs.com;thelooseleaftea.com,,medium,6,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+2,loose leaf tea company,67.2,sponsored_query,no,5,artoftea.com;fullleafteacompany.com;redblossomtea.com;rishi-tea.com;thelooseleaftea.com,,medium,5,loose leaf tea company,loose leaf tea,Bay Area
+3,tea subscription,65.0,sponsored_query,no,5,artoftea.com;atlascoffeeclub.com;redblossomtea.com;republicoftea.com;tearunners.com,,medium,5,tea subscription;tea subscription box,tea subscription,Bay Area
+4,tea subscription box,65.0,sponsored_query,no,4,artoftea.com;atlascoffeeclub.com;republicoftea.com;tearunners.com,,medium,5,tea subscription;tea subscription box,tea subscription,Bay Area
+5,best herbal tea,60.0,sponsored_query,no,6,artoftea.com;fullleafteacompany.com;nytimes.com;palaisdesthes.com;piquelife.com;smithtea.com,,high,6,best herbal tea,herbal tea,Bay Area
+6,buy tea online,60.0,sponsored_query,no,6,artoftea.com;palaisdesthes.com;redblossomtea.com;republicoftea.com;tezumi.com;weaverscoffee.com,,high,6,buy tea online,tea near me,Bay Area
+7,best matcha powder,53.3,targeting_keyword,yes,3,foodandwine.com;ippodotea.com;kettl.co,,medium,5,best matcha powder,matcha powder,Bay Area
+8,best tea,50.0,sponsored_query,no,5,artoftea.com;nytimes.com;palaisdesthes.com;piquelife.com;rishi-tea.com,,medium,6,best tea,tea near me,Texas
+9,buy black tea online,50.0,sponsored_query,no,5,herbco.com;instacart.com;redblossomtea.com;smithtea.com;theteaspot.com,,medium,5,buy black tea online,black tea,Bay Area
+10,buy tea online,50.0,sponsored_query,no,5,arborteas.com;fullleafteacompany.com;kaitea.com;palaisdesthes.com;republicoftea.com,,medium,5,buy tea online,tea near me,Texas
+11,black tea deals,40.0,sponsored_query,no,4,amazon.com;herbco.com;republicoftea.com;smithtea.com,,medium,6,black tea deals,black tea,Bay Area
+12,buy best tea online,40.0,sponsored_query,no,4,artoftea.com;palaisdesthes.com;redblossomtea.com;smithtea.com,,medium,4,buy best tea online,best tea,Bay Area
+13,buy chai tea online,40.0,sponsored_query,no,4,kolkatachai.co;redblossomtea.com;teabox.com;weaverscoffee.com,,medium,5,buy chai tea online,chai tea,Bay Area
+14,buy indian tea online,40.0,sponsored_query,no,4,instacart.com;kolkatachai.co;teabox.com;vahdam.com,,medium,5,buy indian tea online,indian tea,Bay Area
+15,black tea,30.0,sponsored_query,no,4,amazon.com;herbco.com;smithtea.com;theteaspot.com,,medium,1,black tea;black tea deals;buy black tea online,black tea,Bay Area
+16,buy boba tea online,30.0,sponsored_query,no,3,instacart.com;lollicupstore.com;withconfetti.com,,medium,4,buy boba tea online,boba tea,Bay Area
+17,buy boba tea online,30.0,sponsored_query,no,3,amazon.com;bobadirect.com;webstaurantstore.com,,medium,4,buy boba tea online,boba tea near me,Texas
+18,buy milk tea online,30.0,sponsored_query,no,3,catercow.com;lollicupstore.com;webstaurantstore.com,,medium,4,buy milk tea online,milk tea,Bay Area
+19,green tea,30.0,sponsored_query,no,3,hibiki-an.com;ippodotea.com;piquelife.com,,medium,2,best green tea;green tea,green tea,Bay Area
+20,matcha powder,30.0,sponsored_query,no,3,dolcesuperfoods.com;foodandwine.com;ippodotea.com,,medium,2,best matcha powder;matcha powder,matcha powder,Bay Area
+21,leaf tea,25.0,ad_copy,no,5,artoftea.com;fullleafteacompany.com;looseleafteamarket.com;redblossomtea.com;thelooseleaftea.com,,medium,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+22,loose leaf,25.0,ad_copy,no,5,artoftea.com;fullleafteacompany.com;looseleafteamarket.com;rishi-tea.com;thelooseleaftea.com,,medium,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+23,best green tea,20.0,sponsored_query,no,2,hibiki-an.com;ippodotea.com,,low,2,best green tea,green tea,Bay Area
+24,best tea,20.0,sponsored_query,no,2,palaisdesthes.com;redblossomtea.com,,low,2,best tea,best tea,Bay Area
+25,best tea deals,20.0,sponsored_query,no,2,palaisdesthes.com;redblossomtea.com,,low,2,best tea deals,best tea,Bay Area
+26,best tea shop,20.0,sponsored_query,no,2,palaisdesthes.com;redblossomtea.com,,low,2,best tea shop,tea shop,Bay Area
+27,black teas,20.0,ad_copy,no,4,herbco.com;republicoftea.com;smithtea.com;theteaspot.com,,medium,0,black tea;black tea deals;buy black tea online,black tea,Bay Area
+28,buy iced tea online,20.0,sponsored_query,no,2,drinklmnt.com;smithtea.com,,low,4,buy iced tea online,iced tea,Bay Area
+29,buy tea shop online,20.0,sponsored_query,no,2,adagio.com;republicoftea.com,,low,2,buy tea shop online,tea shop,Bay Area
+30,buy tea shop online,20.0,sponsored_query,no,2,adagio.com;republicoftea.com,,low,2,buy tea shop online,tea shop,Texas
+31,e_loose leaf tea,20.0,targeting_keyword,yes,1,fullleafteacompany.com,,low,1,loose leaf tea,loose leaf tea,Bay Area
+32,e_where to buy tea online,20.0,targeting_keyword,yes,1,fullleafteacompany.com,,low,1,buy tea online,tea near me,Texas
+33,leaf teas,20.0,ad_copy,no,4,artoftea.com;fullleafteacompany.com;rishi-tea.com;thelooseleaftea.com,,medium,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+34,loose leaf teas,20.0,ad_copy,no,4,artoftea.com;fullleafteacompany.com;rishi-tea.com;thelooseleaftea.com,,medium,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+35,tea,20.0,targeting_keyword,yes,1,instacart.com,phrase,low,1,buy boba tea online,boba tea,Bay Area
+36,tea of the month club,20.0,targeting_keyword,yes,1,republicoftea.com,,low,2,tea subscription;tea subscription box,tea subscription,Bay Area
+37,tea shop,20.0,sponsored_query,no,2,artoftea.com;theteaspot.com,,low,2,tea shop,tea shop,Texas
+38,black tea,15.0,ad_copy,no,3,fullleafteacompany.com;kaitea.com;piquelife.com,,medium,0,best tea;buy tea online,tea near me,Texas
+39,bubble tea,15.0,ad_copy,no,3,amazon.com;bobadirect.com;webstaurantstore.com,,medium,0,buy boba tea online,boba tea near me,Texas
+40,leaf tea,15.0,ad_copy,no,3,arborteas.com;fullleafteacompany.com;republicoftea.com,,medium,0,buy tea online,tea near me,Texas
+41,organic loose leaf,15.0,ad_copy,no,3,artoftea.com;fullleafteacompany.com;looseleafteamarket.com,,medium,0,loose leaf tea,loose leaf tea,Bay Area
+42,organic tea,15.0,ad_copy,no,3,artoftea.com;rishi-tea.com;thelooseleaftea.com,,medium,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+43,premium loose leaf,15.0,ad_copy,no,3,artoftea.com;fullleafteacompany.com;thelooseleaftea.com,,medium,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+44,tea bags,15.0,ad_copy,no,3,artoftea.com;palaisdesthes.com;redblossomtea.com,,medium,0,best tea;buy tea online,tea near me,Bay Area
+45,tea bags,15.0,ad_copy,no,3,artoftea.com;palaisdesthes.com;republicoftea.com,,medium,0,best tea;buy tea online,tea near me,Texas
+46,tea gift,15.0,ad_copy,no,3,artoftea.com;palaisdesthes.com;rishi-tea.com,,medium,0,best tea;buy tea online,tea near me,Texas
+47,best tea shop,10.0,sponsored_query,no,1,rishi-tea.com,,low,1,best tea shop,tea shop,Texas
+48,black tea benefits,10.0,autocomplete,no,0,,,none,0,,black tea,Bay Area
+49,boba tea,10.0,ad_copy,no,2,lollicupstore.com;withconfetti.com,,low,0,buy boba tea online,boba tea,Bay Area
+50,boba tea,10.0,ad_copy,no,2,amazon.com;webstaurantstore.com,,low,0,buy boba tea online,boba tea near me,Texas
+51,boba tea near me,10.0,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+52,chai tea,10.0,ad_copy,no,2,baristaunderground.com;weaverscoffee.com,,low,0,buy chai tea online;chai tea deals,chai tea,Bay Area
+53,chai tea deals,10.0,sponsored_query,no,1,baristaunderground.com,,low,1,chai tea deals,chai tea,Bay Area
+54,chai tea latte,10.0,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+55,green tea,10.0,ad_copy,no,2,fullleafteacompany.com;piquelife.com,,low,0,best tea;buy tea online,tea near me,Texas
+56,herbal tea,10.0,ad_copy,no,2,palaisdesthes.com;piquelife.com,,low,0,best tea,tea near me,Texas
+57,herbal teas,10.0,ad_copy,no,2,artoftea.com;fullleafteacompany.com,,low,0,best herbal tea,herbal tea,Bay Area
+58,iced tea recipe,10.0,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+59,indian tea,10.0,ad_copy,no,2,teabox.com;vahdam.com,,low,0,buy indian tea online,indian tea,Bay Area
+60,japanese tea,10.0,ad_copy,no,2,hibiki-an.com;ippodotea.com,,low,0,best green tea;green tea,green tea,Bay Area
+61,leaf black tea,10.0,ad_copy,no,2,herbco.com;theteaspot.com,,low,0,black tea deals;buy black tea online,black tea,Bay Area
+62,leaf tea company,10.0,ad_copy,no,2,fullleafteacompany.com;thelooseleaftea.com,,low,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+63,loose leaf black,10.0,ad_copy,no,2,herbco.com;theteaspot.com,,low,0,black tea deals;buy black tea online,black tea,Bay Area
+64,loose leaf black tea,10.0,ad_copy,no,2,herbco.com;theteaspot.com,,low,0,black tea deals;buy black tea online,black tea,Bay Area
+65,loose leaf tea,10.0,ad_copy,no,2,arborteas.com;fullleafteacompany.com,,low,0,buy tea online,tea near me,Texas
+66,loose leaf tea market,10.0,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+67,loose leaf tea near me,10.0,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+68,matcha powder near me,10.0,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+69,milk tea near me,10.0,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+70,organic loose leaf teas,10.0,ad_copy,no,2,artoftea.com;fullleafteacompany.com,,low,0,loose leaf tea,loose leaf tea,Bay Area
+71,organic tea,10.0,ad_copy,no,2,arborteas.com;rishi-tea.com,,low,0,best tea;buy tea online,tea near me,Texas
+72,premium loose leaf tea,10.0,ad_copy,no,2,artoftea.com;fullleafteacompany.com,,low,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+73,premium tea,10.0,ad_copy,no,2,republicoftea.com;smithtea.com,,low,0,black tea deals;buy black tea online,black tea,Bay Area
+74,premium tea,10.0,ad_copy,no,2,palaisdesthes.com;republicoftea.com,,low,0,buy tea online,tea near me,Texas
+75,tea blends,10.0,ad_copy,no,2,smithtea.com;theteaspot.com,,low,0,black tea;buy black tea online,black tea,Bay Area
+76,tea company,10.0,ad_copy,no,2,fullleafteacompany.com;thelooseleaftea.com,,low,0,loose leaf tea;loose leaf tea company,loose leaf tea,Bay Area
+77,tea company,10.0,ad_copy,no,2,adagio.com;theteaspot.com,,low,0,buy tea shop online;tea shop,tea shop,Texas
+78,tea gift sets,10.0,ad_copy,no,2,palaisdesthes.com;rishi-tea.com,,low,0,best tea;buy tea online,tea near me,Texas
+79,tea lovers,10.0,ad_copy,no,2,republicoftea.com;tearunners.com,,low,0,tea subscription;tea subscription box,tea subscription,Bay Area
+80,tea near me open now,10.0,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+81,tea shop,10.0,sponsored_query,no,1,redblossomtea.com,,low,1,tea shop,tea shop,Bay Area
+82,tea shop near me,10.0,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+83,tea shop near me,10.0,autocomplete,no,0,,,none,0,,tea shop,Texas
+84,herbal tea benefits,9.6,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+85,boba tea near me menu,9.5,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+86,boba tea near me menu,9.5,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+87,boba tea near me open,9.5,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+88,boba tea near me open,9.5,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+89,herbal tea recipes,9.5,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+90,iced tea near me,8.5,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+91,herbal tea bags,8.3,ad_copy,no,1,palaisdesthes.com,,low,0,best herbal tea,herbal tea,Bay Area
+92,matcha powder benefits,8.1,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+93,matcha powder costco,8.0,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+94,chai tea benefits,7.8,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+95,chai tea recipe,7.8,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+96,matcha powder amazon,7.7,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+97,matcha powder ceremonial grade,7.7,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+98,chai tea bags,7.4,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+99,chai tea packets,7.4,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+100,chai tea starbucks,7.4,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+101,iced tea brands,7.0,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+102,green tea benefits,6.8,autocomplete,no,0,,,none,0,,green tea,Bay Area
+103,boba tea minneapolis,6.7,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+104,boba tea nyc,6.7,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+105,boba tea nyc,6.7,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+106,boba tea st paul,6.7,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+107,boba tea white plains,6.7,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+108,boba tea white plains,6.7,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+109,green tea shot,6.7,autocomplete,no,0,,,none,0,,green tea,Bay Area
+110,herbal tea for high blood pressure,6.7,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+111,herbal tea near me,6.7,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+112,iced tea powder,6.7,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+113,indian tea near me,6.7,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+114,loose leaf tea spokane,6.7,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+115,tea near me open now,6.7,autocomplete,no,0,,,none,0,,tea near me,Texas
+116,tea shop wichita ks,6.7,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+117,tea shop wichita ks,6.7,autocomplete,no,0,,,none,0,,tea shop,Texas
+118,tea st louis,6.7,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+119,tea st louis,6.7,autocomplete,no,0,,,none,0,,tea near me,Texas
+120,black tea bags,6.6,autocomplete,no,0,,,none,0,,black tea,Bay Area
+121,black tea types,6.5,autocomplete,no,0,,,none,0,,black tea,Bay Area
+122,milk tea recipe,6.5,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+123,tea subscription box gift,6.5,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+124,tea subscription gift,6.5,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+125,boba tea flavors,6.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+126,indian tea powder,6.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+127,indian tea recipe,6.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+128,tea subscription box reddit,6.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+129,tea subscription box usa,6.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+130,boba tea near me drive thru,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+131,boba tea near me drive thru,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+132,boba tea near me now,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+133,boba tea near me now,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+134,boba tea near me open now,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+135,boba tea near me open now,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+136,boba tea near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+137,boba tea near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+138,boba tea near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+139,boba tea near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+140,boba tea near me within 1 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+141,boba tea near me within 1 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+142,boba tea near me within 5 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+143,boba tea near me within 5 mi,6.2,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+144,herbal tea for constipation,6.2,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+145,herbal tea shops near me,6.2,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+146,herbal teas for inflammation,6.2,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+147,herbal teas for weight loss,6.2,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+148,herbal teas to avoid during pregnancy,6.2,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+149,herbal teas to lower blood pressure,6.2,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+150,tea near me drive thru,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+151,tea near me drive thru,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+152,tea near me indian,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+153,tea near me indian,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+154,tea near me now,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+155,tea near me now,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+156,tea near me open,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+157,tea near me open,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+158,tea near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+159,tea near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+160,tea near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+161,tea near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+162,tea near me within 1 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+163,tea near me within 1 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+164,tea near me within 5 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+165,tea near me within 5 mi,6.2,autocomplete,no,0,,,none,0,,tea near me,Texas
+166,boba tea near me hiring,6.1,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+167,boba tea near me hiring,6.1,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+168,boba tea near me open late,6.1,autocomplete,no,0,,,none,0,,boba tea near me,Bay Area
+169,boba tea near me open late,6.1,autocomplete,no,0,,,none,0,,boba tea near me,Texas
+170,herbal tea flavors,6.1,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+171,herbal tea for sore throat,6.1,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+172,herbal tea starbucks,6.1,autocomplete,no,0,,,none,0,,herbal tea,Bay Area
+173,tea near me boba,6.1,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+174,tea near me boba,6.1,autocomplete,no,0,,,none,0,,tea near me,Texas
+175,tea near me hot,6.1,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+176,tea near me hot,6.1,autocomplete,no,0,,,none,0,,tea near me,Texas
+177,tea near me loose leaf,6.1,autocomplete,no,0,,,none,0,,tea near me,Bay Area
+178,tea near me loose leaf,6.1,autocomplete,no,0,,,none,0,,tea near me,Texas
+179,matcha powder walmart,4.7,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+180,matcha powder calories,4.4,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+181,matcha powder from japan,4.4,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+182,matcha powder target,4.4,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+183,matcha powder to water ratio,4.4,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+184,matcha powder bulk,4.3,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+185,matcha powder caffeine content,4.3,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+186,matcha powder recipes,4.3,autocomplete,no,0,,,none,0,,matcha powder,Bay Area
+187,chai tea concentrate,4.2,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+188,loose leaf tea market reviews,4.2,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+189,loose leaf tea steeper,4.2,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+190,chai tea caffeine,4.1,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+191,chai tea ingredients,4.1,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+192,chai tea latte near me,4.1,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+193,chai tea latte recipe,4.1,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+194,chai tea latte starbucks,4.1,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+195,chai tea meme,4.1,autocomplete,no,0,,,none,0,,chai tea,Bay Area
+196,loose leaf tea bags,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+197,loose leaf tea infuser,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+198,loose leaf tea market cortisol reviews,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+199,loose leaf tea nearby,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+200,loose leaf tea pot,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+201,loose leaf tea reviews,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+202,loose leaf tea shop,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+203,loose leaf tea shop near me,3.9,autocomplete,no,0,,,none,0,,loose leaf tea,Bay Area
+204,best tea for sore throat,3.6,autocomplete,no,0,,,none,0,,best tea,Bay Area
+205,best tea to drink in the morning,3.6,autocomplete,no,0,,,none,0,,best tea,Bay Area
+206,iced tea rapper,3.6,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+207,black tea caffeine,3.5,autocomplete,no,0,,,none,0,,black tea,Bay Area
+208,black tea vs green tea,3.5,autocomplete,no,0,,,none,0,,black tea,Bay Area
+209,green tea shot recipe,3.5,autocomplete,no,0,,,none,0,,green tea,Bay Area
+210,tea shop lindsborg ks,3.5,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+211,tea shop lindsborg ks,3.5,autocomplete,no,0,,,none,0,,tea shop,Texas
+212,best tea bags for iced tea,3.4,autocomplete,no,0,,,none,0,,best tea,Bay Area
+213,best tea for sun tea,3.4,autocomplete,no,0,,,none,0,,best tea,Bay Area
+214,best tea for weight loss,3.4,autocomplete,no,0,,,none,0,,best tea,Bay Area
+215,best tea to drink before bed,3.4,autocomplete,no,0,,,none,0,,best tea,Bay Area
+216,iced tea aesthetics,3.4,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+217,iced tea alcohol,3.4,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+218,iced tea hennessy,3.4,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+219,iced tea lemonade,3.4,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+220,iced tea maker,3.4,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+221,iced tea mix,3.4,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+222,iced tea vodka,3.4,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+223,20 benefits of green tea,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+224,4 popular types of black tea,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+225,aroma tea shop san francisco,3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+226,art of tea subscription,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+227,austin tea house,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+228,berkeley tea shop,3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+229,best black tea at grocery store,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+230,best black tea bags,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+231,best black tea brand for milk tea,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+232,best black tea brands,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+233,best black tea deals,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+234,best black tea for health,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+235,best black tea leaves,3.3,autocomplete,no,0,,,none,0,,black tea,Bay Area
+236,best boba in sf chinatown,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+237,best boba sf,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+238,best boba sf reddit,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+239,best boba tea deals,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+240,best boba tea in california,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+241,best boba tea kit,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+242,best boba tea near me,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+243,best boba tea reddit,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+244,best green tea bags,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+245,best green tea bags for health,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+246,best green tea for antioxidants,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+247,best green tea for health benefits,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+248,best green tea for weight loss,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+249,best green tea reddit,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+250,best green tea to drink daily,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+251,best high tea in san francisco,3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+252,best iced tea bags,3.3,autocomplete,no,0,,,none,0,,iced tea,Bay Area
+253,best indian tea brand,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+254,best indian tea brands,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+255,best indian tea in usa,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+256,best indian tea near me,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+257,best indian tea powder,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+258,best indian tea recipe,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+259,best indian tea reddit,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+260,best indian tea shop near me,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+261,best luxury tea brands,3.3,autocomplete,no,0,,,none,0,,best tea,Bay Area
+262,best milk tea brand,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+263,best milk tea flavor,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+264,best milk tea in california,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+265,best milk tea in the world,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+266,best milk tea recipe,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+267,best milk tea reddit,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+268,best monthly tea subscription,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+269,best online tea store,3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+270,best online tea store,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+271,best online tea store reddit,3.3,autocomplete,no,0,,,none,0,,best tea,Bay Area
+272,best online tea store usa,3.3,autocomplete,no,0,,,none,0,,best tea,Bay Area
+273,best place to buy best tea online,3.3,autocomplete,no,0,,,none,0,,best tea,Bay Area
+274,best place to buy tea shop online,3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+275,best place to buy tea shop online,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+276,best quality tea brands,3.3,autocomplete,no,0,,,none,0,,best tea,Bay Area
+277,best tea austin,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+278,best tea bags,3.3,autocomplete,no,0,,,none,0,,best tea,Bay Area
+279,best tea bags for hot tea,3.3,autocomplete,no,0,,,none,0,,best tea,Bay Area
+280,best tea brand for milk tea,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+281,best tea shop in california,3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+282,"best tea shop near downtown austin, austin",3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+283,best tea shop near me,3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+284,best tea shop near me,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+285,"best tea shop near oakland, ca",3.3,autocomplete,no,0,,,none,0,,tea shop,Bay Area
+286,best tea shop online,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+287,best tea shop wichita ks,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+288,best tea subscription box,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+289,boba guys,3.3,autocomplete,no,0,,,none,0,,boba tea,Bay Area
+290,boba tea kit costco,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+291,boba tea supplies wholesale,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+292,bubble tea supplier near me,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+293,buy indian tea online cheap,3.3,autocomplete,no,0,,,none,0,,indian tea,Bay Area
+294,buy milk tea online cheap,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+295,buy milk tea online near me,3.3,autocomplete,no,0,,,none,0,,milk tea,Bay Area
+296,buy tea shop online free shipping,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+297,buy tea shop online near me,3.3,autocomplete,no,0,,,none,0,,tea shop,Texas
+298,green tea benefits for stomach,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+299,green tea flavours,3.3,autocomplete,no,0,,,none,0,,green tea,Bay Area
+300,loose leaf tea subscription box,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+301,republic of tea subscription,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+302,sips by tea subscription,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+303,tea bag subscription box,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+304,tea subscription box free,3.3,autocomplete,no,0,,,none,0,,tea subscription,Bay Area
+305,tea subscription canada,3.0,autocomplete,no,0,,,none,0,,tea subscription,Bay Area

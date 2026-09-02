@@ -1,0 +1,162 @@
+rank,keyword,score,evidence,recovered_from_ad,advertiser_count,advertisers,match_types,competition,ads,seen_on_queries,from_seed,market
+1,best juice cleanse,73.3,targeting_keyword,yes,3,byrdie.com;pressed.com;rawjuicery.com,,medium,6,best juice cleanse,juice cleanse,Bay Area
+2,best juice cleanse,63.3,targeting_keyword,yes,2,byrdie.com;rawjuicery.com,,low,6,best juice cleanse,juice cleanse,Texas
+3,smoothie near me delivery,56.1,sponsored_query,no,5,catercow.com;doordash.com;instacart.com;mendocinofarms.com;pressed.com,,medium,6,smoothie near me delivery,smoothie near me,Bay Area
+4,fresh juice delivery near me,50.0,sponsored_query,no,4,catercow.com;pressed.com;rawgeneration.com;rawjuicery.com,,medium,6,fresh juice delivery near me,fresh juice delivery,Bay Area
+5,juice cleanse,50.0,targeting_keyword,yes,3,byrdie.com;pressed.com;rawjuicery.com,,medium,5,best juice cleanse;juice cleanse,juice cleanse,Texas
+6,buy juice online,40.0,sponsored_query,no,4,drinklmnt.com;instacart.com;pressed.com;starbucks.com,,medium,4,buy juice online,juice nearby,Texas
+7,pressed juice,35.0,targeting_keyword,yes,4,instacart.com;pressed.com;rawgeneration.com;rawjuicery.com,exact,medium,1,best cold pressed juice;cold pressed juice,cold pressed juice,Bay Area
+8,best cold pressed juice,30.0,sponsored_query,no,3,byrdie.com;rawgeneration.com;rawjuicery.com,,medium,4,best cold pressed juice,cold pressed juice,Bay Area
+9,buy juice bar online,30.0,sponsored_query,no,3,catercow.com;instacart.com;pressed.com,,medium,4,buy juice bar online,juice bar near me,Bay Area
+10,buy juice online,30.0,sponsored_query,no,3,drinklmnt.com;instacart.com;pressed.com,,medium,5,buy juice online,juice nearby,Bay Area
+11,cold pressed juice,30.0,sponsored_query,no,3,instacart.com;pressed.com;rawjuicery.com,,medium,4,cold pressed juice,cold pressed juice,Bay Area
+12,juice cleanse,30.0,sponsored_query,no,2,byrdie.com;rawjuicery.com,,low,2,best juice cleanse;juice cleanse,juice cleanse,Bay Area
+13,raw juice delivery,25.0,targeting_keyword,yes,1,rawjuicery.com,,low,1,fresh juice delivery,fresh juice delivery,Bay Area
+14,best cold pressed juice,20.0,sponsored_query,no,2,rawgeneration.com;rawjuicery.com,,low,2,best cold pressed juice,cold pressed juice,Texas
+15,fresh juice delivery,20.0,sponsored_query,no,2,pressed.com;rawjuicery.com,,low,4,fresh juice delivery,fresh juice delivery,Bay Area
+16,juice cleanses,15.0,ad_copy,no,3,byrdie.com;pressed.com;rawjuicery.com,,medium,0,best cold pressed juice;cold pressed juice,cold pressed juice,Bay Area
+17,pressed juice,15.0,ad_copy,no,3,pressed.com;rawgeneration.com;rawjuicery.com,,medium,0,best cold pressed juice;cold pressed juice,cold pressed juice,Texas
+18,best juice,10.0,sponsored_query,no,1,pressed.com,,low,1,best juice,juice nearby,Bay Area
+19,cold pressed juice,10.0,sponsored_query,no,1,pressed.com,,low,1,cold pressed juice,cold pressed juice,Texas
+20,cold pressed juice near me,10.0,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+21,cold pressed juice near me,10.0,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+22,juice bar deals,10.0,sponsored_query,no,1,pressed.com,,low,1,juice bar deals,juice bar near me,Bay Area
+23,juice bar near me open now,10.0,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+24,juice bar near me open now,10.0,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+25,juice cleanse near me,10.0,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+26,juice cleanse near me,10.0,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+27,juice cleanses,10.0,ad_copy,no,2,rawgeneration.com;rawjuicery.com,,low,0,best cold pressed juice,cold pressed juice,Texas
+28,juice delivered,10.0,ad_copy,no,2,rawgeneration.com;rawjuicery.com,,low,0,best cold pressed juice;cold pressed juice,cold pressed juice,Bay Area
+29,juice delivered,10.0,ad_copy,no,2,rawgeneration.com;rawjuicery.com,,low,0,best cold pressed juice,cold pressed juice,Texas
+30,juice delivery,10.0,ad_copy,no,2,pressed.com;rawjuicery.com,,low,0,fresh juice delivery;fresh juice delivery near me,fresh juice delivery,Bay Area
+31,organic juice,10.0,ad_copy,no,2,rawgeneration.com;rawjuicery.com,,low,0,fresh juice delivery near me,fresh juice delivery,Bay Area
+32,pressed juice cleanses,10.0,ad_copy,no,2,pressed.com;rawjuicery.com,,low,0,best juice cleanse;juice cleanse,juice cleanse,Bay Area
+33,pressed juice cleanses,10.0,ad_copy,no,2,pressed.com;rawjuicery.com,,low,0,best juice cleanse;juice cleanse,juice cleanse,Texas
+34,pressed juice delivered,10.0,ad_copy,no,2,rawgeneration.com;rawjuicery.com,,low,0,best cold pressed juice;cold pressed juice,cold pressed juice,Bay Area
+35,pressed juice delivered,10.0,ad_copy,no,2,rawgeneration.com;rawjuicery.com,,low,0,best cold pressed juice,cold pressed juice,Texas
+36,pressed juice delivery,10.0,ad_copy,no,2,pressed.com;rawjuicery.com,,low,0,fresh juice delivery;fresh juice delivery near me,fresh juice delivery,Bay Area
+37,pressed juices,10.0,ad_copy,no,2,pressed.com;rawjuicery.com,,low,0,best cold pressed juice;cold pressed juice,cold pressed juice,Bay Area
+38,juice bar near me menu,9.5,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+39,juice bar near me menu,9.5,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+40,juice cleanse for weight loss,7.3,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+41,juice cleanse for weight loss,7.3,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+42,juice cleanse 7 day,7.0,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+43,juice cleanse 7 day,7.0,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+44,juice cleanse reddit,7.0,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+45,juice cleanse reddit,7.0,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+46,juice bar grand rapids,6.7,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+47,juice bar grand rapids,6.7,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+48,juice near me,6.7,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+49,juice near me,6.7,autocomplete,no,0,,,none,0,,juice nearby,Texas
+50,juice near me open now,6.7,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+51,juice near me open now,6.7,autocomplete,no,0,,,none,0,,juice nearby,Texas
+52,smoothie brooklyn,6.7,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+53,smoothie nyc,6.7,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+54,cold pressed juice recipes,6.5,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+55,cold pressed juice recipes,6.5,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+56,cold pressed juice benefits,6.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+57,cold pressed juice benefits,6.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+58,cold pressed juice costco,6.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+59,cold pressed juice costco,6.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+60,juice bar near me now,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+61,juice bar near me now,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+62,juice bar near me open,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+63,juice bar near me open,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+64,juice bar near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+65,juice bar near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+66,juice bar near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+67,juice bar near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+68,juice bar near me within 1 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+69,juice bar near me within 1 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+70,juice bar near me within 400m,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+71,juice bar near me within 400m,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+72,juice bar near me within 5 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+73,juice bar near me within 5 mi,6.2,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+74,juice near,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+75,juice near,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+76,juice near here,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+77,juice near here,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+78,juice near me drive thru,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+79,juice near me drive thru,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+80,juice near me fresh,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+81,juice near me fresh,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+82,juice near me now,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+83,juice near me now,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+84,juice near me open,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+85,juice near me open,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+86,juice near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+87,juice near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+88,juice near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+89,juice near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,juice nearby,Texas
+90,smoothie near me drive thru,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+91,smoothie near me now,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+92,smoothie near me open,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+93,smoothie near me open now,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+94,smoothie near me within 0.2 mi,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+95,smoothie near me within 0.5 mi,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+96,smoothie near me within 1 mi,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+97,smoothie near me within 5 mi,6.2,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+98,juice bar near me drive thru,6.1,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+99,juice bar near me drive thru,6.1,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+100,juice bar near me hiring,6.1,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+101,juice bar near me hiring,6.1,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+102,juice bar near me organic,6.1,autocomplete,no,0,,,none,0,,juice bar near me,Bay Area
+103,juice bar near me organic,6.1,autocomplete,no,0,,,none,0,,juice bar near me,Texas
+104,juice near me healthy,6.1,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+105,juice near me healthy,6.1,autocomplete,no,0,,,none,0,,juice nearby,Texas
+106,juice near me smoothie,6.1,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+107,juice near me smoothie,6.1,autocomplete,no,0,,,none,0,,juice nearby,Texas
+108,juice near me within 1 mi,6.1,autocomplete,no,0,,,none,0,,juice nearby,Bay Area
+109,juice near me within 1 mi,6.1,autocomplete,no,0,,,none,0,,juice nearby,Texas
+110,smoothie near me healthy,6.1,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+111,smoothie near me open late,6.1,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+112,smoothie near me protein,6.1,autocomplete,no,0,,,none,0,,smoothie near me,Bay Area
+113,juice cleanse recipes,4.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+114,juice cleanse recipes,4.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+115,juice cleanse 3 day,4.0,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+116,juice cleanse 3 day,4.0,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+117,juice cleanse benefits,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+118,juice cleanse benefits,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+119,juice cleanse chicago,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+120,juice cleanse chicago,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+121,juice cleanse costco,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+122,juice cleanse costco,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+123,juice cleanse detox,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+124,juice cleanse detox,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+125,juice cleanse diet,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+126,juice cleanse diet,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+127,juice cleanse for gut health,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+128,juice cleanse for gut health,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+129,juice cleanse nyc,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Bay Area
+130,juice cleanse nyc,3.7,autocomplete,no,0,,,none,0,,juice cleanse,Texas
+131,best cold pressed juice machine,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+132,best cold pressed juice machine,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+133,best cold pressed juice recipes,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+134,best cold pressed juice recipes,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+135,best cold pressed juice recipes for weight loss,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+136,best cold pressed juice recipes for weight loss,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+137,best cold pressed juice to lose weight,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+138,best cold pressed juice to lose weight,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+139,best cold-pressed juice delivery,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+140,best fresh juice delivery,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+141,best fresh juice delivery near me,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+142,cold pressed juice delivery,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+143,cold pressed juice evolution,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+144,cold pressed juice evolution,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+145,cold pressed juice h-e-b,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+146,cold pressed juice organic,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+147,cold pressed juice walmart,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+148,cold pressed juice walmart,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+149,cold pressed juice whole foods,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+150,cold pressed juice whole foods,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+151,cold-pressed juice brands,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Bay Area
+152,cold-pressed juice brands,3.3,autocomplete,no,0,,,none,0,,cold pressed juice,Texas
+153,free fresh juice delivery,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+154,"fresh juice delivery near oakland, ca",3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+155,"fresh juice delivery near san francisco, ca",3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+156,pressed juice near me,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+157,sidewalk juice,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+158,sidewalk juice menu,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+159,sidewalk juice near me,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+160,sidewalk juice sf,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area
+161,whole foods pressed juice,3.3,autocomplete,no,0,,,none,0,,fresh juice delivery,Bay Area

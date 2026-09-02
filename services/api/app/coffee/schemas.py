@@ -40,6 +40,7 @@ class KeywordOut(BaseModel):
 
 class AdvertiserOut(BaseModel):
     advertiser_domain: str
+    advertiser_name: str | None = None   # Google's display name for the advertiser
     ads: int
     recovered_keywords: list[str] = Field(default_factory=list)
     seen_on_queries: list[str] = Field(default_factory=list)

@@ -80,7 +80,52 @@ COFFEE_TERMS = [
     "k-cup", "k cup", "k-cups", "k cups", "keurig", "nespresso", "coffee pod", "coffee pods",
     "instant coffee",
 ]
-COFFEE = re.compile(r"\b(" + "|".join(re.escape(t) for t in sorted(COFFEE_TERMS, key=len, reverse=True)) + r")\b")
+def vocabulary(terms: list[str]) -> re.Pattern[str]:
+    """A market matcher: word-boundary alternation, longest term first."""
+    return re.compile(r"\b(" + "|".join(re.escape(t) for t in sorted(terms, key=len, reverse=True)) + r")\b")
+
+
+COFFEE = vocabulary(COFFEE_TERMS)
+
+# Other verticals, for generating a seed watchlist with the same machinery (see
+# scripts in docs/). The endpoint itself is coffee-only: `discover` defaults to
+# COFFEE and the route never passes anything else.
+TEA_TERMS = [
+    # "tea" already covers green/black/iced/milk/bubble/sweet tea and tea shop/house; the rest are
+    # the terms that do not contain the word.
+    "tea", "teas", "chai", "matcha", "boba", "oolong", "rooibos", "earl grey", "darjeeling",
+    "assam", "sencha", "pu-erh", "genmaicha", "tisane", "loose leaf", "teapot", "infuser",
+    "kettle", "steep", "teahouse",
+]
+LOCAL_SERVICES_TERMS = [
+    "plumber", "plumbing", "drain", "sewer", "water heater", "hvac", "air conditioning", "ac repair",
+    "furnace", "heating", "electrician", "electrical", "roofer", "roofing", "dentist", "dental",
+    "orthodontist", "locksmith", "pest control", "exterminator", "landscaper", "landscaping",
+    "handyman", "garage door", "appliance repair", "auto repair", "mechanic", "towing",
+    "house cleaning", "cleaning service", "contractor", "movers", "moving company",
+]
+MEAL_KIT_TERMS = [
+    # "meal" covers meal kit / delivery / plan / prep / subscription; the rest are the terms
+    # that do not contain the word.
+    "meal", "meals", "recipe box", "recipe kit", "dinner kit", "dinner box", "food box",
+    "prepared food", "prepared dinners", "ready to eat", "ready-made", "chef prepared",
+    "grocery delivery", "home cooking", "weeknight dinners",
+]
+JUICE_TERMS = [
+    "juice", "juices", "juicing", "juicer", "juicery", "smoothie", "smoothies", "cold pressed",
+    "cold-pressed", "cleanse", "detox", "acai", "açaí", "wheatgrass", "kombucha", "pressed juice",
+]
+TEA = vocabulary(TEA_TERMS)
+LOCAL_SERVICES = vocabulary(LOCAL_SERVICES_TERMS)
+MEAL_KITS = vocabulary(MEAL_KIT_TERMS)
+JUICES = vocabulary(JUICE_TERMS)
+VERTICALS = {
+    "coffee": COFFEE,
+    "tea": TEA,
+    "meal kits": MEAL_KITS,
+    "juices": JUICES,
+    "local services": LOCAL_SERVICES,
+}
 
 OFF_MARKET_MESSAGE = (
     "This endpoint covers coffee-related searches only. Try keywords such as 'coffee nearby', "
@@ -88,9 +133,14 @@ OFF_MARKET_MESSAGE = (
 )
 
 
+def in_market(text: str | None, market: re.Pattern[str] = COFFEE) -> bool:
+    """True when a query or keyword belongs to the given market."""
+    return bool(market.search((text or "").lower()))
+
+
 def is_coffee(text: str | None) -> bool:
     """True when a query or keyword belongs to the coffee market."""
-    return bool(COFFEE.search((text or "").lower()))
+    return in_market(text, COFFEE)
 
 
 # ---- expansion -----------------------------------------------------------------------------
@@ -168,7 +218,9 @@ def autocomplete_index(suggestions: list[dict[str, Any]]) -> dict[str, dict[str,
     return out
 
 
-def plan_queries(client: SerpApiClient, seed: str, depth: int, *, gl: str = "us", fresh: bool = False) -> tuple[list[str], dict, list[str]]:
+def plan_queries(
+    client: SerpApiClient, seed: str, depth: int, *, gl: str = "us", fresh: bool = False, market: re.Pattern[str] = COFFEE
+) -> tuple[list[str], dict, list[str]]:
     """(queries to scan, autocomplete index, unspent commercial queries).
 
     The reserve is kept for escalation: if the seed turns out to have no
@@ -178,7 +230,7 @@ def plan_queries(client: SerpApiClient, seed: str, depth: int, *, gl: str = "us"
     seed = seed.lower().strip()
     seed_tokens = tokenize(seed)
     head = head_term(seed)
-    if not is_coffee(head):
+    if not in_market(head, market):
         head = seed   # stripping went too far; keep the market in view
 
     try:
@@ -193,7 +245,7 @@ def plan_queries(client: SerpApiClient, seed: str, depth: int, *, gl: str = "us"
     # Stay on topic and inside the market: "espresso machine" must not drag the scan into
     # "machine learning", and this endpoint only covers coffee.
     on_topic = sorted(
-        (q for q in demand if q != seed and (tokenize(q) & seed_tokens) and is_coffee(q)),
+        (q for q in demand if q != seed and (tokenize(q) & seed_tokens) and in_market(q, market)),
         key=lambda q: -(demand[q]["relevance"] or 0),
     )
     ladder = commercial_ladder(head)
@@ -277,15 +329,30 @@ def targeting_from_ad(ad: dict[str, Any]) -> tuple[list[str], list[str]]:
     return sorted(keywords), sorted(matches)
 
 
-def clean_domain(value: str | None) -> str:
-    """`normalize.domain_of`, plus the breadcrumb trim it does not do.
+# Multi-part public suffixes we are likely to meet. Not the full PSL - enough to keep
+# "example.co.uk" from collapsing to "co.uk".
+MULTI_PART_TLDS = {"co.uk", "com.au", "co.jp", "com.br", "co.in", "org.uk", "gov.uk", "co.nz", "com.mx"}
 
-    Google renders a displayed_link as "vervecoffee.com › coffee-beans"; that whole
-    string survives urlparse into netloc, so without this the same advertiser counts
-    twice - once bare, once with its breadcrumb - and inflates advertiser_count.
+
+def clean_domain(value: str | None) -> str:
+    """The advertiser's registrable domain.
+
+    `normalize.domain_of` leaves two things this needs handled. Google renders a
+    displayed_link as "vervecoffee.com › coffee-beans", and that whole string survives
+    urlparse into netloc - so the same advertiser would count twice, once bare and once
+    with its breadcrumb. And advertisers land ads on subdomains ("go.flowmasters
+    plumbing.com", "athome.starbucks.com"), which is the same business and, more to the
+    point, is not what Ads Transparency looks up.
     """
     host = domain_of(value)
-    return re.split(r"[\s›>/]", host, maxsplit=1)[0].strip(". ") if host else ""
+    if not host:
+        return ""
+    host = re.split(r"[\s›>/]", host, maxsplit=1)[0].strip(". ")
+    parts = [p for p in host.split(".") if p]
+    if len(parts) < 3:
+        return ".".join(parts)
+    keep = 3 if ".".join(parts[-2:]) in MULTI_PART_TLDS else 2
+    return ".".join(parts[-keep:])
 
 
 def advertiser_of(ad: dict[str, Any]) -> str:
@@ -353,6 +420,8 @@ def _ads_for(client: SerpApiClient, query: str, location: str | None, gl: str, f
             {
                 "query": query,
                 "advertiser_domain": domain,
+                # Google's own display name for the advertiser ("Drink Trade"), when it sends one.
+                "advertiser_name": (ad.get("source") or "").strip() or None,
                 "position": int(ad.get("position") or i + 1),
                 "title": ad.get("title") or "",
                 "description": ad.get("description"),
@@ -510,7 +579,7 @@ def _cap_autocomplete_only(rows: list[dict], limit: int) -> list[dict]:
     return out
 
 
-def rank(ads: list[dict], *, seed: str, demand: dict, related: set[str], limit: int) -> list[dict]:
+def rank(ads: list[dict], *, seed: str, demand: dict, related: set[str], limit: int, market: re.Pattern[str] = COFFEE) -> list[dict]:
     """Turn scanned ads plus suggestion signals into the ranked keyword table."""
     seed_tokens = tokenize(seed)
     cand: dict[str, dict[str, Any]] = {}
@@ -547,14 +616,14 @@ def rank(ads: list[dict], *, seed: str, demand: dict, related: set[str], limit: 
         c["autocomplete"] = demand.get(kw)
         c["related_search"] = kw in related
     for kw in (related | set(demand)) - set(cand):
-        if not (tokenize(kw) & seed_tokens) or not is_coffee(kw):
+        if not (tokenize(kw) & seed_tokens) or not in_market(kw, market):
             continue
         c = rec(kw)
         c["autocomplete"] = demand.get(kw)
         c["related_search"] = kw in related
 
     rows = [_score_row(kw, c) for kw, c in cand.items()]
-    rows = [r for r in rows if r.pop("raw") > 0 and not _uncorroborated_copy(r) and is_coffee(r["keyword"])]
+    rows = [r for r in rows if r.pop("raw") > 0 and not _uncorroborated_copy(r) and in_market(r["keyword"], market)]
     rows.sort(key=lambda r: (-r["score"], -r["advertiser_count"], r["keyword"]))
     return _cap_autocomplete_only(rows, limit)
 
@@ -571,6 +640,7 @@ def discover(
     depth: int = 4,
     limit: int = 25,
     fresh: bool = False,
+    market: re.Pattern[str] = COFFEE,
 ) -> dict[str, Any]:
     """Scan the paid block around `seed` and return the ranked coffee keywords.
 
@@ -584,13 +654,13 @@ def discover(
     location = location or DEFAULT_LOCATION
     if not tokenize(seed):
         raise ValueError("keywords must contain at least one word of 3 or more characters")
-    if not is_coffee(seed):
-        raise ValueError(OFF_MARKET_MESSAGE)
+    if not in_market(seed, market):
+        raise ValueError(OFF_MARKET_MESSAGE if market is COFFEE else f"{seed!r} is outside the market being scanned")
 
     depth = max(0, min(depth, MAX_DEPTH))
     limit = max(1, min(limit, MAX_LIMIT))
 
-    queries, demand, reserve = plan_queries(client, seed, depth, gl=gl, fresh=fresh)
+    queries, demand, reserve = plan_queries(client, seed, depth, gl=gl, fresh=fresh, market=market)
     ads, related, warnings = _scan(client, queries, location, gl, fresh)
 
     # A seed nobody advertises against is not a dead end: it usually means the query is a map
@@ -609,7 +679,7 @@ def discover(
     if not ads and warnings and len(warnings) >= len(queries):
         raise SerpApiError(f"every query failed: {warnings[0]['error']}")
 
-    rows = rank(ads, seed=seed, demand=demand, related=related, limit=limit)
+    rows = rank(ads, seed=seed, demand=demand, related=related, limit=limit, market=market)
     advertisers = _advertiser_rollup(ads)
     per_query = {q: {a["advertiser_domain"] for a in ads if a["query"] == q} for q in queries}
     exposed = sum(1 for a in ads if a["targeting_keywords"])
@@ -640,8 +710,11 @@ def discover(
 def _advertiser_rollup(ads: list[dict]) -> list[dict]:
     by_domain: dict[str, dict[str, Any]] = {}
     for ad in ads:
-        r = by_domain.setdefault(ad["advertiser_domain"], {"ads": 0, "keywords": set(), "queries": set(), "titles": []})
+        r = by_domain.setdefault(
+            ad["advertiser_domain"], {"ads": 0, "keywords": set(), "queries": set(), "titles": [], "name": None}
+        )
         r["ads"] += 1
+        r["name"] = r["name"] or ad.get("advertiser_name")
         r["keywords"].update(ad["targeting_keywords"])
         r["queries"].add(ad["query"])
         if ad["title"] and len(r["titles"]) < 3:
@@ -649,6 +722,7 @@ def _advertiser_rollup(ads: list[dict]) -> list[dict]:
     rows = [
         {
             "advertiser_domain": d,
+            "advertiser_name": r["name"],
             "ads": r["ads"],
             "recovered_keywords": sorted(r["keywords"]),
             "seen_on_queries": sorted(r["queries"]),

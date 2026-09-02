@@ -135,6 +135,15 @@ def test_a_breadcrumb_display_link_is_one_advertiser_not_two():
     assert report["summary"]["advertisers"] == 1
 
 
+def test_a_landing_subdomain_is_the_same_advertiser_as_the_root():
+    # Advertisers land ads on subdomains; the business - and what Ads Transparency
+    # looks up - is the registrable domain.
+    assert ck.clean_domain("https://athome.starbucks.com/whole-bean") == "starbucks.com"
+    assert ck.clean_domain("go.flowmastersplumbing.com") == "flowmastersplumbing.com"
+    assert ck.clean_domain("https://shop.example.co.uk") == "example.co.uk"
+    assert ck.clean_domain("beanbox.com") == "beanbox.com"
+
+
 def test_copy_phrases_stay_on_topic_and_do_not_cross_a_sentence():
     got = ck.copy_phrases({"title": "Cold brew coffee delivered", "description": "Free shipping. Buy coffee online or pick up in store."}, {"coffee"})
     assert "cold brew coffee" in got

@@ -1,19 +1,19 @@
 rank,keyword,score,evidence,recovered_from_ad,advertiser_count,advertisers,match_types,competition,ads,seen_on_queries,from_seed
 1,coffee subscription gift,75.0,targeting_keyword,yes,4,atlascoffeeclub.com;beanbox.com;favy.com;roastycoffee.com,,medium,7,coffee subscription gift,coffee subscription
 2,coffee subscription,40.0,sponsored_query,no,4,atlascoffeeclub.com;drinktrade.com;favy.com;roastycoffee.com,,medium,2,coffee subscription;coffee subscription gift,coffee subscription
-3,cold brew delivery deals,40.0,sponsored_query,no,4,amazon.com;atlascoffeeclub.com;drink.noblbeverages.com;stokbrew.com,,medium,6,cold brew delivery deals,cold brew delivery
+3,cold brew delivery deals,40.0,sponsored_query,no,4,amazon.com;atlascoffeeclub.com;noblbeverages.com;stokbrew.com,,medium,6,cold brew delivery deals,cold brew delivery
 4,espresso machine,35.0,sponsored_query,no,3,amazon.com;foodandwine.com;merakitech.com,,medium,2,espresso machine;espresso machine price,espresso machine
 5,best coffee beans,20.0,sponsored_query,no,2,bonescoffee.com;walmart.com,,low,2,best coffee beans,coffee beans
 6,best coffee subscription box,20.0,targeting_keyword,yes,1,roastycoffee.com,,low,1,coffee subscription gift,coffee subscription
-7,buy cold brew delivery online,20.0,sponsored_query,no,2,drink.noblbeverages.com;stokbrew.com,,low,2,buy cold brew delivery online,cold brew delivery
-8,cold brew,20.0,ad_copy,no,4,amazon.com;atlascoffeeclub.com;drink.noblbeverages.com;stokbrew.com,,medium,0,best cold brew delivery;buy cold brew delivery online;cold brew delivery;cold brew delivery deals;cold brew delivery price;cold brew delivery service,cold brew delivery
-9,espresso machine price,20.0,sponsored_query,no,2,foodandwine.com;reviews.chicagotribune.com,,low,2,espresso machine price,espresso machine
+7,buy cold brew delivery online,20.0,sponsored_query,no,2,noblbeverages.com;stokbrew.com,,low,2,buy cold brew delivery online,cold brew delivery
+8,cold brew,20.0,ad_copy,no,4,amazon.com;atlascoffeeclub.com;noblbeverages.com;stokbrew.com,,medium,0,best cold brew delivery;buy cold brew delivery online;cold brew delivery;cold brew delivery deals;cold brew delivery price;cold brew delivery service,cold brew delivery
+9,espresso machine price,20.0,sponsored_query,no,2,chicagotribune.com;foodandwine.com,,low,2,espresso machine price,espresso machine
 10,cold brew delivery service,16.7,sponsored_query,no,1,stokbrew.com,,low,1,cold brew delivery service,cold brew delivery
 11,best cold brew delivery,16.4,sponsored_query,no,1,stokbrew.com,,low,1,best cold brew delivery,cold brew delivery
-12,coffee beans for sale,16.2,sponsored_query,no,1,athome.starbucks.com,,low,1,coffee beans for sale,coffee beans
-13,espresso machines,15.0,ad_copy,no,3,amazon.com;foodandwine.com;reviews.chicagotribune.com,,medium,0,espresso machine;espresso machine price,espresso machine
+12,coffee beans for sale,16.2,sponsored_query,no,1,starbucks.com,,low,1,coffee beans for sale,coffee beans
+13,espresso machines,15.0,ad_copy,no,3,amazon.com;chicagotribune.com;foodandwine.com,,medium,0,espresso machine;espresso machine price,espresso machine
 14,coffee subscription box,10.3,ad_copy,no,1,favy.com,,low,0,coffee subscription gift,coffee subscription
-15,buy coffee online,10.0,sponsored_query,no,1,athome.starbucks.com,,low,1,buy coffee online,coffee nearby
+15,buy coffee online,10.0,sponsored_query,no,1,starbucks.com,,low,1,buy coffee online,coffee nearby
 16,coffee subscription boxes,10.0,ad_copy,no,2,favy.com;roastycoffee.com,,low,0,coffee subscription gift,coffee subscription
 17,coffee subscriptions,10.0,ad_copy,no,2,favy.com;roastycoffee.com,,low,0,coffee subscription gift,coffee subscription
 18,cold brew delivery,10.0,sponsored_query,no,1,stokbrew.com,,low,1,cold brew delivery,cold brew delivery

@@ -1,0 +1,172 @@
+rank,keyword,score,evidence,recovered_from_ad,advertiser_count,advertisers,match_types,competition,ads,seen_on_queries,from_seed,market
+1,meal kit delivery,85.0,targeting_keyword,yes,5,cookunity.com;forbes.com;hellofresh.com;hungryroot.com;shef.com,broad,medium,7,meal kit delivery,meal kit delivery,Bay Area
+2,vegetarian meal kit delivery,60.0,sponsored_query,no,4,forbes.com;hellofresh.com;hungryroot.com;thistle.co,,medium,6,vegetarian meal kit delivery,vegetarian meal kit,Bay Area
+3,cheap meal kits delivery,56.7,sponsored_query,no,5,everyplate.com;hellofresh.com;homechef.com;hungryroot.com;topmealkitdelivery.com,,medium,6,cheap meal kits delivery,cheap meal kits,Bay Area
+4,meal kit delivery services,56.7,sponsored_query,no,5,factor75.com;forbes.com;hellofresh.com;hungryroot.com;thistle.co,,medium,5,meal kit delivery services,meal kit delivery,Bay Area
+5,family meal kit,55.0,sponsored_query,no,5,forbes.com;hellofresh.com;homechef.com;hungryroot.com;shef.com,,medium,5,family meal kit,family meal kit,Bay Area
+6,meal kits,55.0,sponsored_query,no,4,forbes.com;greenchef.com;hellofresh.com;hungryroot.com,,medium,5,meal kits;meal kits delivery,meal kits,Bay Area
+7,meal prep delivery,55.0,sponsored_query,no,5,factor75.com;forbes.com;hellofresh.com;shoplocale.com;thistle.co,,medium,6,meal prep delivery,meal prep delivery,Bay Area
+8,best meal kit delivery service,50.0,sponsored_query,no,4,forbes.com;hellofresh.com;homechef.com;hungryroot.com,,medium,6,best meal kit delivery service,best meal kit,Bay Area
+9,meal kit delivery,50.0,sponsored_query,no,4,forbes.com;hellofresh.com;homechef.com;hungryroot.com,,medium,6,meal kit delivery;meal kit delivery services,meal kit delivery,Texas
+10,meal subscription box,50.0,sponsored_query,no,5,cookunity.com;forbes.com;hellofresh.com;hungryroot.com;thistle.co,,medium,5,meal subscription box,meal subscription box,Bay Area
+11,vegetarian meal kit,50.0,sponsored_query,no,4,hellofresh.com;hungryroot.com;purplecarrot.com;thistle.co,,medium,6,vegetarian meal kit;vegetarian meal kit delivery,vegetarian meal kit,Bay Area
+12,meal subscription boxes reddit,46.7,sponsored_query,no,4,consumerrating.org;forbes.com;hungryroot.com;thistle.co,,medium,6,meal subscription boxes reddit,meal subscription box,Bay Area
+13,family meal kit subscription,43.0,sponsored_query,no,4,forbes.com;hellofresh.com;homechef.com;hungryroot.com,,medium,6,family meal kit subscription,family meal kit,Bay Area
+14,meal kits delivery,41.7,sponsored_query,no,3,forbes.com;hellofresh.com;hungryroot.com,,medium,4,meal kits delivery,meal kits,Bay Area
+15,meal prep delivery services,41.7,sponsored_query,no,3,factor75.com;forbes.com;hellofresh.com,,medium,5,meal prep delivery;meal prep delivery services,meal prep delivery,Texas
+16,cheap meal kits,40.0,sponsored_query,no,4,forbes.com;hellofresh.com;hungryroot.com;topmealkitdelivery.com,,medium,6,cheap meal kits,cheap meal kits,Bay Area
+17,meal prep delivery,40.0,sponsored_query,no,3,cookunity.com;factor75.com;forbes.com,,medium,5,meal prep delivery,meal prep delivery,Texas
+18,meal kit delivery services,36.7,sponsored_query,no,3,forbes.com;hellofresh.com;hungryroot.com,,medium,5,meal kit delivery services,meal kit delivery,Texas
+19,cheap meal boxes,25.0,targeting_keyword,yes,1,topmealkitdelivery.com,exact,low,1,cheap meal kits delivery,cheap meal kits,Bay Area
+20,best meal kit,20.0,sponsored_query,no,2,forbes.com;hellofresh.com,,low,4,best meal kit,best meal kit,Bay Area
+21,meal kit,20.0,ad_copy,no,4,cookunity.com;forbes.com;hellofresh.com;hungryroot.com,,medium,0,meal kit delivery;meal kit delivery services,meal kit delivery,Bay Area
+22,meal kit,20.0,ad_copy,no,4,forbes.com;hellofresh.com;homechef.com;hungryroot.com,,medium,0,meal kit delivery;meal kit delivery services,meal kit delivery,Texas
+23,family meal kits,16.7,ad_copy,no,2,forbes.com;hungryroot.com,,low,0,family meal kit;family meal kit subscription,family meal kit,Bay Area
+24,family meals,15.0,ad_copy,no,3,homechef.com;hungryroot.com;shef.com,,medium,0,family meal kit;family meal kit subscription,family meal kit,Bay Area
+25,meal delivery,15.0,ad_copy,no,3,factor75.com;forbes.com;shoplocale.com,,medium,0,meal prep delivery,meal prep delivery,Bay Area
+26,meal prep,15.0,ad_copy,no,3,factor75.com;forbes.com;thistle.co,,medium,0,meal prep delivery,meal prep delivery,Bay Area
+27,meal prep,15.0,ad_copy,no,3,cookunity.com;factor75.com;forbes.com,,medium,0,meal prep delivery;meal prep delivery services,meal prep delivery,Texas
+28,vegetarian meal,15.0,ad_copy,no,3,forbes.com;hungryroot.com;thistle.co,,medium,0,vegetarian meal kit;vegetarian meal kit delivery,vegetarian meal kit,Bay Area
+29,meal prep delivery services,11.7,ad_copy,no,1,forbes.com,,low,0,meal prep delivery,meal prep delivery,Bay Area
+30,vegetarian meal kits,11.7,ad_copy,no,1,hungryroot.com,,low,0,vegetarian meal kit,vegetarian meal kit,Bay Area
+31,based meal,10.0,ad_copy,no,2,purplecarrot.com;thistle.co,,low,0,vegetarian meal kit,vegetarian meal kit,Bay Area
+32,based meal kits,10.0,ad_copy,no,2,purplecarrot.com;thistle.co,,low,0,vegetarian meal kit,vegetarian meal kit,Bay Area
+33,cheapest meal,10.0,ad_copy,no,2,forbes.com;topmealkitdelivery.com,,low,0,cheap meal kits,cheap meal kits,Bay Area
+34,cheapest meal kit,10.0,ad_copy,no,2,forbes.com;topmealkitdelivery.com,,low,0,cheap meal kits,cheap meal kits,Bay Area
+35,family meal,10.0,ad_copy,no,2,forbes.com;hungryroot.com,,low,0,family meal kit;family meal kit subscription,family meal kit,Bay Area
+36,family meal planning,10.0,ad_copy,no,2,forbes.com;hungryroot.com,,low,0,family meal kit;family meal kit subscription,family meal kit,Bay Area
+37,family meals made,10.0,ad_copy,no,2,homechef.com;hungryroot.com,,low,0,family meal kit subscription,family meal kit,Bay Area
+38,meal delivery,10.0,ad_copy,no,2,factor75.com;forbes.com,,low,0,meal prep delivery;meal prep delivery services,meal prep delivery,Texas
+39,meal kits,10.0,ad_copy,no,2,forbes.com;hungryroot.com,,low,0,meal kit delivery;meal kit delivery services,meal kit delivery,Texas
+40,meal planning,10.0,ad_copy,no,2,forbes.com;hungryroot.com,,low,0,family meal kit;family meal kit subscription,family meal kit,Bay Area
+41,meal subscription,10.0,ad_copy,no,2,forbes.com;hungryroot.com,,low,0,meal subscription box;meal subscription boxes reddit,meal subscription box,Bay Area
+42,prep meal,10.0,ad_copy,no,2,forbes.com;hellofresh.com,,low,0,meal kits;meal kits delivery,meal kits,Bay Area
+43,prep meal,10.0,ad_copy,no,2,forbes.com;hellofresh.com,,low,0,meal prep delivery;meal prep delivery services,meal prep delivery,Texas
+44,prep meal kits,10.0,ad_copy,no,2,forbes.com;hellofresh.com,,low,0,meal kits;meal kits delivery,meal kits,Bay Area
+45,prep meal kits,10.0,ad_copy,no,2,forbes.com;hellofresh.com,,low,0,meal prep delivery;meal prep delivery services,meal prep delivery,Texas
+46,vegetarian meals,10.0,ad_copy,no,2,hungryroot.com;thistle.co,,low,0,vegetarian meal kit;vegetarian meal kit delivery,vegetarian meal kit,Bay Area
+47,meal prep delivery near me,9.5,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+48,meal prep delivery near me,9.5,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+49,family meal kits delivered,9.3,ad_copy,no,1,hungryroot.com,,low,0,family meal kit,family meal kit,Bay Area
+50,cheapest meal kits,8.2,ad_copy,no,1,forbes.com,,low,0,cheap meal kits,cheap meal kits,Bay Area
+51,meal kits for seniors,8.0,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+52,meal kits walmart,8.0,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+53,cheapest meal kit service,7.9,ad_copy,no,1,topmealkitdelivery.com,,low,0,cheap meal kits,cheap meal kits,Bay Area
+54,family meal kit whole foods,7.1,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+55,best meal kits,6.7,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+56,meal subscription box comparison,6.7,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+57,best meal kits for families,6.5,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+58,family meal kits restaurants,6.5,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+59,best meal kit delivery service reddit,6.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+60,meal subscription box for one person,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+61,meal subscription box gift,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+62,meal subscription box gluten free,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+63,meal subscription box price comparison,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+64,meal subscription box uk,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+65,meal subscription boxes australia,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+66,meal subscription boxes canada,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+67,meal subscription boxes for families,6.2,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+68,meal subscription box for kids,6.1,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+69,meal subscription box for picky eaters,6.1,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+70,meal subscription box high protein,6.1,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+71,meal subscription box south africa,6.1,autocomplete,no,0,,,none,0,,meal subscription box,Bay Area
+72,meal kits for families,5.0,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+73,meal kits for weight loss,5.0,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+74,meal kits for one,4.7,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+75,meal kits near me,4.7,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+76,meal kits that accept ebt,4.7,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+77,meal kits at costco,4.6,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+78,meal kits at grocery stores,4.6,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+79,meal kits for 2,4.6,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+80,meal kits for diabetics,4.6,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+81,meal kits for kids,4.6,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+82,meal kits for one person,4.6,autocomplete,no,0,,,none,0,,meal kits,Bay Area
+83,best meal kit services,4.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+84,family meal kitchen,4.3,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+85,family meal kit sprouts,3.7,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+86,family meal kitchen staff,3.7,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+87,family meal kits near me,3.7,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+88,affordable meal prep delivery services,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+89,affordable vegetarian meal delivery,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+90,best family meal kit,3.3,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+91,best family meal kit subscription,3.3,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+92,best heat and eat meal delivery,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+93,best meal delivery service for singles,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+94,best meal delivery service for singles,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+95,best meal delivery services,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+96,best meal kit delivery,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+97,best meal kit delivery service 2026,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+98,best meal kit delivery service consumer reports,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+99,best meal kit delivery service for seniors,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+100,best meal kit delivery service for singles,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+101,best meal kit delivery service for weight loss,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+102,best meal kit delivery service reddit,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+103,best meal kit delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+104,best meal kit for couples,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+105,best meal kit reddit,3.3,autocomplete,no,0,,,none,0,,best meal kit,Bay Area
+106,best meal prep delivery,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+107,best meal prep delivery,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+108,best meal prep delivery services,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+109,best meal prep delivery services,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+110,best prepared meal delivery service,3.3,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+111,best prepared meal delivery service,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+112,best vegetarian meal delivery reddit,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+113,best vegetarian meal kit,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+114,best vegetarian meal kit delivery,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+115,cheap meal kits delivery near me,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+116,cheap meal kits delivery reddit,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+117,cheap meal kits for seniors,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+118,cheap meal kits near me,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+119,cheapest meal delivery service for singles,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+120,cheapest vegetarian meal kit delivery,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+121,dinnerly meal kits,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+122,everyplate meal delivery,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+123,everyplate meal kits,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+124,family meal kit delivered,3.3,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+125,family meal kit delivery,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+126,family meal kit delivery,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+127,family meal kit subscription cost,3.3,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+128,family meal kit subscription reddit,3.3,autocomplete,no,0,,,none,0,,family meal kit,Bay Area
+129,free meal kit delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+130,free meal kit delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+131,free meal prep delivery,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+132,free meal prep delivery,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+133,free meal prep delivery services,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+134,free meal prep delivery services,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+135,healthy meal delivery san francisco,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+136,healthy meal kit delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+137,healthy meal kit delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+138,healthy meal prep delivery,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+139,healthy meal prep delivery,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+140,healthy meal prep delivery services,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+141,healthy meal prep delivery services,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+142,healthy vegetarian meal kit,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+143,healthy vegetarian meal kit delivery,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+144,meal delivery services san francisco,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Bay Area
+145,meal kit delivery services cost,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+146,meal kit delivery services cost,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+147,meal prep delivery cost,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+148,meal prep delivery for weight loss,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+149,meal prep delivery services cost,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+150,meal prep delivery services near me,3.3,autocomplete,no,0,,,none,0,,meal prep delivery,Texas
+151,no subscription prepared meal delivery,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+152,no subscription prepared meal delivery,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+153,prepared meal delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+154,prepared meal delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+155,prepared meal kit delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+156,prepared meal kit delivery services,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+157,prepared meal kits,3.3,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+158,vegetarian meal delivery for weight loss,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+159,vegetarian meal delivery gift,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+160,vegetarian meal delivery no subscription,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+161,vegetarian meal kit for weight loss,3.3,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+162,weekly meal kit delivery,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+163,weekly meal kit delivery,3.3,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+164,affordable meal kits,3.2,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+165,meal kit delivery companies,3.2,autocomplete,no,0,,,none,0,,meal kit delivery,Bay Area
+166,meal kit delivery companies,3.2,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+167,meal kit delivery services price comparison,3.2,autocomplete,no,0,,,none,0,,meal kit delivery,Texas
+168,vegetarian meal kits australia,3.2,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+169,vegetarian meal kits uk,3.2,autocomplete,no,0,,,none,0,,vegetarian meal kit,Bay Area
+170,cheapest meal kit delivery service,3.0,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
+171,cheap meal kits delivered,2.9,autocomplete,no,0,,,none,0,,cheap meal kits,Bay Area
