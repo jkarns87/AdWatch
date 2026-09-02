@@ -13,6 +13,19 @@ function cleanDomain(s: string) {
   return s.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
 }
 
+/** Must stay at module scope. Defined inside Onboarding it gets a new function
+ *  identity every render, so React remounts the subtree and every input loses
+ *  focus after a single keystroke. */
+const Field = ({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) => (
+  <label className="block mb-3">
+    <div className="text-sm font-medium mb-1">{label}</div>
+    {children}
+    {hint && <div className="muted text-xs mt-1">{hint}</div>}
+  </label>
+);
+
+const input = "panel-2 w-full p-2 text-sm";
+
 export default function Onboarding() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -42,18 +55,9 @@ export default function Onboarding() {
         setBusy(`Running baseline collection (${cost} SerpApi searches)…`);
         try { await api.collectAndAnalyze(w.id); } catch (e: any) { setErr(`Watchlist created, but the first collection failed: ${e.message}. You can run it from the watchlist page.`); }
       }
-      router.push(`/w/${w.id}`);
+      router.push(`/watchlists/${w.id}`);
     } catch (e: any) { setErr(String(e.message ?? e)); setBusy(null); }
   };
-
-  const Field = ({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) => (
-    <label className="block mb-3">
-      <div className="text-sm font-medium mb-1">{label}</div>
-      {children}
-      {hint && <div className="muted text-xs mt-1">{hint}</div>}
-    </label>
-  );
-  const input = "panel-2 w-full p-2 text-sm";
 
   return (
     <div className="max-w-2xl mx-auto">
