@@ -13,7 +13,7 @@ query "alert_prefs/by_id/{alert_pref_id}" verb=DELETE {
       field_value = $input.alert_pref_id
     } as $pref
 
-    precondition ($pref != null && $pref.workspace_id == $auth.workspace_id) {
+    precondition ($pref != null && $pref.workspace_id == $auth.extras.workspace_id) {
       error_type = "notfound"
       error = "alert preference not found"
     }

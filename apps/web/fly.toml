@@ -1,0 +1,27 @@
+# AdWatch dashboard on Fly.io — `fly deploy apps/web`
+# NEXT_PUBLIC_* are baked in at build time, so they live in build.args, not [env].
+app = "adwatch-web"
+primary_region = "sjc"
+
+[build]
+  [build.args]
+    NEXT_PUBLIC_API_BASE_URL = "https://adwatch-api.fly.dev/api/v1"
+    NEXT_PUBLIC_AUTH_PROVIDER = "xano"
+    NEXT_PUBLIC_XANO_BASE_URL = "https://xcne-4ruo-ej7c.n7e.xano.io/api:adwatch-control"
+
+[env]
+  PORT = "3000"
+  HOSTNAME = "0.0.0.0"
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

@@ -51,6 +51,18 @@ query "auth/signup" verb=POST {
       }
     }
 
+    db.add "alert_pref" {
+      data = {
+        workspace_id: $workspace.id,
+        channel: "in_app",
+        provider: "in_app",
+        label: "In-app inbox",
+        target: "",
+        min_severity: "low",
+        enabled: true
+      }
+    }
+
     db.patch "user" {
       field_name = "id"
       field_value = $user.id

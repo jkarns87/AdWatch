@@ -1,9 +1,10 @@
 query "internal/dispatch" verb=POST {
   api_group = "control"
-  description = "Called by the data plane after /analyze. Fans one insight out to every enabled alert destination in the workspace. Protected by a shared secret header."
+  description = "Called by the data plane after /analyze. Fans one insight out to every enabled alert destination in the workspace (in-app inbox, Slack/Discord/Teams/generic webhooks, email). Protected by a shared secret header."
   input {
     int workspace_id
     int insight_id
+    int watchlist_id?
     text severity filters=trim|lower
     text title filters=trim
     text summary
@@ -53,16 +54,71 @@ query "internal/dispatch" verb=POST {
                 workspace_id: $input.workspace_id,
                 alert_pref_id: $pref.id,
                 insight_id: $input.insight_id,
+                watchlist_id: $input.watchlist_id,
+                channel: $pref.channel,
+                severity: $input.severity,
+                title: $input.title,
+                summary: $input.summary,
+                why_it_matters: $input.why_it_matters,
+                dashboard_url: $input.dashboard_url,
                 status: "skipped",
                 detail: "below min_severity"
               }
             }
           }
+          elseif ($pref.channel == "in_app") {
+            db.add "alert_log" {
+              data = {
+                workspace_id: $input.workspace_id,
+                alert_pref_id: $pref.id,
+                insight_id: $input.insight_id,
+                watchlist_id: $input.watchlist_id,
+                channel: "in_app",
+                severity: $input.severity,
+                title: $input.title,
+                summary: $input.summary,
+                why_it_matters: $input.why_it_matters,
+                dashboard_url: $input.dashboard_url,
+                read: false,
+                status: "sent",
+                detail: "in_app"
+              }
+            }
+            var.update $sent { value = $sent + 1 }
+          }
           elseif ($pref.channel == "webhook") {
+            var $payload { value = { text: $text, content: $text } }
+            conditional {
+              if ($pref.provider == "teams") {
+                var.update $payload {
+                  value = {
+                    type: "message",
+                    attachments: [
+                      {
+                        contentType: "application/vnd.microsoft.card.adaptive",
+                        content: {
+                          type: "AdaptiveCard",
+                          version: "1.4",
+                          body: [
+                            { type: "TextBlock", size: "Medium", weight: "Bolder", text: "AdWatch · " ~ $input.title ~ " — " ~ ($input.severity|to_upper) },
+                            { type: "TextBlock", wrap: true, text: $input.summary },
+                            { type: "TextBlock", wrap: true, isSubtle: true, text: $input.why_it_matters }
+                          ],
+                          actions: [
+                            { type: "Action.OpenUrl", title: "Open in AdWatch", url: $input.dashboard_url }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+
             api.request {
               url = $pref.target
               method = "POST"
-              params = { text: $text, content: $text }
+              params = $payload
               headers = ["Content-Type: application/json"]
               timeout = 10
             } as $hook
@@ -75,8 +131,13 @@ query "internal/dispatch" verb=POST {
                     workspace_id: $input.workspace_id,
                     alert_pref_id: $pref.id,
                     insight_id: $input.insight_id,
+                    watchlist_id: $input.watchlist_id,
+                    channel: "webhook",
+                    severity: $input.severity,
+                    title: $input.title,
+                    summary: $input.summary,
                     status: "sent",
-                    detail: "webhook " ~ ($hook.response.status|to_text)
+                    detail: ($pref.provider|to_text) ~ " webhook " ~ ($hook.response.status|to_text)
                   }
                 }
               }
@@ -86,8 +147,13 @@ query "internal/dispatch" verb=POST {
                     workspace_id: $input.workspace_id,
                     alert_pref_id: $pref.id,
                     insight_id: $input.insight_id,
+                    watchlist_id: $input.watchlist_id,
+                    channel: "webhook",
+                    severity: $input.severity,
+                    title: $input.title,
+                    summary: $input.summary,
                     status: "failed",
-                    detail: "webhook " ~ ($hook.response.status|to_text)
+                    detail: ($pref.provider|to_text) ~ " webhook " ~ ($hook.response.status|to_text)
                   }
                 }
               }
@@ -105,6 +171,11 @@ query "internal/dispatch" verb=POST {
                 workspace_id: $input.workspace_id,
                 alert_pref_id: $pref.id,
                 insight_id: $input.insight_id,
+                watchlist_id: $input.watchlist_id,
+                channel: "email",
+                severity: $input.severity,
+                title: $input.title,
+                summary: $input.summary,
                 status: "sent",
                 detail: "email"
               }

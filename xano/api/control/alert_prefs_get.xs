@@ -5,7 +5,7 @@ query "alert_prefs" verb=GET {
   input {}
   stack {
     db.query "alert_pref" {
-      where = $db.alert_pref.workspace_id == $auth.workspace_id
+      where = $db.alert_pref.workspace_id == $auth.extras.workspace_id
       sort = { created_at: "desc" }
       return = { type: "list" }
     } as $prefs

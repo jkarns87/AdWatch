@@ -24,6 +24,7 @@ def dispatch_via_xano(db: Session, watchlist: m.Watchlist, insight: m.Insight, c
     payload = {
         "workspace_id": watchlist.workspace_id,
         "insight_id": insight.id,
+        "watchlist_id": watchlist.id,
         "severity": top,
         "title": watchlist.name,
         "summary": insight.summary,

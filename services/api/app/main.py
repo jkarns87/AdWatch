@@ -7,7 +7,7 @@ from sqlalchemy import text
 
 from .config import get_settings
 from .db import get_engine, init_db
-from .routers import demo, reads, runs, watchlists
+from .routers import demo, reads, runs, usage, watchlists
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -33,6 +33,7 @@ app.include_router(watchlists.router, prefix=API)
 app.include_router(runs.router, prefix=API)
 app.include_router(reads.router, prefix=API)
 app.include_router(demo.router, prefix=API)
+app.include_router(usage.router, prefix=API)
 
 
 @app.get(f"{API}/health", tags=["health"])

@@ -1,0 +1,70 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { signOut, xano, xanoEnabled } from "@/lib/xano";
+import type { XanoMe } from "@/lib/types";
+
+const LINKS: { href: string; label: string; match: (p: string) => boolean }[] = [
+  { href: "/", label: "Watchlists", match: (p) => p === "/" || p.startsWith("/w/") },
+  { href: "/alerts", label: "Alerts", match: (p) => p.startsWith("/alerts") },
+  { href: "/usage", label: "Usage & plan", match: (p) => p.startsWith("/usage") },
+  { href: "/settings/integrations", label: "Integrations", match: (p) => p.startsWith("/settings") },
+];
+
+export function Nav() {
+  const path = usePathname();
+  const [unread, setUnread] = useState<number>(0);
+  const [me, setMe] = useState<XanoMe | null>(null);
+  const onLogin = path.startsWith("/login");
+
+  useEffect(() => {
+    if (!xanoEnabled || onLogin) return;
+    let stop = false;
+    const tick = () => {
+      xano.alerts().then((r) => { if (!stop) setUnread(r.unread); }).catch(() => {});
+    };
+    xano.me().then((m) => { if (!stop) setMe(m); }).catch(() => {});
+    tick();
+    const t = setInterval(tick, 45_000);
+    const bump = () => tick();
+    window.addEventListener("adwatch:alerts-changed", bump);
+    return () => { stop = true; clearInterval(t); window.removeEventListener("adwatch:alerts-changed", bump); };
+  }, [onLogin, path]);
+
+  return (
+    <header className="border-b" style={{ borderColor: "var(--line)" }}>
+      <div className="mx-auto max-w-6xl px-5 py-3 flex items-center gap-5">
+        <Link href="/" className="font-semibold tracking-tight text-lg" style={{ color: "var(--text)" }}>
+          <span style={{ color: "var(--accent)" }}>●</span> AdWatch
+        </Link>
+        {!onLogin && (
+          <nav className="flex items-center gap-1 text-sm">
+            {LINKS.map((l) => (
+              <Link key={l.href} href={l.href} className="tab" data-active={l.match(path)} style={{ color: l.match(path) ? "var(--text)" : "var(--muted)" }}>
+                {l.label}
+                {l.href === "/alerts" && unread > 0 && (
+                  <span className="badge sev-high ml-2" title={`${unread} unread alerts`}>{unread}</span>
+                )}
+              </Link>
+            ))}
+          </nav>
+        )}
+        <div className="ml-auto flex items-center gap-3 text-sm">
+          {me ? (
+            <>
+              <span className="muted">{me.workspace.name}</span>
+              <span className="badge kind">{me.workspace.plan}</span>
+              <button className="btn" onClick={signOut}>Sign out</button>
+            </>
+          ) : xanoEnabled && !onLogin ? (
+            <Link href="/login" className="btn">Sign in</Link>
+          ) : (
+            <span className="muted text-xs">competitor ads · keyword SERPs · demand — diffed, explained, alerted</span>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}

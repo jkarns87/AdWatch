@@ -202,3 +202,42 @@ class SeedOut(BaseModel):
     runs: list[int]
     changes: int
     insights: int
+
+
+# ---- usage & budget --------------------------------------------------------------------------------
+
+
+class WatchlistUsage(BaseModel):
+    watchlist_id: int
+    name: str
+    competitors: int
+    keywords: int
+    searches_used: int
+    runs: int
+    last_run_at: datetime | None
+    searches_per_run: int
+    projected_month_current: int
+    projected_month_plan: int
+    over_plan_limits: bool
+
+
+class UsageOut(BaseModel):
+    workspace_id: int
+    plan: str
+    period_start: datetime
+    period_end: datetime
+    searches_used: int
+    searches_budget: int
+    searches_remaining: int
+    budget_used_pct: float
+    runs: int
+    cost_to_date_usd: float
+    projected_month_current_cadence: int
+    projected_month_plan_cadence: int
+    projected_cost_current_usd: float
+    projected_cost_plan_usd: float
+    rate_per_search_usd: float
+    watchlists_used: int
+    watchlists_limit: int
+    by_watchlist: list[WatchlistUsage]
+    plans: list[dict[str, Any]]

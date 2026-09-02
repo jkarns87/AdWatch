@@ -11,15 +11,15 @@ query "auth/me" verb=GET {
 
     db.get "workspace" {
       field_name = "id"
-      field_value = $auth.workspace_id
+      field_value = $auth.extras.workspace_id
     } as $workspace
   }
   response = {
     id: $user.id,
     name: $user.name,
     email: $user.email,
-    workspace_id: $auth.workspace_id,
-    role: $auth.role,
+    workspace_id: $auth.extras.workspace_id,
+    role: $auth.extras.role,
     workspace: { id: $workspace.id, name: $workspace.name, plan: $workspace.plan }
   }
   guid = "FKw5aKvGQPd7Dmr5RWmgVD8ctJA"

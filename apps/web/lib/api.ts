@@ -6,6 +6,7 @@ import type {
   Insight,
   SerpOut,
   TrendsOut,
+  UsageOut,
   WatchlistDetail,
   WatchlistSummary,
 } from "./types";
@@ -49,4 +50,5 @@ export const api = {
   trends: (id: number, keywordId: number) => req<TrendsOut>(`/watchlists/${id}/trends?keyword_id=${keywordId}`),
   collectAndAnalyze: (id: number) => req<CollectAnalyzeOut>(`/watchlists/${id}/collect-and-analyze`, { method: "POST" }),
   seedSynthetic: () => req<{ watchlist_id: number }>("/demo/seed", { method: "POST", body: JSON.stringify({ mode: "synthetic" }) }),
+  usage: () => req<UsageOut>("/usage"),
 };

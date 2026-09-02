@@ -1,4 +1,5 @@
-// Mirrors docs/API_CONTRACT.md. Keep in sync with services/api/app/schemas.py.
+// Mirrors docs/API_CONTRACT.md. Keep in sync with services/api/app/schemas.py (data plane)
+// and xano/ (control plane: auth, alert prefs, in-app inbox, plan).
 
 export type Severity = "low" | "medium" | "high";
 export type ChangeKind =
@@ -138,4 +139,112 @@ export interface CollectAnalyzeOut {
   changes: Change[];
   insights: Insight[];
   alerts_sent: number;
+}
+
+// ---- usage & budget (data plane GET /usage) ----------------------------------------------------
+
+export type PlanKey = "free" | "team" | "agency";
+
+export interface PlanCadence {
+  creatives_per_day: number;
+  serp_per_day: number;
+  trends_per_day: number;
+  related_per_week: number;
+}
+
+export interface PlanInfo {
+  key: PlanKey;
+  name: string;
+  price_usd: number;
+  watchlists: number;
+  competitors_per_watchlist: number;
+  keywords_per_watchlist: number;
+  searches_per_month: number;
+  cadence: PlanCadence;
+  blurb: string;
+}
+
+export interface WatchlistUsage {
+  watchlist_id: number;
+  name: string;
+  competitors: number;
+  keywords: number;
+  searches_used: number;
+  runs: number;
+  last_run_at: string | null;
+  searches_per_run: number;
+  projected_month_current: number;
+  projected_month_plan: number;
+  over_plan_limits: boolean;
+}
+
+export interface UsageOut {
+  workspace_id: number;
+  plan: PlanKey;
+  period_start: string;
+  period_end: string;
+  searches_used: number;
+  searches_budget: number;
+  searches_remaining: number;
+  budget_used_pct: number;
+  runs: number;
+  cost_to_date_usd: number;
+  projected_month_current_cadence: number;
+  projected_month_plan_cadence: number;
+  projected_cost_current_usd: number;
+  projected_cost_plan_usd: number;
+  rate_per_search_usd: number;
+  watchlists_used: number;
+  watchlists_limit: number;
+  by_watchlist: WatchlistUsage[];
+  plans: PlanInfo[];
+}
+
+// ---- control plane (Xano) ---------------------------------------------------------------------
+
+export type AlertChannel = "in_app" | "webhook" | "email";
+export type AlertProvider = "in_app" | "slack" | "discord" | "teams" | "generic" | "email";
+
+export interface XanoMe {
+  id: number;
+  name: string;
+  email: string;
+  workspace_id: number;
+  role: "owner" | "member" | "viewer";
+  workspace: { id: number; name: string; plan: PlanKey };
+}
+
+export interface AlertPref {
+  id: number;
+  created_at: number | string;
+  workspace_id: number;
+  channel: AlertChannel;
+  provider: AlertProvider | string | null;
+  label: string | null;
+  target: string | null;
+  min_severity: Severity;
+  enabled: boolean;
+}
+
+export interface XanoAlert {
+  id: number;
+  created_at: number | string;
+  workspace_id: number;
+  alert_pref_id: number | null;
+  insight_id: number | null;
+  watchlist_id: number | null;
+  channel: AlertChannel;
+  severity: Severity;
+  title: string | null;
+  summary: string | null;
+  why_it_matters: string | null;
+  dashboard_url: string | null;
+  read: boolean;
+  status: "sent" | "failed" | "skipped";
+  detail: string | null;
+}
+
+export interface XanoAlertsOut {
+  unread: number;
+  alerts: XanoAlert[];
 }

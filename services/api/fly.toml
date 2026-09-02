@@ -1,0 +1,37 @@
+# AdWatch data plane on Fly.io — `fly deploy services/api`
+# Secrets (never here): SERPAPI_API_KEY, ANTHROPIC_API_KEY, DATAPLANE_SHARED_SECRET, DATABASE_URL (set by `fly postgres attach`)
+app = "adwatch-api"
+primary_region = "sjc"
+
+[build]
+
+[env]
+  ENV = "prod"
+  PORT = "8000"
+  DEMO_ENDPOINTS = "true"
+  ANTHROPIC_MODEL = "claude-sonnet-4-5"
+  SERPAPI_CACHE_DIR = "/app/.cache/serpapi"
+  AUTH_PROVIDER = "xano"
+  XANO_BASE_URL = "https://xcne-4ruo-ej7c.n7e.xano.io/api:adwatch-control"
+  ALERT_DISPATCHER = "xano"
+  DASHBOARD_URL = "https://adwatch-web.fly.dev"
+  CORS_ORIGINS = "https://adwatch-web.fly.dev,http://localhost:3000"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "off"      # the Xano scheduler and the demo both want a warm API
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "25s"
+    method = "GET"
+    path = "/api/v1/health"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

@@ -20,15 +20,16 @@ from . import models as m
 from .config import get_settings
 from .db import get_db
 
-_introspect_cache: dict[str, tuple[float, int]] = {}
+_introspect_cache: dict[str, tuple[float, int, str]] = {}
 _CACHE_TTL_S = 300
 
 
-def _introspect_xano(token: str) -> int:
+def _introspect_xano(token: str) -> tuple[int, str]:
+    """-> (workspace_id, plan)"""
     s = get_settings()
     hit = _introspect_cache.get(token)
     if hit and hit[0] > time.time():
-        return hit[1]
+        return hit[1], hit[2]
     if not s.xano_base_url:
         raise HTTPException(500, "XANO_BASE_URL not configured")
     try:
@@ -37,11 +38,13 @@ def _introspect_xano(token: str) -> int:
         raise HTTPException(502, f"auth introspection failed: {e.__class__.__name__}") from e
     if r.status_code != 200:
         raise HTTPException(401, "invalid or expired token")
-    wid = (r.json() or {}).get("workspace_id")
+    body = r.json() or {}
+    wid = body.get("workspace_id")
     if not wid:
         raise HTTPException(401, "token has no workspace_id")
-    _introspect_cache[token] = (time.time() + _CACHE_TTL_S, int(wid))
-    return int(wid)
+    plan = str(((body.get("workspace") or {}).get("plan")) or "free")
+    _introspect_cache[token] = (time.time() + _CACHE_TTL_S, int(wid), plan)
+    return int(wid), plan
 
 
 def current_workspace_id(
@@ -56,8 +59,24 @@ def current_workspace_id(
     if s.auth_provider == "xano":
         if not authorization or not authorization.lower().startswith("bearer "):
             raise HTTPException(401, "missing bearer token")
-        return _introspect_xano(authorization.split(" ", 1)[1].strip())
+        return _introspect_xano(authorization.split(" ", 1)[1].strip())[0]
     return int(x_workspace_id or 1)
+
+
+def current_plan(
+    authorization: str | None = Header(default=None),
+    x_workspace_id: int | None = Header(default=None),
+    x_dataplane_secret: str | None = Header(default=None),
+    x_plan: str | None = Header(default=None),
+) -> str:
+    """Workspace plan key (free | team | agency). Owned by Xano; introspected with the token.
+    Machine callers and AUTH_PROVIDER=none may pass X-Plan; default "team" keeps the demo ungated."""
+    s = get_settings()
+    if s.dataplane_shared_secret and x_dataplane_secret == s.dataplane_shared_secret and x_workspace_id:
+        return x_plan or "team"
+    if s.auth_provider == "xano" and authorization and authorization.lower().startswith("bearer "):
+        return _introspect_xano(authorization.split(" ", 1)[1].strip())[1]
+    return x_plan or "team"
 
 
 def ensure_workspace(db: Session, workspace_id: int) -> m.Workspace:

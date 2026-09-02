@@ -7,10 +7,16 @@ table "alert_pref" {
       table = "workspace"
     }
     enum channel?="webhook" {
-      values = ["webhook", "email"]
+      values = ["in_app", "webhook", "email"]
     }
-    text target filters=trim {
-      description = "Webhook URL or email address"
+    text provider? filters=trim {
+      description = "in_app | slack | discord | teams | generic | email — drives payload shape and the UI icon"
+    }
+    text label? filters=trim {
+      description = "Human name shown in Settings, e.g. 'Growth team channel'"
+    }
+    text target? filters=trim {
+      description = "Webhook URL or email address; empty for in_app"
     }
     enum min_severity?="medium" {
       values = ["low", "medium", "high"]
