@@ -10,13 +10,13 @@ Same script for the video (add 30s of build-story voiceover at the end for Xano)
 "Every paid-search team does this once a week: open a competitor's Google Ads Transparency page, search your own keywords in incognito, check Google Trends, screenshot it all into a deck. It's slow, it's a snapshot, and it never tells you what *changed*. AdWatch is the monitor plus the analyst."
 
 **[0:25–0:55] The watchlist.** *(scroll the overview)*
-"One watchlist for the meal-kit category: three competitors, five keywords. Every card here is live public data pulled through SerpApi — these are the creatives each competitor is running right now, with first- and last-shown dates. This table is the paid block on our keywords — who's bidding, what position, top or bottom. And that's category demand over the last twelve weeks."
+"One watchlist for the specialty-coffee category (Bay Area): three competitors, five keywords. Every card here is live public data pulled through SerpApi — these are the creatives each competitor is running right now, with first- and last-shown dates. This table is the paid block on our keywords — who's bidding, what position, top or bottom. And that's category demand over the last twelve weeks."
 
 **[0:55–1:35] The change feed.** *(click Changes)*
-"Here's the part nobody has. Every run is diffed against the last. Overnight: competitor two launched four new video creatives; a brand we don't track appeared in position one on our highest-value keyword; and 'meal kit for two' broke out as a rising query. Each of those is a typed event with severity — not a screenshot."
+"Here's the part nobody has. Every run is diffed against the last. Overnight: competitor two launched four new video creatives; a brand we don't track appeared in position one on our highest-value keyword; and 'cold brew delivery san francisco' broke out as a rising query. Each of those is a typed event with severity — not a screenshot."
 
 **[1:35–2:20] The analyst.** *(click the top Insight)*
-"The AI analyst reads the structured diff — only the diff, it can't invent numbers — and writes this: what happened, why it matters, and three actions with effort and urgency. 'Launch a two-person plan landing page this week; the query is breaking out and no tracked competitor owns it yet.' That's a Monday-morning brief, generated at 6 AM."
+"The AI analyst reads the structured diff — only the diff, it can't invent numbers — and writes this: what happened, why it matters, and three actions with effort and urgency. 'Launch a cold-brew landing page this week; the query is breaking out locally and no tracked competitor owns it yet.' That's a Monday-morning brief, generated at 6 AM."
 
 **[2:20–2:45] Live.** *(click Collect now)*
 "Let's run it live." *(wait ≤ 30s — narrate: 'three ad-transparency calls, five search calls, ten trends calls, diffed, analyzed')* "New run, [N] changes, one new insight — and it just hit our team channel." *(show the webhook message)*

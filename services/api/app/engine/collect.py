@@ -165,7 +165,7 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
         for kw in watchlist.keywords:
             # paid block
             prev_serp = serp_view(db, kw.id, prev_id)
-            res = client.google_search(q=kw.term, gl=gl, fresh=fresh)
+            res = client.google_search(q=kw.term, gl=gl, location=watchlist.location, fresh=fresh)
             _snapshot(db, run, "search_ads", "keyword", kw.id, res)
             n_snapshots += 1
             ads = serp_ads_from_google(res.data)

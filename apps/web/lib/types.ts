@@ -18,6 +18,7 @@ export interface WatchlistSummary {
   name: string;
   vertical: string;
   geo: string;
+  location?: string | null;
   competitor_count: number;
   keyword_count: number;
   last_run_at: string | null;
@@ -51,6 +52,7 @@ export interface WatchlistDetail {
   name: string;
   vertical: string;
   geo: string;
+  location?: string | null;
   created_at: string;
   competitors: Competitor[];
   keywords: Keyword[];

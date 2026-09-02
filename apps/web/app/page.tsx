@@ -23,12 +23,15 @@ export default function Home() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold tracking-tight">Watchlists</h1>
-        <button className="btn" onClick={seed} disabled={busy}>{busy ? "seeding…" : "Seed demo data"}</button>
+        <div className="flex gap-2">
+          <button className="btn" onClick={seed} disabled={busy} title="Fictitious advertisers, two runs, zero SerpApi quota">{busy ? "seeding…" : "Seed demo data"}</button>
+          <Link href="/onboarding" className="btn btn-primary">New watchlist</Link>
+        </div>
       </div>
       {err && <div className="panel p-3 mt-4 text-sm" style={{ color: "var(--high)" }}>API error: {err} — is the API running on {process.env.NEXT_PUBLIC_API_BASE_URL}?</div>}
       {rows === null && !err && <div className="muted mt-4">loading…</div>}
       {rows && rows.length === 0 && (
-        <div className="panel p-6 mt-4 muted">No watchlists yet. Seed demo data or <code>POST /watchlists</code>.</div>
+        <div className="panel p-6 mt-4 muted">No watchlists yet. <Link href="/onboarding">Create your first watchlist</Link> or seed demo data.</div>
       )}
       <div className="grid gap-3 mt-4 sm:grid-cols-2">
         {rows?.map((w) => (

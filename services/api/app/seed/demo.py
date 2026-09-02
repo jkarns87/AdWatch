@@ -31,11 +31,11 @@ def reset(db: Session) -> None:
     db.commit()
 
 
-def _ensure_watchlist(db: Session, workspace_id: int, name: str, vertical: str, geo: str, competitors: list[dict], keywords: list[str]) -> m.Watchlist:
+def _ensure_watchlist(db: Session, workspace_id: int, name: str, vertical: str, geo: str, competitors: list[dict], keywords: list[str], location: str | None = None) -> m.Watchlist:
     ensure_workspace(db, workspace_id)
     w = db.scalar(select(m.Watchlist).where(m.Watchlist.workspace_id == workspace_id, m.Watchlist.name == name))
     if w is None:
-        w = m.Watchlist(workspace_id=workspace_id, name=name, vertical=vertical, geo=geo)
+        w = m.Watchlist(workspace_id=workspace_id, name=name, vertical=vertical, geo=geo, location=location)
         db.add(w)
         db.flush()
         for c in competitors:
@@ -48,7 +48,7 @@ def _ensure_watchlist(db: Session, workspace_id: int, name: str, vertical: str, 
 
 
 def seed_synthetic(db: Session, *, workspace_id: int = 1, vertical: str | None = None) -> dict:
-    w = _ensure_watchlist(db, workspace_id, "Meal Kit Delivery", vertical or "meal kits", "US", FICTIONAL_COMPETITORS, FICTIONAL_KEYWORDS)
+    w = _ensure_watchlist(db, workspace_id, "Specialty Coffee — Bay Area", vertical or "specialty coffee", "US", FICTIONAL_COMPETITORS, FICTIONAL_KEYWORDS, location="San Francisco, California, United States")
     run_ids: list[int] = []
     n_changes = 0
     for idx in (0, 1):
@@ -63,7 +63,7 @@ def seed_live(db: Session, *, workspace_id: int = 1, vertical: str | None = None
     if not CONFIG_PATH.exists():
         raise FileNotFoundError(f"{CONFIG_PATH} missing — copy demo_config.example.json and fill in real domains/keywords")
     cfg = json.loads(CONFIG_PATH.read_text())
-    w = _ensure_watchlist(db, workspace_id, cfg["name"], vertical or cfg.get("vertical", ""), cfg.get("geo", "US"), cfg["competitors"], cfg["keywords"])
+    w = _ensure_watchlist(db, workspace_id, cfg["name"], vertical or cfg.get("vertical", ""), cfg.get("geo", "US"), cfg["competitors"], cfg["keywords"], location=cfg.get("location"))
     run, _, changes = run_collect(db, w)
     insights, _ = run_analyze(db, w)
     return {"watchlist_id": w.id, "runs": [run.id], "changes": len(changes), "insights": len(insights)}

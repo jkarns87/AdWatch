@@ -1,0 +1,194 @@
+<title>AdWatch One-Pager</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root {
+    --ground: #f7f8fc; --sheet: #ffffff; --ink: #0b1020; --muted: #5c6684; --line: #d8deee;
+    --accent: #1f4fd8; --accent-soft: #e8eeff; --rail: #f1f4fb;
+    --high: #c73f3f; --high-bg: #fbeaea; --med: #b8730f; --med-bg: #fff3e0; --ok: #2d8a5b; --ok-bg: #e6f5ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0b1020; --sheet: #121a2e; --ink: #e6ebf5; --muted: #8b96b3; --line: #24304d;
+      --accent: #6ea8fe; --accent-soft: #182238; --rail: #0f1628;
+      --high: #ff7b7b; --high-bg: #3a1c22; --med: #ffb454; --med-bg: #3a2c16; --ok: #7dd3a0; --ok-bg: #163126;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0b1020; --sheet: #121a2e; --ink: #e6ebf5; --muted: #8b96b3; --line: #24304d;
+    --accent: #6ea8fe; --accent-soft: #182238; --rail: #0f1628;
+    --high: #ff7b7b; --high-bg: #3a1c22; --med: #ffb454; --med-bg: #3a2c16; --ok: #7dd3a0; --ok-bg: #163126;
+  }
+  html, body { background: var(--ground); color: var(--ink); }
+  body { font-family: "IBM Plex Sans", "Source Sans 3", "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13.5px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .sheet { max-width: 900px; margin: 28px auto 40px; background: var(--sheet); border: 1px solid var(--line); padding: 40px 44px 30px; }
+  h1, h2, h3, .brand { font-family: Poppins, "IBM Plex Sans", Helvetica, Arial, sans-serif; letter-spacing: -0.01em; }
+  h1 { font-size: 30px; line-height: 1.15; font-weight: 700; margin: 12px 0 8px; text-wrap: balance; max-width: 22ch; }
+  h1 em { font-style: normal; color: var(--accent); }
+  h2 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 0 0 8px; }
+  p { margin: 0 0 10px; max-width: 66ch; }
+  .lede { font-size: 15px; color: var(--muted); max-width: 60ch; }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 2px solid var(--ink); padding-bottom: 14px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; }
+  .brand svg { width: 34px; height: 34px; border-radius: 8px; }
+  .brand b { font-weight: 700; } .brand span { color: var(--accent); }
+  .meta { text-align: right; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+  .grid { display: grid; grid-template-columns: 1fr 272px; gap: 30px; margin-top: 20px; }
+  section + section { margin-top: 20px; }
+  .rail { background: var(--rail); border: 1px solid var(--line); padding: 16px 18px; align-self: start; }
+  .rail section + section { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .rail p { font-size: 12.5px; max-width: none; }
+  .fact { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12.5px; }
+  .fact dt { color: var(--muted); }
+  .fact dd { margin: 0; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .steps div { border-top: 2px solid var(--accent); padding-top: 8px; font-size: 12.5px; }
+  .steps b { display: block; font-family: Poppins, sans-serif; font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+  .specimen { border: 1px solid var(--line); background: var(--accent-soft); padding: 12px 14px; display: grid; gap: 8px; }
+  .ev { display: grid; grid-template-columns: 58px 1fr; gap: 10px; align-items: baseline; font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+  .chip { font-family: "IBM Plex Sans", sans-serif; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; text-align: center; }
+  .chip.high { color: var(--high); background: var(--high-bg); }
+  .chip.med { color: var(--med); background: var(--med-bg); }
+  .chip.ai { color: var(--accent); background: var(--sheet); border: 1px solid var(--line); }
+  .ev .kind { color: var(--muted); }
+  .ev.insight { font-family: "IBM Plex Sans", sans-serif; font-size: 12.5px; border-top: 1px dashed var(--line); padding-top: 8px; }
+  .plans { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .plans div { border: 1px solid var(--line); padding: 8px 10px; font-size: 11.5px; background: var(--sheet); }
+  .plans b { display: inline-block; min-width: 62px; font-size: 12.5px; font-family: Poppins, sans-serif; font-weight: 600; }
+  .plans .n { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
+  .team { display: grid; gap: 6px; font-size: 12.5px; }
+  .duo { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px; }
+  .duo p { font-size: 12.5px; }
+  .note { margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+  .duo section + section { margin-top: 0; }
+  .team b { font-weight: 600; }
+  .foot { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; font-size: 11px; color: var(--muted); }
+  .foot a { color: var(--accent); text-decoration: none; }
+  .hint { max-width: 900px; margin: 0 auto 30px; font-size: 12px; color: var(--muted); text-align: center; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } .steps { grid-template-columns: 1fr 1fr; } .head { flex-direction: column; align-items: flex-start; } .meta { text-align: left; } }
+  @media print {
+    @page { size: letter; margin: 0.4in; }
+    html, body { background: #fff; }
+    .sheet { margin: 0; border: 0; padding: 0; max-width: none; }
+    .hint { display: none; }
+    body { font-size: 10px; line-height: 1.38; }
+    h1 { font-size: 21px; margin: 6px 0 5px; }
+    .lede { font-size: 11.2px; }
+    .grid { gap: 20px; margin-top: 14px; grid-template-columns: 1fr 240px; }
+    section + section { margin-top: 10px; }
+    .rail { padding: 12px 14px; }
+    .rail section + section { margin-top: 10px; padding-top: 9px; }
+    .specimen { padding: 9px 11px; gap: 6px; }
+    .ev { font-size: 9.9px; }
+    .steps { gap: 8px; }
+    .duo { margin-top: 12px; gap: 16px; }
+    .steps div, .rail p, .fact, .team, .plans div, .ev.insight, .duo p, .note { font-size: 9.7px; }
+    .steps b, .plans b { font-size: 11px; }
+    .fact { gap: 2px 8px; }
+    .chip { font-size: 8.5px; padding: 1px 6px; }
+    h2 { font-size: 9.5px; margin-bottom: 5px; }
+    p { margin-bottom: 6px; }
+    .sheet { padding: 0 2px; }
+    .head { padding-bottom: 9px; }
+    .foot { margin-top: 8px; padding-top: 6px; font-size: 9px; }
+    .rail p, .fact, .team { line-height: 1.32; }
+    .rail section + section { margin-top: 8px; padding-top: 7px; }
+  }
+</style>
+
+<article class="sheet">
+  <header class="head">
+    <div class="brand">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#0b1020"/><path d="M72 256 C 150 100, 362 100, 440 256 C 362 412, 150 412, 72 256 Z" fill="none" stroke="#6ea8fe" stroke-width="30" stroke-linejoin="round"/><circle cx="256" cy="256" r="98" fill="#6ea8fe" opacity="0.26"/><circle cx="256" cy="256" r="98" fill="none" stroke="#6ea8fe" stroke-width="12"/><rect x="176" y="200" width="160" height="112" rx="20" fill="#ffffff"/><rect x="196" y="218" width="58" height="28" rx="9" fill="#0b1020"/><text x="225" y="239" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="22" fill="#ffffff">Ad</text><rect x="196" y="260" width="120" height="14" rx="7" fill="#6ea8fe"/><rect x="196" y="284" width="84" height="12" rx="6" fill="#8b96b3"/></svg>
+      <b>Ad<span>Watch</span></b>
+    </div>
+    <div class="meta">Competitive intelligence for paid search<br>DevNetwork API + Cloud + AI Hackathon · API World, September 2026</div>
+  </header>
+
+  <h1>Know what your competitors did <em>before your standup.</em></h1>
+  <p class="lede">AdWatch watches every Google ad your competitors run, every keyword they bid on, and every shift in category demand — then tells you what changed, why it matters, and what to do next. Built on public data: nothing to connect, no ad-account access.</p>
+
+  <div class="grid">
+    <div class="main">
+      <section>
+        <h2>The problem</h2>
+        <p>Every paid-search team runs the same weekly ritual: open a competitor's transparency page, search your own keywords in an incognito window, check a trends chart, paste screenshots into a deck. It is slow, it is retrospective, and it has no concept of <em>change</em> — you get a snapshot, not a signal. Incumbent intelligence suites cost hundreds of dollars a seat and still deliver a report, not an alert.</p>
+      </section>
+
+      <section>
+        <h2>The product</h2>
+        <div class="steps">
+          <div><b>Watch</b>Competitor creatives (Ads Transparency Center), the live paid block on your keywords (Google Search), and demand (Google Trends) — via SerpApi, on a schedule.</div>
+          <div><b>Diff</b>Every run is compared to the last. Nine typed change kinds with severity. The first run is a silent baseline.</div>
+          <div><b>Explain</b>An AI analyst reads only the structured diff and writes what happened, why it matters, and 2–3 actions with effort and urgency.</div>
+          <div><b>Alert &amp; report</b>High-severity insights hit team chat or email. One click renders a CFO spend-&amp;-risk brief or a marketing action brief (PDF, DOCX, MD).</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>What a Monday morning looks like</h2>
+        <div class="specimen">
+          <div class="ev"><span class="chip high">high</span><span><span class="kind">new_serp_advertiser</span> · brewdrop.example appeared at top #1 on "cold brew delivery"</span></div>
+          <div class="ev"><span class="chip high">high</span><span><span class="kind">creative_surge</span> · RoastNest went from 7 to 11 active creatives (+57%), four of them video</span></div>
+          <div class="ev"><span class="chip high">high</span><span><span class="kind">trend_spike</span> · interest in "cold brew delivery" is 1.7× its 4-week average in the Bay Area; "cold brew delivery san francisco" is Breakout</span></div>
+          <div class="ev insight"><span class="chip ai">AI</span><span>"A new entrant took the top slot on your highest-intent query while local demand nearly doubled. Ship a cold-brew landing page this week and add a 'cold brew delivery san francisco' ad group; no tracked competitor owns the breakout yet." — <b>now · low effort</b></span></div>
+        </div>
+        <p class="note">Fictitious advertisers shown; design partner: a Bay Area specialty-coffee startup. The analyst may not invent numbers.</p>
+      </section>
+
+      <section>
+        <h2>Why now</h2>
+        <p>Ad transparency data became public and, through SerpApi, structured and real-time — the sensor now exists. Language models made "explain the diff" cheap enough to run every cycle. And paid-search budgets are under scrutiny: finance wants competitive context for spend, not just performance dashboards. The wedge is the diff; the moat is the history of it.</p>
+      </section>
+
+      <div class="duo">
+        <section>
+          <h2>Traction</h2>
+          <p>Working product built in ~22 hours by three people: 9 change kinds, 3 report formats, control plane live, pipeline validated end-to-end. Next: three design-partner brands and two agencies on live watchlists for 30 days.</p>
+        </section>
+        <section>
+          <h2>Team</h2>
+          <div class="team">
+            <div><b>Joseph Karns</b> — product, infrastructure &amp; frontend; DevOps engineer, cloud-agnostic</div>
+            <div><b>Divya</b> — backend &amp; collectors</div>
+            <div><b>Seema Gupta</b> — backend &amp; data</div>
+          </div>
+        </section>
+        <section>
+          <h2>The ask</h2>
+          <p>Design partners with real watchlists, SerpApi volume for pilots, and introductions to agencies that bill for competitive reporting today.</p>
+        </section>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <section>
+        <h2>Who buys it</h2>
+        <p>Direct-to-consumer brands with a paid-search line item, and agencies running five to fifty client accounts who do this ritual for every one of them. Expansion: multi-channel coverage and own-account overlay (import campaign reports to see spend against competitor moves).</p>
+      </section>
+      <section>
+        <h2>Business model</h2>
+        <div class="plans">
+          <div><b>Free</b><span class="n">$0</span> · 1 watchlist, daily samples, in-app alerts</div>
+          <div><b>Team</b><span class="n">$79/mo</span> · 3 watchlists, SERP twice daily, chat + email alerts, reports</div>
+          <div><b>Agency</b><span class="n">$299/mo</span> · 10 watchlists, client workspaces, white-label reports</div>
+        </div>
+        <p style="margin-top:8px">Per-workspace SaaS; every SerpApi call is one metered search and each plan maps limits to a monthly budget (~61% gross margin at Team, ~49% at Agency at list prices, improving with cross-tenant caching).</p>
+      </section>
+      <section>
+        <h2>How it's built</h2>
+        <dl class="fact">
+          <dt>Sensor</dt><dd>SerpApi — 3 engines, 18 searches per run for a 3×5 watchlist</dd>
+          <dt>Control plane</dt><dd>Xano — auth, workspaces, alert routing, 6-hourly scheduler</dd>
+          <dt>Data plane</dt><dd>FastAPI + Postgres; diff engine, Claude analyst, report renderers</dd>
+          <dt>Frontend</dt><dd>Next.js dashboard; containers on any cloud, CI on push</dd>
+        </dl>
+      </section>
+    </aside>
+  </div>
+
+  <footer class="foot">
+    <span>Data: SerpApi (Google Ads Transparency Center, Google Search, Google Trends) · Control plane: Xano · Analysis: AdWatch diff engine + Claude</span>
+    <span><a href="mailto:jkarns87@gmail.com">jkarns87@gmail.com</a> · devpost.com/software/adwatch</span>
+  </footer>
+</article>
+<p class="hint">Print or save as PDF from your browser for the letter-size version.</p>

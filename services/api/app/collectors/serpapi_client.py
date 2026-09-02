@@ -107,8 +107,12 @@ class SerpApiClient:
             params["platform"] = platform
         return self.search(params, fresh=fresh)
 
-    def google_search(self, *, q: str, gl: str = "us", hl: str = "en", device: str = "desktop", fresh: bool = False) -> SerpResult:
-        params = {"engine": "google", "q": q, "gl": gl, "hl": hl, "device": device, "google_domain": "google.com", "num": 10}
+    def google_search(
+        self, *, q: str, gl: str = "us", hl: str = "en", device: str = "desktop", location: str | None = None, fresh: bool = False
+    ) -> SerpResult:
+        params: dict[str, Any] = {"engine": "google", "q": q, "gl": gl, "hl": hl, "device": device, "google_domain": "google.com", "num": 10}
+        if location:
+            params["location"] = location  # e.g. "San Francisco, California, United States" — geo-targets the paid block
         return self.search(params, fresh=fresh)
 
     def trends_timeseries(self, *, q: str, geo: str = "US", date: str = "today 3-m", fresh: bool = False) -> SerpResult:

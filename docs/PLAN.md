@@ -62,7 +62,7 @@ Budget: 2 live runs for demo data (36) + dev testing (~60) + safety margin ≈ 1
 
 ## Definition of done for the demo
 
-- [ ] Open dashboard → watchlist "Meal Kit Delivery" (or chosen vertical) shows ≥3 competitors with live creatives
+- [ ] Open dashboard → watchlist "Specialty Coffee — Bay Area"  shows ≥3 competitors with live creatives
 - [ ] Change timeline shows ≥1 `creative_launched`, ≥1 `new_serp_advertiser`, ≥1 `trend_spike` from real runs
 - [ ] Insight feed shows Claude-written insight with 2–3 recommended actions per change cluster
 - [ ] Clicking "Collect now" on stage completes in < 30s and produces at least one new change (pre-warm: run collect 5 min before demo so SerpApi's cache is hot)

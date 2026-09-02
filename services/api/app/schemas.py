@@ -21,6 +21,7 @@ class WatchlistCreate(BaseModel):
     name: str = Field(min_length=1, max_length=200)
     vertical: str = ""
     geo: str = "US"
+    location: str | None = Field(default=None, max_length=120)  # SerpApi location string for Google Search
 
 
 class CompetitorCreate(BaseModel):
@@ -60,6 +61,7 @@ class WatchlistSummary(BaseModel):
     name: str
     vertical: str
     geo: str
+    location: str | None = None
     competitor_count: int
     keyword_count: int
     last_run_at: datetime | None
@@ -71,6 +73,7 @@ class WatchlistDetail(BaseModel):
     name: str
     vertical: str
     geo: str
+    location: str | None = None
     created_at: datetime
     competitors: list[CompetitorOut]
     keywords: list[KeywordOut]

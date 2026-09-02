@@ -32,3 +32,15 @@ export async function xanoLogin(email: string, password: string): Promise<string
   setToken(authToken);
   return authToken;
 }
+
+export function hasToken(): boolean {
+  if (PROVIDER !== "xano") return true;
+  try { return !!window.localStorage.getItem(TOKEN_KEY); } catch { return false; }
+}
+
+export function logout() {
+  setToken(null);
+  if (typeof window !== "undefined") window.location.href = "/";
+}
+
+export const AUTH_PROVIDER = PROVIDER;

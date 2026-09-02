@@ -42,10 +42,28 @@ make collect WATCHLIST=1
 make analyze WATCHLIST=1
 ```
 
+## App routes
+
+| Route | What |
+|---|---|
+| `/welcome` | Marketing landing (hero, how it works, features, pricing from `plans.py`) |
+| `/login` | Sign in / sign up on the Xano control plane (`NEXT_PUBLIC_AUTH_PROVIDER=xano`); local mode skips it |
+| `/` | Watchlists with unreviewed-change badges · **New watchlist** |
+| `/onboarding` | 4-step wizard: watchlist (vertical, geo, search location) → competitors → keywords → review + baseline run |
+| `/w/[id]` | Insights · Changes · Competitors (creative grid, add) · Keywords (paid block, share of voice, demand, add) · **Collect now** · **Export report** |
+| `/alerts` | In-app alert inbox (served by the Xano control plane) |
+| `/usage` | Usage & plan: searches spent vs budget, month-end projection, plan switch |
+| `/settings/integrations` | Alert destinations: in-app, Slack, Teams, Discord, email, webhook |
+
+## Reports
+
+`Export report ▾` (or `GET /api/v1/watchlists/{id}/report?audience=cfo|marketing&format=pdf|docx|md`) generates an audience-tailored brief: AI executive summary with decisions for that reader, KPIs, recommended actions, what changed, competitor activity, keyword share of voice and demand chart. Renderers: reportlab (PDF), python-docx, Markdown.
+
 ## Docs
 
 - [`docs/PLAN.md`](docs/PLAN.md) — hour-by-hour timeline, lanes, checkpoints, quota budget
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — components, data model, change taxonomy
+- [`docs/SERPAPI.md`](docs/SERPAPI.md) — the four SerpApi calls, fields we consume, quota rules, backend definition of done
 - [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md) — the REST contract between web ↔ api (frontend and backend can build in parallel against it)
 - [`docs/XANO.md`](docs/XANO.md) — control-plane setup and the cut-line if it slips
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — one-command deploy options

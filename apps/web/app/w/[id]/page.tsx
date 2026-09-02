@@ -9,6 +9,7 @@ import { InsightCard } from "@/components/InsightCard";
 import { CreativeCard } from "@/components/CreativeCard";
 import { SerpTable } from "@/components/SerpTable";
 import { TrendSparkline } from "@/components/TrendSparkline";
+import { ExportMenu } from "@/components/ExportMenu";
 
 type Tab = "insights" | "changes" | "competitors" | "keywords";
 
@@ -27,6 +28,8 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [newComp, setNewComp] = useState({ name: "", domain: "" });
+  const [newKw, setNewKw] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -55,6 +58,16 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
     finally { setBusy(false); }
   };
 
+  const addComp = async () => {
+    const domain = newComp.domain.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
+    if (domain.length < 4) return;
+    try { await api.addCompetitor(id, { name: newComp.name.trim() || domain.split(".")[0], domain }); setNewComp({ name: "", domain: "" }); await load(); } catch (e: any) { setErr(String(e.message ?? e)); }
+  };
+  const addKw = async () => {
+    if (!newKw.trim()) return;
+    try { await api.addKeyword(id, newKw.trim()); setNewKw(""); await load(); } catch (e: any) { setErr(String(e.message ?? e)); }
+  };
+
   if (err && !w) return <div className="panel p-4" style={{ color: "var(--high)" }}>{err}</div>;
   if (!w) return <div className="muted">loading…</div>;
 
@@ -67,10 +80,13 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{w.name}</h1>
           <div className="muted text-sm mt-1">
-            {w.vertical} · {w.geo} · {w.competitors.length} competitors · {w.keywords.length} keywords · last run {fmtTime(w.last_run?.finished_at)}{w.last_run ? ` (${w.last_run.searches_used} searches)` : ""}
+            {w.vertical} · {w.geo}{w.location ? ` · ${w.location}` : ""} · {w.competitors.length} competitors · {w.keywords.length} keywords · last run {fmtTime(w.last_run?.finished_at)}{w.last_run ? ` (${w.last_run.searches_used} searches)` : ""}
           </div>
         </div>
-        <button className="btn btn-primary" onClick={collect} disabled={busy}>{busy ? "Collecting…" : "Collect now"}</button>
+        <div className="flex items-center gap-2">
+          <ExportMenu watchlistId={id} />
+          <button className="btn btn-primary" onClick={collect} disabled={busy}>{busy ? "Collecting…" : "Collect now"}</button>
+        </div>
       </div>
       {status && <div className="panel-2 p-2 mt-3 text-sm">{status}</div>}
       {err && <div className="panel p-2 mt-3 text-sm" style={{ color: "var(--high)" }}>{err}</div>}
@@ -99,6 +115,12 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
 
       {tab === "competitors" && (
         <div className="mt-4 space-y-6">
+          <div className="panel-2 p-3 flex flex-wrap gap-2 items-center">
+            <span className="muted text-xs">Add competitor</span>
+            <input className="panel-2 p-1.5 text-sm" placeholder="Name (optional)" value={newComp.name} onChange={(e) => setNewComp({ ...newComp, name: e.target.value })} />
+            <input className="panel-2 p-1.5 text-sm flex-1 min-w-[200px]" placeholder="competitor-domain.com" value={newComp.domain} onChange={(e) => setNewComp({ ...newComp, domain: e.target.value })} onKeyDown={(e) => e.key === "Enter" && addComp()} />
+            <button className="btn text-sm" onClick={addComp}>Add</button>
+          </div>
           {w.competitors.map((c) => {
             const mine = creatives.filter((x) => x.competitor_id === c.id);
             return (
@@ -119,6 +141,11 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
 
       {tab === "keywords" && (
         <div className="mt-4">
+          <div className="panel-2 p-3 flex flex-wrap gap-2 items-center mb-3">
+            <span className="muted text-xs">Add keyword</span>
+            <input className="panel-2 p-1.5 text-sm flex-1 min-w-[200px]" placeholder="e.g. cold brew delivery" value={newKw} onChange={(e) => setNewKw(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addKw()} />
+            <button className="btn text-sm" onClick={addKw}>Add</button>
+          </div>
           <div className="flex flex-wrap gap-2">
             {w.keywords.map((k) => (
               <button key={k.id} className="btn" style={kwId === k.id ? { borderColor: "var(--accent)" } : {}} onClick={() => setKwId(k.id)}>{k.term}</button>

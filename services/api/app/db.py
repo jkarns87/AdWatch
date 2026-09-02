@@ -40,3 +40,8 @@ def init_db() -> None:
     from . import models  # noqa: F401  (register tables)
 
     Base.metadata.create_all(get_engine())
+    # additive column migrations for DBs created before these fields existed (hackathon-grade; Alembic later)
+    from sqlalchemy import text
+
+    with get_engine().begin() as conn:
+        conn.execute(text("ALTER TABLE watchlists ADD COLUMN IF NOT EXISTS location VARCHAR(120)"))

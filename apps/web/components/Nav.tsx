@@ -37,7 +37,9 @@ export function Nav() {
     <header className="border-b" style={{ borderColor: "var(--line)" }}>
       <div className="mx-auto max-w-6xl px-5 py-3 flex items-center gap-5">
         <Link href="/" className="font-semibold tracking-tight text-lg" style={{ color: "var(--text)" }}>
-          <span style={{ color: "var(--accent)" }}>●</span> AdWatch
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/mark.svg" alt="" width={24} height={24} style={{ borderRadius: 6, verticalAlign: "-5px", marginRight: 8 }} />
+          Ad<span style={{ color: "var(--accent)" }}>Watch</span>
         </Link>
         {!onLogin && (
           <nav className="flex items-center gap-1 text-sm">

@@ -1,17 +1,18 @@
 {
-  "name": "Meal Kit Delivery",
-  "vertical": "meal kits",
+  "name": "Specialty Coffee — Bay Area",
+  "vertical": "specialty coffee",
   "geo": "US",
+  "location": "San Francisco, California, United States",
   "competitors": [
     { "name": "Competitor A", "domain": "competitor-a.example" },
     { "name": "Competitor B", "domain": "competitor-b.example" },
     { "name": "Competitor C", "domain": "competitor-c.example" }
   ],
   "keywords": [
-    "meal kit delivery",
-    "healthy meal kits",
-    "meal kit for two",
-    "cheap meal kit",
-    "vegetarian meal kit"
+    "coffee subscription",
+    "specialty coffee beans",
+    "cold brew delivery",
+    "best coffee beans online",
+    "coffee gift box"
   ]
 }

@@ -14,22 +14,22 @@ from typing import Any
 from ..collectors.serpapi_client import SerpResult
 
 FICTIONAL_COMPETITORS = [
-    {"name": "FreshCrate", "domain": "freshcrate.example"},
-    {"name": "PlateNest", "domain": "platenest.example"},
-    {"name": "KitchenLoop", "domain": "kitchenloop.example"},
+    {"name": "BeanLoop", "domain": "beanloop.example"},
+    {"name": "RoastNest", "domain": "roastnest.example"},
+    {"name": "DripCrate", "domain": "dripcrate.example"},
 ]
-FICTIONAL_KEYWORDS = ["meal kit delivery", "healthy meal kits", "meal kit for two", "cheap meal kit", "vegetarian meal kit"]
-OUTSIDERS = ["dinnerdrop.example", "supperbox.example", "chefcrate.example", "greenplate.example"]
+FICTIONAL_KEYWORDS = ["coffee subscription", "specialty coffee beans", "cold brew delivery", "best coffee beans online", "coffee gift box"]
+OUTSIDERS = ["brewdrop.example", "mugbox.example", "grindhaus.example", "pourfolk.example"]
 
 HEADLINES = [
-    "Chef-Designed Dinners, Delivered",
-    "First Box 60% Off",
-    "Fresh Ingredients Every Week",
-    "Family Plans From $7.99/Serving",
+    "Roasted to Order, Delivered Weekly",
+    "First Bag Free",
+    "Single-Origin, Small-Batch",
+    "Fresh Beans From $14.99/Bag",
     "Skip Any Week, Cancel Anytime",
-    "New: 15-Minute Meals",
-    "Plant-Based Menu Just Dropped",
-    "Meals for Two, Zero Waste",
+    "New: Cold Brew Concentrate",
+    "Bay Area Roasted, Shipped Nationwide",
+    "Decaf That Actually Tastes Good",
 ]
 
 
@@ -70,7 +70,7 @@ class SyntheticSerpApiClient:
                     creatives.append(self._creative(domain, f"CRV{abs(hash((domain, 'v', j))) % 10**11:011d}", "video", today - timedelta(days=1), today))
             elif idx == 0:  # FreshCrate: drops 2 old, launches 1 new discount ad
                 creatives = creatives[2:]
-                creatives.append(self._creative(domain, f"CRN{abs(hash((domain, 'n'))) % 10**11:011d}", "text", today - timedelta(days=1), today, headline="First Box 60% Off"))
+                creatives.append(self._creative(domain, f"CRN{abs(hash((domain, 'n'))) % 10**11:011d}", "text", today - timedelta(days=1), today, headline="First Bag Free"))
             else:  # KitchenLoop: launches one image ad
                 if r2.random() > 0.2:
                     creatives.append(self._creative(domain, f"CRI{abs(hash((domain, 'i'))) % 10**11:011d}", "image", today, today))
@@ -99,7 +99,7 @@ class SyntheticSerpApiClient:
 
     # ---- google search (paid block) -----------------------------------------------------------
 
-    def google_search(self, *, q: str, gl="us", hl="en", device="desktop", fresh=False) -> SerpResult:
+    def google_search(self, *, q: str, gl="us", hl="en", device="desktop", location=None, fresh=False) -> SerpResult:
         r = _rng("serp", q)
         comps = [c["domain"] for c in FICTIONAL_COMPETITORS]
         pool = comps + r.sample(OUTSIDERS, 2)
@@ -107,9 +107,10 @@ class SyntheticSerpApiClient:
         lineup = pool[:4]
         if self.run_index >= 1:
             r2 = _rng("serp-run2", q)
-            if q == "meal kit for two":
-                lineup = ["dinnerdrop.example"] + [d for d in lineup if d != "dinnerdrop.example"][:3]  # new outsider takes #1
-            elif q == "meal kit delivery":
+            if q == "cold brew delivery":
+                newcomer = next(o for o in OUTSIDERS if o not in lineup)  # guaranteed new advertiser takes #1
+                lineup = [newcomer] + lineup[:3]
+            elif q == "coffee subscription":
                 lineup = lineup[1:] + lineup[:1]  # rotate -> position shifts
             elif r2.random() > 0.5 and len(lineup) > 3:
                 lineup = lineup[:3]  # someone left
@@ -123,7 +124,7 @@ class SyntheticSerpApiClient:
                     "title": f"{d.split('.')[0].title()} — {r.choice(HEADLINES)}",
                     "link": f"https://{d}/?utm_source=google",
                     "displayed_link": f"https://www.{d}",
-                    "description": "Weekly meal kits with fresh ingredients. Flexible plans.",
+                    "description": "Specialty coffee subscription. Roasted this week, shipped free.",
                 }
             )
         return self._res({"ads": ads, "organic_results": []})
@@ -139,7 +140,7 @@ class SyntheticSerpApiClient:
             d = today - timedelta(weeks=i)
             v = max(5, min(100, base + r.randint(-8, 8)))
             pts.append({"date": d.strftime("%b %-d, %Y"), "timestamp": str(int(__import__("time").mktime(d.timetuple()))), "values": [{"query": q, "value": str(v), "extracted_value": v}]})
-        if self.run_index >= 1 and q == "meal kit for two":
+        if self.run_index >= 1 and q == "cold brew delivery":
             last = pts[-1]["values"][0]
             last["extracted_value"] = min(100, int(last["extracted_value"] * 2.1))
             last["value"] = str(last["extracted_value"])
@@ -153,8 +154,8 @@ class SyntheticSerpApiClient:
             rising.append({"query": f"{q} {suffix}", "value": f"+{v}%", "extracted_value": v})
         cost = r.randint(30, 80)
         top = [{"query": f"best {q}", "value": "100", "extracted_value": 100}, {"query": f"{q} cost", "value": str(cost), "extracted_value": cost}]
-        if self.run_index >= 1 and q in ("meal kit for two", "cheap meal kit"):
-            rising.insert(0, {"query": f"{q} student discount" if q == "cheap meal kit" else "date night meal kit", "value": "Breakout", "extracted_value": None})
+        if self.run_index >= 1 and q in ("cold brew delivery", "coffee gift box"):
+            rising.insert(0, {"query": "coffee gift box for dad" if q == "coffee gift box" else "cold brew delivery san francisco", "value": "Breakout", "extracted_value": None})
         return self._res({"related_queries": {"rising": rising, "top": top}})
 
 

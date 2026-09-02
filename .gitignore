@@ -24,3 +24,7 @@ npm-debug.log*
 .DS_Store
 .idea/
 .vscode/
+
+# bundles / snapshots
+*.tgz
+_to_delete/

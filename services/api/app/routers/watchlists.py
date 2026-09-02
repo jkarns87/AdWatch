@@ -30,6 +30,7 @@ def list_watchlists(db: Session = Depends(get_db), workspace_id: int = Depends(c
                 name=w.name,
                 vertical=w.vertical,
                 geo=w.geo,
+                location=w.location,
                 competitor_count=len(w.competitors),
                 keyword_count=len(w.keywords),
                 last_run_at=lr.finished_at if lr else None,
@@ -42,7 +43,7 @@ def list_watchlists(db: Session = Depends(get_db), workspace_id: int = Depends(c
 @router.post("", response_model=s.WatchlistDetail, status_code=201)
 def create_watchlist(body: s.WatchlistCreate, db: Session = Depends(get_db), workspace_id: int = Depends(current_workspace_id)):
     ensure_workspace(db, workspace_id)
-    w = m.Watchlist(workspace_id=workspace_id, name=body.name, vertical=body.vertical, geo=body.geo or "US")
+    w = m.Watchlist(workspace_id=workspace_id, name=body.name, vertical=body.vertical, geo=body.geo or "US", location=(body.location or None))
     db.add(w)
     db.commit()
     return _detail(db, w)
@@ -59,6 +60,7 @@ def _detail(db: Session, w: m.Watchlist) -> s.WatchlistDetail:
         name=w.name,
         vertical=w.vertical,
         geo=w.geo,
+        location=w.location,
         created_at=w.created_at,
         competitors=comps,
         keywords=[s.KeywordOut.model_validate(k) for k in w.keywords],

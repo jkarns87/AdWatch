@@ -40,6 +40,7 @@ class Watchlist(Base):
     name: Mapped[str] = mapped_column(String(200))
     vertical: Mapped[str] = mapped_column(String(200), default="")
     geo: Mapped[str] = mapped_column(String(10), default="US")
+    location: Mapped[str | None] = mapped_column(String(120))  # SerpApi `location` for Google Search, e.g. "San Francisco, California, United States"
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     competitors: Mapped[list[Competitor]] = relationship(back_populates="watchlist", cascade="all, delete-orphan")

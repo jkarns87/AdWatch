@@ -111,6 +111,13 @@ Frontend builds against this document. Backend implements it. **Changes to this 
 
 ---
 
+## Reports
+
+`GET /watchlists/{id}/report?audience=cfo|marketing&format=pdf|docx|md&days=7` → file download (`Content-Disposition: attachment`).
+Audience-tailored AI executive summary (headline, paragraphs, decisions, watch-next), KPI strip, recommended actions, what changed (severity-sorted), competitor activity, per-keyword paid block / share of voice / demand (+ Trends chart in PDF). Header `X-Report-Model` says whether Claude or the deterministic fallback wrote the summary.
+
+`GET /watchlists/{id}/report/data?audience=&days=` → the assembled JSON payload (for previews/tests).
+
 ## Demo helpers (disabled when `ENV=prod` unless `DEMO_ENDPOINTS=true`)
 
 `POST /demo/seed` body `{ "mode": "synthetic" | "live", "vertical"?: "meal kits" }`
