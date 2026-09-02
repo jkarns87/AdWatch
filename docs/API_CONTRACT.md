@@ -78,6 +78,63 @@ Frontend builds against this document. Backend implements it. **Changes to this 
   "share_of_voice": [{ "advertiser_domain": "…", "appearances": 3, "avg_position": 1.7 }] }
 ```
 
+`GET /coffee/keywords?keywords=coffee+nearby&output=json|md|html|csv&location=&depth=4&limit=25&refresh=false`
+
+Top coffee keywords for a seed term, ranked by how many advertisers are observably competing on them. **This is the one endpoint that queries SerpApi live** — it answers "what is the paid block for this term right now", which no stored run can. Cost: `1 + depth` searches, plus up to 3 more if the seed has no advertisers of its own and the scan escalates up the commercial ladder; `searches_used` reports the exact figure and the disk cache makes a repeated call free. Off-market seeds are rejected with 400 **before** any search is spent.
+
+Every keyword carries the evidence it was scored on, and `scoring` returns the formula and weights used, so any score can be recomputed by hand from that keyword's `signals`. Nothing about bids, budgets, spend or impression share is reported — SerpApi does not return it.
+
+| evidence | meaning |
+|---|---|
+| `targeting_keyword` | an advertiser's own ad URL named it (Google expanded `{keyword}` into the click URL) |
+| `sponsored_query` | ads were served against this exact query |
+| `ad_copy` | two or more advertisers write the phrase in their copy |
+| `autocomplete` | a Google suggestion only, no advertiser behind it |
+
+```json
+{ "query": "coffee subscription", "location": "United States", "searches_used": 4,
+  "summary": { "queries_scanned": 3, "ads_seen": 8, "advertisers": 5,
+               "keywords_found": 14, "keywords_recovered_from_ads": 2,
+               "ads_exposing_a_keyword": 2, "competition": "low",
+               "confidence": "high", "escalated_to": [] },
+  "scoring": { "formula": "score = 100 * min(1, (6*targeting_keyword_advertisers + …) / 30)",
+               "weights": { "…": 6.0 }, "reference": 30.0, "competition_bands": { "…": "…" } },
+  "queries": [{ "query": "coffee subscription", "advertisers": 4, "ads": 2 }],
+  "keywords": [{ "keyword": "coffee subscription gift", "score": 75.0,
+                 "evidence": "targeting_keyword", "recovered_from_ad": true,
+                 "advertiser_count": 4, "advertisers": ["beanbox.com", "…"],
+                 "competition": "medium", "match_types": ["exact"], "ads": 7,
+                 "signals": { "targeting_keyword_advertisers": 4, "…": 0 },
+                 "seen_on_queries": ["coffee subscription gift"],
+                 "example_ad": { "advertiser_domain": "beanbox.com", "title": "…" } }],
+  "advertisers": [{ "advertiser_domain": "drinktrade.com", "ads": 7,
+                    "recovered_keywords": ["coffee subscription gift"] }],
+  "warnings": [] }
+```
+
+`output=md` returns Markdown, `output=html` a standalone report page, `output=csv` a spreadsheet (`rank,keyword,score,evidence,recovered_from_ad,advertiser_count,advertisers,match_types,competition,ads,seen_on_queries`; list cells joined with `;`). Errors are always JSON: `400` bad parameter or off-market keyword · `401` invalid SerpApi key · `429` SerpApi rate limit or quota · `502` SerpApi failed.
+
+`GET /watchlists/{id}/export.csv` → the watchlist's competitors and keywords as CSV (`Content-Disposition: attachment`).
+
+`POST /watchlists/import.csv?name=&vertical=&geo=&location=` → the CSV as the request body with `Content-Type: text/csv`. Builds a watchlist in one step and returns `{ watchlist_id, name, competitors, keywords }`.
+
+```bash
+curl -X POST 'localhost:8000/api/v1/watchlists/import.csv?name=Specialty%20Coffee' \
+     -H 'Content-Type: text/csv' --data-binary @coffee.csv
+```
+
+Both directions use one shape, so an exported file can be edited in a spreadsheet and imported back:
+
+```
+type,name,domain,term
+competitor,BeanLoop,beanloop.example,
+keyword,,,coffee subscription
+```
+
+A `type` column is honoured when present; without one, a row with a domain is a competitor and a row with a term is a keyword. URLs and `www.` are reduced to a domain, duplicates dropped, and a competitor with no name gets one from its domain. Caps: 50 competitors, 100 keywords, 1 MB — a run costs `competitors + 3 × keywords` searches. Bad input returns 400 naming the row and the problem.
+
+These three routes are additive: they live in `app/coffee/` on their own router and change nothing in `routers/watchlists.py`, the collectors, the diff engine or the seed. Registering them is one line in `main.py`.
+
 `GET /watchlists/{id}/trends?keyword_id=21`
 ```json
 { "keyword": { "id": 21, "term": "…" }, "run_id": 4,
