@@ -2,8 +2,13 @@ name: deploy
 # Ships whatever changed on main: services/api → Fly, apps/web → Fly, xano/ → Xano (CLI push).
 # First-time setup is manual (docs/DEPLOY.md: fly apps create, postgres attach, secrets); this only redeploys.
 #
-# Repo secrets:  FLY_API_TOKEN        `fly tokens create deploy -x 720h`
+# Repo secrets:  FLY_API_TOKEN_API    `fly tokens create deploy -a adwatch-api -x 720h`
+#                FLY_API_TOKEN_WEB    `fly tokens create deploy -a adwatch-web -x 720h`
 #                XANO_ACCESS_TOKEN    `xano profile token` (or Xano → Settings → Metadata API → generate)
+#
+# One token per app, on purpose: `tokens create deploy` is app-scoped, so a single
+# shared token silently deploys one app and returns "unauthorized" for the other.
+# Revoking one app's token also does not ground the other.
 # Repo vars:     XANO_INSTANCE_ORIGIN (default below), XANO_WORKSPACE_ID (default 1)
 
 on:
@@ -77,7 +82,7 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: fly deploy (api)
         run: flyctl deploy --remote-only --wait-timeout 300
-        env: { FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN }}" }
+        env: { FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN_API }}" }
       - name: health
         run: |
           url="https://$(grep -E '^app *= *"' fly.toml | sed -E 's/.*"(.*)".*/\1/').fly.dev/api/v1/health"
@@ -98,7 +103,7 @@ jobs:
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: fly deploy (web)   # NEXT_PUBLIC_* come from [build.args] in fly.toml
         run: flyctl deploy --remote-only --wait-timeout 300
-        env: { FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN }}" }
+        env: { FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN_WEB }}" }
 
   xano:
     needs: changes
