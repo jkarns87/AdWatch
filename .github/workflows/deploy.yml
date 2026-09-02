@@ -1,0 +1,124 @@
+name: deploy
+# Ships whatever changed on main: services/api → Fly, apps/web → Fly, xano/ → Xano (CLI push).
+# First-time setup is manual (docs/DEPLOY.md: fly apps create, postgres attach, secrets); this only redeploys.
+#
+# Repo secrets:  FLY_API_TOKEN        `fly tokens create deploy -x 720h`
+#                XANO_ACCESS_TOKEN    `xano profile token` (or Xano → Settings → Metadata API → generate)
+# Repo vars:     XANO_INSTANCE_ORIGIN (default below), XANO_WORKSPACE_ID (default 1)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: What to deploy
+        type: choice
+        default: all
+        options: [all, api, web, xano]
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+env:
+  XANO_INSTANCE_ORIGIN: ${{ vars.XANO_INSTANCE_ORIGIN || 'https://xcne-4ruo-ej7c.n7e.xano.io' }}
+  XANO_WORKSPACE_ID: ${{ vars.XANO_WORKSPACE_ID || '1' }}
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.pick.outputs.api }}
+      web: ${{ steps.pick.outputs.web }}
+      xano: ${{ steps.pick.outputs.xano }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - id: pick
+        shell: bash
+        run: |
+          set -euo pipefail
+          api=false; web=false; xano=false
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            case "${{ inputs.target }}" in
+              all)  api=true; web=true; xano=true ;;
+              api)  api=true ;;
+              web)  web=true ;;
+              xano) xano=true ;;
+            esac
+          else
+            before="${{ github.event.before }}"
+            if [ "$before" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$before" 2>/dev/null; then
+              changed="services/api/ apps/web/ xano/"      # first push or force-push: deploy everything
+            else
+              changed=$(git diff --name-only "$before" "${{ github.sha }}")
+            fi
+            echo "$changed" | grep -q '^services/api/' && api=true
+            echo "$changed" | grep -q '^apps/web/'     && web=true
+            echo "$changed" | grep -q '^xano/'         && xano=true
+          fi
+          echo "api=$api"   >> "$GITHUB_OUTPUT"
+          echo "web=$web"   >> "$GITHUB_OUTPUT"
+          echo "xano=$xano" >> "$GITHUB_OUTPUT"
+          echo "deploy: api=$api web=$web xano=$xano"
+
+  api:
+    needs: changes
+    if: needs.changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: services/api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip, cache-dependency-path: services/api/requirements.txt }
+      - name: preflight (same checks as ci)
+        run: pip install -q -r requirements.txt && ruff check app tests && python -m pytest -q
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: fly deploy (api)
+        run: flyctl deploy --remote-only --wait-timeout 300
+        env: { FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN }}" }
+      - name: health
+        run: |
+          url="https://$(grep -E '^app *= *"' fly.toml | sed -E 's/.*"(.*)".*/\1/').fly.dev/api/v1/health"
+          for i in 1 2 3 4 5 6; do curl -fsS "$url" && exit 0; sleep 10; done
+          echo "health check failed: $url"; exit 1
+
+  web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/web } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: apps/web/package-lock.json }
+      - name: preflight (typecheck)
+        run: npm ci --ignore-scripts && npx tsc --noEmit
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: fly deploy (web)   # NEXT_PUBLIC_* come from [build.args] in fly.toml
+        run: flyctl deploy --remote-only --wait-timeout 300
+        env: { FLY_API_TOKEN: "${{ secrets.FLY_API_TOKEN }}" }
+
+  xano:
+    needs: changes
+    if: needs.changes.outputs.xano == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: npm i -g @xano/cli && xano --version
+      - name: auth (token from secret, no browser)
+        run: |
+          xano profile create ci -i "$XANO_INSTANCE_ORIGIN" -t "$XANO_ACCESS_TOKEN"
+          xano profile edit ci -w "$XANO_WORKSPACE_ID"
+          xano profile set ci
+          xano profile me
+        env: { XANO_ACCESS_TOKEN: "${{ secrets.XANO_ACCESS_TOKEN }}" }
+      - name: plan
+        run: xano workspace push -d ./xano -w "$XANO_WORKSPACE_ID" --dry-run
+      - name: push
+        run: xano workspace push -d ./xano -w "$XANO_WORKSPACE_ID" --force
+      - name: smoke
+        run: curl -fsS "$XANO_INSTANCE_ORIGIN/api:adwatch-control/health"

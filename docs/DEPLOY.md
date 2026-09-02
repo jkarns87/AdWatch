@@ -50,3 +50,22 @@ gcloud run deploy adwatch-web --source apps/web --region us-west1 --allow-unauth
 ## Terraform
 
 Not for this build. A `infra/terraform/` module would be the first post-hackathon task — mention it in the "what's next" slide, don't spend Wednesday on it.
+
+## Continuous deploy (`.github/workflows/deploy.yml`) — added 2026-09-02
+
+After the first manual deploy above, every push to `main` redeploys **only what changed**: `services/api/**` → `fly deploy`
+(after ruff + pytest), `apps/web/**` → `fly deploy` (after `tsc`), `xano/**` → `xano workspace push --force` (after a
+logged `--dry-run`). Force-pushes and the first push deploy everything. Manual runs: Actions → deploy → *Run workflow* → pick a target.
+
+One-time setup:
+
+```bash
+fly tokens create deploy -x 720h                       # → FLY_API_TOKEN
+xano profile token                                     # → XANO_ACCESS_TOKEN (or Xano → Settings → Metadata API)
+gh secret set FLY_API_TOKEN
+gh secret set XANO_ACCESS_TOKEN
+# optional overrides: gh variable set XANO_INSTANCE_ORIGIN --body https://…xano.io ; gh variable set XANO_WORKSPACE_ID --body 1
+```
+
+Fly rolls out with health checks, so a bad image never replaces the running one; the Xano push is blocked server-side on
+syntax errors. Neither step runs on pull requests — CI (`ci.yml`) does the checking there.
