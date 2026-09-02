@@ -18,4 +18,5 @@ table "workspace_member" {
     {type: "btree|unique", field: [{name: "workspace_id"}, {name: "user_id"}]}
     {type: "btree", field: [{name: "user_id"}]}
   ]
+  guid = "spSQjIldV9FXO8pTQr0iRLArdZI"
 }

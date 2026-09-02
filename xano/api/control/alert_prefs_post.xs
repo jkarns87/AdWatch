@@ -28,4 +28,5 @@ query "alert_prefs" verb=POST {
     } as $pref
   }
   response = $pref
+  guid = "6FTeE9UAh5D-HpFILsgU3JyhdJg"
 }

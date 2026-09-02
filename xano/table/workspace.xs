@@ -15,4 +15,5 @@ table "workspace" {
     {type: "primary", field: [{name: "id"}]}
     {type: "btree", field: [{name: "owner_id"}]}
   ]
+  guid = "7TLB4Z9rLphbGvtfv3jpoVyPRc0"
 }

@@ -24,4 +24,5 @@ query "alert_prefs/by_id/{alert_pref_id}" verb=DELETE {
     }
   }
   response = { success: true }
+  guid = "S5eh83O6W0gaOEiY4-APK9zFZyQ"
 }

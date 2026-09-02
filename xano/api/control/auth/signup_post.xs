@@ -70,4 +70,5 @@ query "auth/signup" verb=POST {
     user: { id: $user.id, name: $user.name, email: $user.email },
     workspace: { id: $workspace.id, name: $workspace.name }
   }
+  guid = "pfG0VcJBt35LnCl8CXb9Kukhl6k"
 }

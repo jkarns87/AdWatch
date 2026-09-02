@@ -17,4 +17,5 @@ function "issue_token" {
     } as $token
   }
   response = $token
+  guid = "N6SvqR7yUHmOyIANtIUzhIFiMec"
 }

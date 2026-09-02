@@ -21,4 +21,5 @@ table "alert_log" {
     {type: "primary", field: [{name: "id"}]}
     {type: "btree", field: [{name: "workspace_id"}, {name: "created_at", op: "desc"}]}
   ]
+  guid = "YXeI-Ggi-NtMaJjoCxEUXi4-JfU"
 }

@@ -38,4 +38,5 @@ task "collect_all_watchlists" {
     debug.log { value = "collect_all_watchlists triggered " ~ ($runs|to_text) ~ " runs" }
   }
   schedule = [{starts_on: 2026-09-02 00:00:00+0000, freq: 21600}]
+  guid = "HuSpI31FyjFnyMr4dNYAqnVmT6Y"
 }

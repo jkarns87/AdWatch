@@ -115,4 +115,5 @@ query "internal/dispatch" verb=POST {
     }
   }
   response = { sent: $sent, destinations: $prefs|count }
+  guid = "aki8nIbyAvNN1ZdIkBoVEi7ai3w"
 }

@@ -22,4 +22,5 @@ query "auth/me" verb=GET {
     role: $auth.role,
     workspace: { id: $workspace.id, name: $workspace.name, plan: $workspace.plan }
   }
+  guid = "FKw5aKvGQPd7Dmr5RWmgVD8ctJA"
 }

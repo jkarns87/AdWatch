@@ -11,4 +11,5 @@ query "alert_prefs" verb=GET {
     } as $prefs
   }
   response = $prefs
+  guid = "s2mGjdrL9Jz8oZ0DbFLoKVmkg-o"
 }

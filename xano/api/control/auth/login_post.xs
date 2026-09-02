@@ -63,4 +63,5 @@ query "auth/login" verb=POST {
     user: { id: $user.id, name: $user.name, email: $user.email },
     workspace: { id: $workspace.id, name: $workspace.name }
   }
+  guid = "qhEF2ZKtZqc0iKWrRReiTG2ko4I"
 }

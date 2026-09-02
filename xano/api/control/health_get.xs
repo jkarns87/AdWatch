@@ -6,4 +6,5 @@ query "health" verb=GET {
     var $has_dataplane { value = $env.DATAPLANE_URL != null && $env.DATAPLANE_URL != "" }
   }
   response = { status: "ok", dataplane_configured: $has_dataplane }
+  guid = "MLpxH5ea3wkzZGZ9nVd0LwfbdmI"
 }

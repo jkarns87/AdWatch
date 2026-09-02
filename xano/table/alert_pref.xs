@@ -21,4 +21,5 @@ table "alert_pref" {
     {type: "primary", field: [{name: "id"}]}
     {type: "btree", field: [{name: "workspace_id"}]}
   ]
+  guid = "p8CSKx3gi2OJH8S50pbxjKRrgAI"
 }
