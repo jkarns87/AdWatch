@@ -29,3 +29,7 @@ npm-debug.log*
 *.tgz
 _to_delete/
 .superpowers*
+
+# playwright
+apps/web/test-results/
+apps/web/playwright-report/
