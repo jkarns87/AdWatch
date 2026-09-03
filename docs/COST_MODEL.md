@@ -81,3 +81,34 @@ scale) and skipping Trends on keywords whose timeseries hasn't moved in 14 days.
 
 The SERP block is 70 % of spend — which is also where the hourly signal is. Selling "SERP samples per day" as the
 knob between Team and Agency tiers is honest and maps 1:1 to cost.
+
+## 7. What changed the per-run cost (2026-09-03)
+
+Two corrections made runs more expensive, both deliberately:
+
+| Change | Cost | Why it is worth paying |
+|---|---|---|
+| Related queries take **3 draws**, not 1 | +2 searches per market keyword per run | One draw is not evidence. Four uncached draws of one term agreed on 10-25 % of results; 13 of 23 queries appeared in exactly one draw. Suppressed 20 of 38 rising queries as noise on live data. |
+| Every competitor gets a **brand term** | +1 search per competitor per run | 7 of 7 measured brand SERPs carrying ads had a competitor bidding on the brand, and in 4 of 7 the owner was absent from its own name. The highest-value alert public data supports. |
+
+**Per run = competitors + 5 × market keywords + brand terms.** The demo watchlist
+(3 competitors, 5 keywords) went from 18 searches to **31**.
+
+Brand terms take the paid-block call only — demand for a company's name is not the
+signal, and collecting trends for it would cost three more searches each.
+
+Two things that cost nothing and were being discarded: **product listings**
+(`immersive_products`) ride free on the paid-search response, and **ad copy and sitelinks**
+were already stored and simply never compared.
+
+The old 18 was cheaper because a third of what it collected was noise and the two
+headline collectors returned nothing at all. A cheap number that is wrong is not a saving.
+
+### Cache accounting, unresolved
+
+Measured: SerpApi serves cached responses (identical params within ~1h) **free**, and a
+Search Archive re-fetch by `search_id` is also free with 31-day retention. The ledger
+counts every call as billed, so it **over-reports** spend. The correction is not applied
+yet: the supporting measurement for which error responses are billed rests on differencing
+SerpApi's quota counter, and the same session observed that counter swinging ±13 with no
+searches issued. Verify against SerpApi's own dashboard before changing published numbers.

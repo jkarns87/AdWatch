@@ -24,6 +24,15 @@ Full story copy to paste into Devpost: **`docs/devpost_story.md`** (rewritten 20
 
 ## Verified numbers (pulled from production 2026-09-03 06:47Z)
 
+> **Post-submission note.** These are the figures as submitted and are left unedited as
+> the record of what was sent. They are also **understated**, because they were collected
+> while two of the three collectors silently returned nothing: the Ads Transparency
+> normalizer matched a field name the engine does not send, and the keyword collector
+> queried `engine=google`, whose paid block is empty on commercial queries. Both were
+> found and fixed after submission — see `docs/research/README.md`. On the same demo
+> watchlist afterwards: 248 creatives and 35 typed changes in a single run, against 29
+> and 75 cumulative here. Do not reuse these numbers as current.
+
 Real, SerpApi-backed workspaces only — the synthetic demo workspace is excluded so
 nothing here is inflated by seeded data.
 

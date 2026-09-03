@@ -61,13 +61,16 @@ make analyze WATCHLIST=1
 
 ## Docs
 
+- [`docs/CHANGELOG.md`](docs/CHANGELOG.md) — **start here for what changed after submission**, including nine silent collector failures found by live probing
+- [`docs/research/README.md`](docs/research/README.md) — the SerpApi surface, measured against the live API: what to build, what was rejected, and the hard negatives worth not attempting
 - [`docs/PLAN.md`](docs/PLAN.md) — hour-by-hour timeline, lanes, checkpoints, quota budget
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — components, data model, change taxonomy
-- [`docs/SERPAPI.md`](docs/SERPAPI.md) — the four SerpApi calls, fields we consume, quota rules, backend definition of done
+- [`docs/SERPAPI.md`](docs/SERPAPI.md) — the SerpApi calls, fields we consume, quota rules, and why the paid block needs `engine=google_ads`
 - [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md) — the REST contract between web ↔ api (frontend and backend can build in parallel against it)
 - [`docs/XANO.md`](docs/XANO.md) — control-plane setup and the cut-line if it slips
 - [`docs/DEPLOY.md`](docs/DEPLOY.md) — one-command deploy options
-- [`docs/DEVPOST.md`](docs/DEVPOST.md) — submission checklist + pitch copy (brand-name-free)
+- [`docs/COST_MODEL.md`](docs/COST_MODEL.md) — plan economics and what each run actually spends
+- [`docs/DEVPOST.md`](docs/DEVPOST.md) — submission checklist + pitch copy (submitted; numbers annotated as historical)
 - [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) — the 3-minute stage demo
 
 ## Repo layout

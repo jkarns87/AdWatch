@@ -20,24 +20,63 @@ Per watchlist run (`app/engine/collect.py::run_collect`):
 | Step | Engine | Params we send | Per | Cost |
 |---|---|---|---|---|
 | A | `google_ads_transparency_center` | `text=<domain>` **or** `advertiser_id=<AR…>`, `num=100`; optional `region`, `creative_format=text|image|video`, `platform=SEARCH|YOUTUBE|MAPS|SHOPPING|PLAY` | competitor | 1 |
-| B | `google` | `q=<keyword>`, `gl=us`, `hl=en`, `device=desktop`, `google_domain=google.com`, `num=10`, **`location=<watchlist.location>`** (e.g. `San Francisco, California, United States`) | keyword | 1 |
-| C | `google_trends` | `q=<keyword>`, `geo=US`, `date="today 3-m"`, `data_type=TIMESERIES` | keyword | 1 |
-| D | `google_trends` | same as C with `data_type=RELATED_QUERIES` | keyword | 1 |
+| B | **`google_ads`** | `q=<keyword>`, `gl=us`, `hl=en`, `device=desktop`, `google_domain=google.com`, `num=10`, **`location=<watchlist.location>`** (required — see below) | market keyword | 1 |
+| C | `google_trends` | `q=<keyword>`, `geo=US`, `date="today 3-m"`, `data_type=TIMESERIES` | market keyword | 1 |
+| D | `google_trends` | same as C with `data_type=RELATED_QUERIES`, **taken 3× with `no_cache=true`** | market keyword | 3 |
+| E | `google_ads` | as B, on a competitor's brand name | brand term | 1 |
 
-**Cost per run = competitors + 3 × keywords.** Demo watchlist (3 comps, 5 kws) = **18 searches**. Two live runs for the demo = 36. Budget the rest for testing; don't run collect in a loop.
+**Cost per run = competitors + 5 × market keywords + brand terms.** Demo watchlist
+(3 competitors, 5 keywords, 3 brand terms) = **31 searches**.
+
+### Why `google_ads` and not `google`
+
+Measured 2026-09-03, identical query, location and minute:
+
+| query | `engine=google` | `engine=google_ads` |
+|---|---|---|
+| crm software | 0 | 5 |
+| car insurance quotes | 0 | 6 |
+| espresso machine | 0 | 4 |
+| meal kit delivery | 0 | 6 |
+| running shoes | 0 | 2 |
+| project management software | 0 | 6 |
+
+Same cost, and the response is a superset — organic results, related searches and AI
+overview all still come back. AdWatch is a paid-search product and was reading the engine
+that omits the paid block; every SERP-derived number before this fix was zero.
+
+`google_ads` also **requires** `location`: without one it errors and returns nothing, so
+the client falls back to a country derived from `gl` rather than collecting silently
+empty.
+
+### Why three related-query draws
+
+Google samples the rising bucket. Four genuinely uncached draws of one term gave pairwise
+Jaccard **0.10-0.25**, with 13 of 23 queries appearing in exactly one draw and the
+breakout flag stable in 0 of 2 cases. Diffing one draw against one draw reported that
+churn as demand. Three draws, majority wins, measured to suppress 20 of 38 rising queries
+as noise on live data.
+
+Every draw must be genuinely fresh. `fresh=True` now sends `no_cache=true`; before that
+it bypassed only our disk cache while SerpApi replayed its stored record for an hour, and
+a stability measurement over those "draws" returned a meaningless Jaccard of 1.00.
 
 ## 2. What we read from each response (`app/collectors/normalize.py`)
 
 ### A — `google_ads_transparency_center` → `creatives_from_ads_transparency(raw)`
 ```
 raw.ad_creatives[]:
-  id / creative_id      -> creative_id (string, unique per competitor)      REQUIRED
+  ad_creative_id        -> creative_id (string, unique per competitor)      REQUIRED
+                           (NOT `id` or `creative_id` — matching those dropped every
+                            creative silently; a 40-creative response normalized to [])
   format                -> "text" | "image" | "video"
   platform              -> e.g. "SEARCH", "YOUTUBE"           (may be missing)
   target_domain
   image                 -> image_url                          (image/video only)
   details_link | link   -> details_url (Google transparency page)
   first_shown           -> date  (unix ts int OR ISO string — normalizer handles both)
+  total_days_shown      -> days actually served, not the first→last span. Present on
+                           100% of creatives; 4 to 947 days observed on one advertiser.
   last_shown            -> date
   advertiser, advertiser_id
   headline / description / title -> text{}                    (text ads; verify field names live!)

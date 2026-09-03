@@ -12,6 +12,8 @@
 | **Alert preferences** — per-workspace webhook/email destinations + min severity | Xano | `table/alert_pref.xs`, `api/control/alert_prefs*` |
 | **Alert dispatch** — fan-out to every destination, delivery log | Xano ← FastAPI | `api/control/internal/dispatch_post.xs`, `table/alert_log.xs` |
 | **Scheduling** — every 6h, collect + analyze every watchlist in every workspace | Xano → FastAPI | `task/collect_all_watchlists.xs` |
+| **Plan** — which plan a workspace is on, and who may change it | Xano | `table/workspace.xs`, `api/control/workspace/plan_post.xs` |
+| **Platform administration** — changing *another* workspace's plan | Xano | `table/user.xs` (`is_platform_admin`), `api/control/admin/workspace_plan_post.xs`, `table/plan_change.xs` |
 | Watchlists, competitors, keywords, snapshots, creatives, diffs, insights | **Postgres / FastAPI** | `services/api/*` |
 
 The data plane never stores a password, never issues a token, never decides who gets notified, and never schedules itself. That's the build-story sentence.
@@ -29,14 +31,56 @@ FastAPI /analyze ──X-Dataplane-Secret──▶ Xano /internal/dispatch ─�
 
 ```
 xano/
-  table/        user · workspace · workspace_member · alert_pref · alert_log
-  function/     issue_token
+  table/        user · workspace · workspace_member · alert_pref · alert_log ·
+                password_reset · plan_change
+  function/     issue_token · send_email
   api/control/  api_group (canonical adwatch-control) · health_get
-    auth/       signup_post · login_post · me_get
+    auth/       signup_post · login_post · me_get · forgot_password_post · reset_password_post
+    workspace/  plan_post
+    admin/      workspace_plan_post
     alert_prefs_get · alert_prefs_post · alert_prefs/by_id_delete
+    alerts_get · alerts/read_post · alerts/read_all_post
     internal/   dispatch_post
-  task/         collect_all_watchlists  (freq 21600s)
+  task/         collect_all_watchlists (21600s) · prune_snapshots (daily 09:00Z)
 ```
+
+## Plans and platform administration
+
+`workspace.plan` is owned here and read by the data plane through `/auth/me`
+introspection, which caches for five minutes — a plan change is not visible to the data
+plane until the token is re-introspected or the user logs in again. That cache is worth
+remembering before concluding a plan change "did not work".
+
+Two doors change a plan:
+
+- `POST /workspace/plan` — the owner changing their **own** workspace. Gated on
+  `$auth.extras.role == "owner"`.
+- `POST /admin/workspace/{workspace_id}/plan` — platform staff changing **anyone's**.
+  Gated on `$auth.extras.is_platform_admin`.
+
+`is_platform_admin` is deliberately not a `workspace_member.role`. A role only ever means
+something inside one workspace; this is the one action a caller takes against a workspace
+they are not a member of, so conflating them would have made every workspace owner a
+platform admin. The claim rides in the token, so **a user granted the flag must log in
+again** before it takes effect — and a token issued before the claim existed reads null
+and is denied, which is the correct way to fail.
+
+Both doors write to `plan_change` (actor, workspace, from, to, reason), before the patch
+and even when the plan does not move, so "who changed this plan" has one answer
+regardless of which door it came through.
+
+Granting the flag is a manual database edit — there is no endpoint that grants platform
+administration, on purpose:
+
+```bash
+TOK=$(python3 -c "import yaml,pathlib;print(yaml.safe_load(pathlib.Path.home().joinpath('.xano/credentials.yaml').read_text())['profiles']['default']['access_token'])")
+curl -X PUT "https://<instance>/api:meta/workspace/1/table/3/content/<user_id>" \
+  -H "Authorization: Bearer $TOK" -H "Content-Type: application/json" \
+  -d '{"id":<user_id>,"is_platform_admin":true}'
+```
+
+That metadata endpoint merges rather than replaces — verified — but `PUT` semantics vary,
+so test against a throwaway row before scripting it against a real user.
 
 ## Push it (Joey, from a terminal in `AdWatch/`)
 

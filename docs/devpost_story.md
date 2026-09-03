@@ -1,3 +1,9 @@
+> **Post-submission note.** This is the story as submitted, left unedited. Several
+> figures in it were collected while two collectors were silently returning nothing
+> (see the note in `DEVPOST.md` and the findings in `research/README.md`), and the
+> test counts have since moved from 246 to 359. Treat this file as an archive, not
+> as current documentation.
+
 ## Inspiration
 
 Every paid-search team does the same ritual: once a week, someone opens the Google Ads Transparency Center for a handful of competitors, searches their own keywords in an incognito window, checks Google Trends, and pastes screenshots into a deck. It's slow, it's retrospective, and it has no concept of *change* — you see a snapshot, not a signal. Incumbent competitive-intelligence suites cost hundreds of dollars a seat and still hand you a report, not an alert. We wanted the thing we actually needed: a monitor with an analyst attached.

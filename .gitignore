@@ -33,3 +33,12 @@ _to_delete/
 # playwright
 apps/web/test-results/
 apps/web/playwright-report/
+
+# Video production assets. The renders and voice-overs are ~60MB — a 22MB mp4 plus a zip
+# duplicating it — and git has no good story for binaries that size in a public repo.
+# The script, the cue sheets and the mux tooling are text and are tracked.
+docs/video/*.mp4
+docs/video/*.mp3
+docs/video/*.zip
+docs/video/*.mov
+docs/video/*.wav

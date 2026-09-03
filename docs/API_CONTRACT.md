@@ -187,6 +187,14 @@ These three routes are additive: they live in `app/coffee/` on their own router 
 - `serp_position_shift`: `{ advertiser_domain, from_position, to_position, from_block, to_block }`
 - `trend_spike|trend_decline`: `{ latest, trailing_mean, ratio }`
 - `rising_query`: `{ query, value_text }`
+- `ad_copy_changed`: `{ advertiser_domain, from_title, to_title, from_description, to_description, is_tracked_competitor }`
+- `ad_sitelinks_changed`: `{ advertiser_domain, added[], removed[], is_tracked_competitor }`
+- `product_price_changed`: `{ merchant, title, from_price, to_price, delta_pct }`
+- `product_promo_appeared`: `{ merchant, title, promo, original_price?, price }`
+- `brand_conquest`: `{ brand, advertiser_domain, position?, block?, title?, owner_present }`
+- `brand_conquest_ended`: `{ brand, advertiser_domain }`
+- `brand_undefended`: `{ brand, conquerors[], was_at_position? }`
+- `brand_defended`: `{ brand, position? }`
 
 `GET /watchlists/{id}/insights?limit=20`
 ```json
@@ -197,6 +205,55 @@ These three routes are additive: they live in `app/coffee/` on their own router 
 ```
 
 ---
+
+### `GET /watchlists/{id}/brands`
+
+Current brand-defence state — who is bidding on each tracked company's own name.
+
+```json
+{ "run_id": 57,
+  "brands": [
+    { "brand": "Acme", "competitor_id": 10, "is_self": true, "owner_domain": "acme.com",
+      "collected": true, "owner_present": false, "owner_position": null,
+      "undefended": true,
+      "conquerors": [{ "advertiser_domain": "rival.com", "position": 1, "block": "top", "title": "Switch to Rival" }] }
+  ] }
+```
+
+State rather than events, deliberately. `brand_conquest` fires only when conquesting
+starts or stops — the paid block flickers, and re-announcing a standing rival every run
+would bury the run where one arrives — which leaves the standing position invisible in
+the change feed. `undefended` requires someone to actually be bidding: nobody on the term
+at all, owner included, is the normal healthy state of a brand term, not an emergency.
+
+Our own brand sorts first. It is the one the customer can act on today.
+
+### `DELETE /watchlists/{id}` → 204
+
+Deletes the watchlist and everything collected under it. **Not recoverable** — snapshots
+hold the raw SerpApi payloads that cost real quota, and nothing is soft-deleted. The
+foreign-key-ordered chain lives in `app/purge.py` and is shared with the demo reset.
+
+`DELETE /watchlists/{id}/competitors/{cid}` also removes that competitor's creatives and
+the brand term tracking its name. Market keywords are untouched — only the brand term
+belongs to the competitor.
+
+## Plan limits
+
+Creating a watchlist, competitor or keyword beyond the plan's allowance returns **402**:
+
+```json
+{ "detail": "the free plan allows 2 competitors per watchlist; you have 2. Upgrade to add more." }
+```
+
+402 rather than 403: the caller is authenticated and permitted, the plan simply does not
+cover it, and a distinct code lets the UI show an upgrade prompt instead of an access
+error. Two things never consume a slot — the `is_self` competitor, which is the
+customer's own domain, and brand terms, which the collector provisions from the
+competitor list rather than the customer choosing them.
+
+Enforced on creation only. A workspace already over a limit, whether created before this
+existed or downgraded since, keeps everything it has and simply cannot add more.
 
 ## Onboarding
 
@@ -337,5 +394,8 @@ export type Severity = "low" | "medium" | "high";
 export type ChangeKind =
   | "creative_launched" | "creative_dropped" | "creative_surge"
   | "new_serp_advertiser" | "serp_advertiser_left" | "serp_position_shift"
-  | "trend_spike" | "trend_decline" | "rising_query";
+  | "trend_spike" | "trend_decline" | "rising_query"
+  | "ad_copy_changed" | "ad_sitelinks_changed"
+  | "product_price_changed" | "product_promo_appeared"
+  | "brand_conquest" | "brand_conquest_ended" | "brand_undefended" | "brand_defended";
 ```
