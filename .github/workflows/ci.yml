@@ -37,11 +37,19 @@ jobs:
         with: { node-version: "22", cache: npm, cache-dependency-path: apps/web/package-lock.json }
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      # playwright.config.ts builds and starts the app itself. These specs cover
-      # routing, theming and form behaviour, so they need no API — data views render
-      # their error panel and the assertions here are structural.
+      # playwright.config.ts builds and starts the app itself, and e2e/fixtures.ts
+      # stubs both the data plane and the control plane, so no backend is needed.
+      # Build as production does. NEXT_PUBLIC_* are baked in at build time, and with
+      # AUTH_PROVIDER unset the app renders its "auth provider is none" branch — so the
+      # login and password-reset specs would exercise a configuration that never ships.
+      # e2e/fixtures.ts stubs both the data plane and the control plane, so no backend
+      # is needed either way.
       - run: npx playwright test
-        env: { NEXT_TELEMETRY_DISABLED: "1", NEXT_PUBLIC_API_BASE_URL: "http://localhost:8000/api/v1" }
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+          NEXT_PUBLIC_API_BASE_URL: "http://localhost:8000/api/v1"
+          NEXT_PUBLIC_AUTH_PROVIDER: "xano"
+          NEXT_PUBLIC_XANO_BASE_URL: "https://stub.invalid/api:adwatch-control"
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: playwright-report, path: apps/web/playwright-report/, retention-days: 7 }
