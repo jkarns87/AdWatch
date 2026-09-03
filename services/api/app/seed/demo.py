@@ -25,9 +25,37 @@ log = logging.getLogger(__name__)
 CONFIG_PATH = Path(__file__).resolve().parents[2] / "seed" / "demo_config.json"
 
 
-def reset(db: Session) -> None:
-    for table in (m.Alert, m.Change, m.Insight, m.RelatedQuery, m.TrendPoint, m.SerpAd, m.Creative, m.Snapshot, m.Run, m.Keyword, m.Competitor, m.Watchlist):
-        db.execute(delete(table))
+def reset(db: Session, *, workspace_id: int) -> None:
+    """Delete one workspace's data. Scoped deliberately: this previously issued an
+    unqualified DELETE against every table, so any caller wiped every tenant.
+
+    Order follows the foreign keys — children before parents. Changes go before
+    Insights (Change.insight_id references them), and LlmCall before Run and
+    Watchlist. Everything reaches the workspace through Watchlist except LlmCall,
+    which carries workspace_id directly.
+    """
+    watchlists = select(m.Watchlist.id).where(m.Watchlist.workspace_id == workspace_id)
+    competitors = select(m.Competitor.id).where(m.Competitor.watchlist_id.in_(watchlists))
+    keywords = select(m.Keyword.id).where(m.Keyword.watchlist_id.in_(watchlists))
+    insights = select(m.Insight.id).where(m.Insight.watchlist_id.in_(watchlists))
+
+    statements = (
+        delete(m.Alert).where(m.Alert.insight_id.in_(insights)),
+        delete(m.Change).where(m.Change.watchlist_id.in_(watchlists)),
+        delete(m.Insight).where(m.Insight.watchlist_id.in_(watchlists)),
+        delete(m.RelatedQuery).where(m.RelatedQuery.keyword_id.in_(keywords)),
+        delete(m.TrendPoint).where(m.TrendPoint.keyword_id.in_(keywords)),
+        delete(m.SerpAd).where(m.SerpAd.keyword_id.in_(keywords)),
+        delete(m.Creative).where(m.Creative.competitor_id.in_(competitors)),
+        delete(m.Snapshot).where(m.Snapshot.watchlist_id.in_(watchlists)),
+        delete(m.LlmCall).where(m.LlmCall.workspace_id == workspace_id),
+        delete(m.Run).where(m.Run.watchlist_id.in_(watchlists)),
+        delete(m.Keyword).where(m.Keyword.watchlist_id.in_(watchlists)),
+        delete(m.Competitor).where(m.Competitor.watchlist_id.in_(watchlists)),
+        delete(m.Watchlist).where(m.Watchlist.workspace_id == workspace_id),
+    )
+    for stmt in statements:
+        db.execute(stmt, execution_options={"synchronize_session": False})
     db.commit()
 
 

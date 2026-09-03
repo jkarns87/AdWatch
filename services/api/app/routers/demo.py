@@ -34,4 +34,4 @@ def reset_all(db: Session = Depends(get_db), workspace_id: int = Depends(current
     Snapshot.raw row, which cost real SerpApi quota to collect and is not recoverable.
     _guard() alone only checks that demo mode is on — it authenticates nobody."""
     _guard()
-    reset(db)
+    reset(db, workspace_id=workspace_id)
