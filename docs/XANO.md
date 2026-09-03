@@ -129,5 +129,17 @@ cannot be used to probe which links exist.
 `DASHBOARD_URL` builds the link, so it must be set on the Xano side too or the email
 points nowhere.
 
-**Not handled here:** rate limiting. Xano applies its own per-instance limits; if you
-need per-address throttling on `forgot_password`, that is a separate change.
+### Rate limiting
+
+Three issues per account per hour, counted from `password_reset` rows — no extra table.
+Enough for someone who lost the first email, not enough to mail-bomb an address.
+
+A throttled request returns the **same** response as a delivered one. Anything else
+re-opens the enumeration hole the neutral message exists to close.
+
+The throttle gates the whole issue-and-send block, including the step that spends
+outstanding tokens — so being throttled never invalidates a link the user is still
+holding.
+
+This is per-account, not per-IP. Someone spraying many different addresses is not
+limited by it; that would need a separate counter keyed on the caller.
