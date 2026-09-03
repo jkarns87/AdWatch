@@ -51,6 +51,18 @@ def run_analyze(db: Session, watchlist: m.Watchlist, *, analyst: Analyst | None 
     by_id = {c.id: c for c in pending}
     insights: list[m.Insight] = []
     sent = 0
+
+    # analyst.analyze() makes every model call before returning, so without this the
+    # transaction opened by the read above sits idle in transaction for the whole
+    # batch and Postgres closes the connection underneath it. The first write after
+    # the model calls then died with "server closed the connection unexpectedly",
+    # 500ing an endpoint whose collect had already succeeded and committed.
+    #
+    # commit() releases the connection to the pool, so the next statement checks one
+    # out and pool_pre_ping validates it. expire_on_commit=False keeps `pending` and
+    # `by_id` usable, which matters because the loop below assigns insight_id on them.
+    db.commit()
+
     for change_ids, result in analyst.analyze(watchlist_context(watchlist), as_dicts):
         # Pop before building the Insight so the marker cannot reach a persisted field.
         usage = result.pop("_usage", None)

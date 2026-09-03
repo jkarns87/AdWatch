@@ -200,3 +200,42 @@ def test_a_creative_missing_from_a_populated_response_is_still_retired(db, watch
     db.flush()
     assert db.query(m.Creative).filter_by(creative_id="CR1").one().active is False
     assert db.query(m.Creative).filter_by(creative_id="CR2").one().active is True
+
+
+# ---- long model calls must not hold a transaction ---------------------------------------------
+
+
+def test_analyze_releases_its_transaction_before_calling_the_model(db, watchlist, faked, monkeypatch):
+    """The model calls are the longest wait in the request, and they all happen
+    before the result loop starts.
+
+    Holding the read transaction open across them left the connection idle in
+    transaction long enough for Postgres to close it, so the first write afterwards
+    raised "server closed the connection unexpectedly" — a 500 on an endpoint whose
+    collect had already succeeded and committed.
+    """
+    from app.engine import analyze as analyze_mod
+
+    collect_mod.run_collect(db, watchlist, fresh=False)
+    db.flush()
+    run = db.query(m.Run).first()
+    db.add(m.Change(watchlist_id=watchlist.id, run_id=run.id, kind="creative_launched",
+                    subject_type="competitor", subject_id=1, subject_label="Rival",
+                    severity="medium", payload={}))
+    db.commit()
+
+    in_transaction: list[bool] = []
+
+    class _Analyst:
+        def __init__(self, *a, **k):
+            pass
+
+        def analyze(self, context, changes):
+            in_transaction.append(db.in_transaction())
+            return []
+
+    monkeypatch.setattr(analyze_mod, "Analyst", _Analyst)
+    analyze_mod.run_analyze(db, watchlist)
+
+    assert in_transaction, "the analyst was never reached"
+    assert in_transaction[0] is False, "a transaction was open across the model calls"
