@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ApiKeys } from "@/components/ApiKeys";
 import { xano, xanoEnabled } from "@/lib/xano";
 import type { AlertPref, AlertProvider, Severity } from "@/lib/types";
 
@@ -180,6 +181,8 @@ export default function IntegrationsPage() {
           </div>
         </form>
       </section>
+
+      <ApiKeys />
     </div>
   );
 }

@@ -2,7 +2,9 @@ import { authHeaders } from "./auth";
 import type {
   AlertFeedItem,
   Change,
+  ProviderKind,
   SerpApiStatus,
+  WorkspaceKey,
   CollectAnalyzeOut,
   Creative,
   Insight,
@@ -56,6 +58,14 @@ export const api = {
   /** One call for the whole inbox. Replaces watchlists() + insights() per watchlist. */
   alertFeed: (limit = 50) => req<AlertFeedItem[]>(`/alerts?limit=${limit}`),
   serpapiStatus: () => req<SerpApiStatus>("/providers/serpapi"),
+  workspaceKeys: () => req<WorkspaceKey[]>("/workspace/keys"),
+  /** Validated with the provider before it is stored; a bad key 400s. */
+  putWorkspaceKey: (kind: ProviderKind, key: string) =>
+    req<{ kind: string; last4: string; verified: boolean }>(`/workspace/keys/${kind}`, {
+      method: "PUT",
+      body: JSON.stringify({ key }),
+    }),
+  deleteWorkspaceKey: (kind: ProviderKind) => req(`/workspace/keys/${kind}`, { method: "DELETE" }),
   /** Downloads a generated report; returns the filename. Uses fetch so auth headers apply. */
   downloadReport: async (id: number, audience: "cfo" | "marketing", format: "pdf" | "docx" | "md", days = 7) => {
     const r = await fetch(`${BASE}/watchlists/${id}/report?audience=${audience}&format=${format}&days=${days}`, { headers: authHeaders(), cache: "no-store" });

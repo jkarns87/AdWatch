@@ -308,3 +308,13 @@ export interface SerpApiStatus {
   used_this_month: number | null;
   cached: boolean;
 }
+
+export type ProviderKind = "serpapi" | "anthropic";
+
+/** GET /workspace/keys — never carries key material, only the last four characters. */
+export interface WorkspaceKey {
+  kind: ProviderKind;
+  last4: string;
+  created_at: string;
+  updated_at: string;
+}

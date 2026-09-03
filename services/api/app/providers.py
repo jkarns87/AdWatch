@@ -59,6 +59,41 @@ def serpapi_status(db: Session, *, workspace_id: int, platform_key: str) -> dict
     return {**result, "key_source": source, "cached": False}
 
 
+ANTHROPIC_MODELS_URL = "https://api.anthropic.com/v1/models"
+
+
+def validate_key(kind: str, api_key: str) -> str:
+    """Ask the provider whether this key works. Returns ok | invalid | unreachable.
+
+    `unreachable` is deliberately distinct from `invalid`: provider downtime is not
+    proof of a bad key, and refusing to save during a wobble would make the settings
+    page unusable.
+    """
+    try:
+        if kind == "serpapi":
+            with httpx.Client(timeout=TIMEOUT_SECONDS, transport=_transport_for_tests) as c:
+                r = c.get(ACCOUNT_URL, params={"api_key": api_key})
+        elif kind == "anthropic":
+            # /v1/models authenticates without spending tokens.
+            with httpx.Client(timeout=TIMEOUT_SECONDS, transport=_transport_for_tests) as c:
+                r = c.get(
+                    ANTHROPIC_MODELS_URL,
+                    headers={"x-api-key": api_key, "anthropic-version": "2023-06-01"},
+                )
+        else:
+            raise ValueError(f"unknown provider {kind!r}")
+    except httpx.HTTPError as e:
+        log.warning("%s key validation unreachable: %s", kind, e.__class__.__name__)
+        return "unreachable"
+
+    if r.status_code in (401, 403):
+        return "invalid"
+    if r.status_code == 200:
+        return "ok"
+    log.warning("%s key validation returned %s", kind, r.status_code)
+    return "unreachable"
+
+
 def _blank(status: str) -> dict[str, Any]:
     """Every branch returns the same keys, so callers never need to guess which
     fields exist for which status."""

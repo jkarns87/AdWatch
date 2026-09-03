@@ -88,6 +88,7 @@ export const test = base.extend({
       "/alerts": ALERTS,
       "/watchlists": WATCHLISTS,
       "/health": { status: "ok", db: "ok", serpapi_key_present: true, anthropic_key_present: true },
+      "/workspace/keys": [{ kind: "serpapi", last4: "aaaa", created_at: "2026-09-02T12:00:00Z", updated_at: "2026-09-02T12:00:00Z" }],
     };
 
     // The control plane too. Nav calls xano.me() and xano.alerts() on mount, and
@@ -116,6 +117,21 @@ export const test = base.extend({
     const serve = (table: Record<string, unknown>) => async (route: import("@playwright/test").Route) => {
       const { pathname } = new URL(route.request().url());
       const match = Object.keys(table).find((suffix) => pathname.endsWith(suffix));
+      const method = route.request().method();
+      // PUT /workspace/keys/{kind} answers with the save result, not the list.
+      if (method === "PUT" && /\/workspace\/keys\/\w+$/.test(pathname)) {
+        const kind = pathname.split("/").pop();
+        await route.fulfill({
+          status: 200, contentType: "application/json",
+          body: JSON.stringify({ kind, last4: "zzzz", verified: true }),
+        });
+        return;
+      }
+      if (method === "DELETE") {
+        await route.fulfill({ status: 204, body: "" });
+        return;
+      }
+
       let body: unknown = match ? table[match] : [];
       if (!match && /\/watchlists\/\d+$/.test(pathname)) body = DETAIL;
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
