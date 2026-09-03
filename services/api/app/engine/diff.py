@@ -294,16 +294,27 @@ def diff_trends(points: list[dict], *, keyword_id: int, label: str, had_previous
 
 
 def diff_related_queries(
-    previous: list[dict] | None, current: list[dict], *, keyword_id: int, label: str
+    previous: list[dict] | None, current: list[dict], *, keyword_id: int, label: str, watchlist: Any = None
 ) -> list[dict]:
     if previous is None:
         return []
+    # Google Trends returns rising queries that have nothing to do with the market:
+    # a coffee watchlist got "concerts" and "healthy recipes", both at +400%, and both
+    # reached an insight. app/market.py was written to fence exactly this and was
+    # never called from the collect path — the fence existed and was never hung.
+    # None means the watchlist has no vocabulary to build one from, and filtering on
+    # nothing would empty every feed, so the guard stays off in that case.
+    from ..market import for_watchlist
+
+    market = for_watchlist(watchlist) if watchlist is not None else None
     prev_rising = {r["query"].lower() for r in previous if r.get("bucket") == "rising"}
     changes: list[dict] = []
     for r in current:
         if r.get("bucket") != "rising":
             continue
         q = r["query"].lower()
+        if market is not None and not market.search(q):
+            continue
         if q in prev_rising:
             continue
         vt = str(r.get("value_text", ""))

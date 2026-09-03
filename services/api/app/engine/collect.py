@@ -302,7 +302,7 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
             rel = consensus_rising(rel_draws, min_draws=RELATED_QUERY_MIN_DRAWS)
             for r in rel:
                 db.add(m.RelatedQuery(keyword_id=kw.id, run_id=run.id, **r))
-            for ch in diff.diff_related_queries(prev_rel, rel, keyword_id=kw.id, label=kw.term):
+            for ch in diff.diff_related_queries(prev_rel, rel, keyword_id=kw.id, label=kw.term, watchlist=watchlist):
                 changes.append(m.Change(watchlist_id=watchlist.id, run_id=run.id, **ch))
 
         for ch in changes:

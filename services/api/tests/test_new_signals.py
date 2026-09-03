@@ -238,3 +238,46 @@ def test_an_unknown_format_is_kept_rather_than_silently_dropped():
     should show up as a creative, not vanish."""
     raw = {"ad_creatives": [{"ad_creative_id": "X", "format": "carousel"}]}
     assert len(creatives_from_ads_transparency(raw)) == 1
+
+
+# ---- market drift on rising queries ------------------------------------------------------------
+
+
+class _WL:
+    """Minimal stand-in for a watchlist — market.for_watchlist reads these two."""
+
+    def __init__(self, terms=None, keywords=()):
+        self.market_terms = terms
+        self.keywords = [type("K", (), {"term": t})() for t in keywords]
+
+
+def _rq(query: str) -> dict:
+    return {"query": query, "bucket": "rising", "value_text": "+400%", "value_num": 400.0}
+
+
+def test_a_rising_query_outside_the_market_is_not_reported():
+    """Production, on a coffee watchlist: Google Trends returned "concerts" and
+    "healthy recipes" as rising for "coffee subscription", and both reached an
+    insight. app/market.py exists to stop exactly that drift, but nothing in the
+    collect path had ever called it — the fence was built and never hung.
+    """
+    wl = _WL(keywords=["coffee subscription", "cold brew coffee"])
+    out = diff.diff_related_queries(
+        [], [_rq("concerts"), _rq("cold brew coffee near me")],
+        keyword_id=1, label="coffee subscription", watchlist=wl,
+    )
+    assert [c["payload"]["query"] for c in out] == ["cold brew coffee near me"]
+
+
+def test_without_a_market_nothing_is_filtered():
+    """A watchlist with no terms and no keywords has no fence. Filtering everything
+    out would be worse than filtering nothing — that is how the old hand-curated
+    lists silently emptied any vertical they did not cover."""
+    out = diff.diff_related_queries([], [_rq("concerts")], keyword_id=1, label="k", watchlist=_WL())
+    assert len(out) == 1
+
+
+def test_the_filter_is_skipped_when_no_watchlist_is_supplied():
+    """Callers that predate the guard keep working unchanged."""
+    out = diff.diff_related_queries([], [_rq("concerts")], keyword_id=1, label="k")
+    assert len(out) == 1
