@@ -195,10 +195,12 @@ query "internal/dispatch" verb=POST {
             }
           }
           else {
-            util.send_email {
-              to = $pref.target
-              subject = "AdWatch alert: " ~ $input.title
-              message = $text
+            function.run "send_email" {
+              input = {
+                to: $pref.target,
+                subject: "AdWatch alert: " ~ $input.title,
+                message: $text
+              }
             }
             var.update $sent { value = $sent + 1 }
             db.add "alert_log" {

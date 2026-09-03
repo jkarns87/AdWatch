@@ -59,10 +59,12 @@ query "auth/forgot_password" verb=POST {
           value = $env.DASHBOARD_URL ~ "/reset-password?s=" ~ $selector ~ "&v=" ~ $verifier
         }
 
-        util.send_email {
-          to = $user.email
-          subject = "Reset your AdWatch password"
-          message = "Someone asked to reset the password for this AdWatch account.\n\nOpen this link within the next hour to choose a new one:\n\n" ~ $link ~ "\n\nThe link can be used once. If you did not ask for this, you can ignore this email — nothing has changed."
+        function.run "send_email" {
+          input = {
+            to: $user.email,
+            subject: "Reset your AdWatch password",
+            message: "Someone asked to reset the password for this AdWatch account.\n\nOpen this link within the next hour to choose a new one:\n\n" ~ $link ~ "\n\nThe link can be used once. If you did not ask for this, you can ignore this email — nothing has changed."
+          }
         }
       }
     }
