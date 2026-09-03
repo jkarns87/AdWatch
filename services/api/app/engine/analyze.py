@@ -8,6 +8,7 @@ from ..alerts.webhook import dispatch_insight
 from ..alerts.xano import dispatch_via_xano
 from ..config import get_settings
 from ..metering import record_call
+from ..workspace_secrets import resolve_key
 from .analyst import Analyst
 
 
@@ -22,7 +23,12 @@ def watchlist_context(w: m.Watchlist) -> dict:
 
 
 def run_analyze(db: Session, watchlist: m.Watchlist, *, analyst: Analyst | None = None) -> tuple[list[m.Insight], int]:
-    analyst = analyst or Analyst()
+    analyst = analyst or Analyst(
+        api_key=resolve_key(
+            db, workspace_id=watchlist.workspace_id, kind="anthropic",
+            fallback=get_settings().anthropic_api_key,
+        )
+    )
     pending = db.scalars(
         select(m.Change).where(m.Change.watchlist_id == watchlist.id, m.Change.insight_id.is_(None)).order_by(m.Change.id)
     ).all()

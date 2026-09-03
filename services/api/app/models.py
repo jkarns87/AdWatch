@@ -178,6 +178,25 @@ class Insight(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
+class WorkspaceSecret(Base):
+    """A customer-supplied API key, encrypted at rest.
+
+    Only `last4` is stored in clear, and it is the only part that may be shown back
+    to a user. `ciphertext` must never leave the API in any response — see
+    app/workspace_secrets.py, which is the sole reader.
+    """
+
+    __tablename__ = "workspace_secrets"
+    __table_args__ = (UniqueConstraint("workspace_id", "kind", name="uq_secret_per_workspace_kind"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    workspace_id: Mapped[int] = mapped_column(Integer, index=True)
+    kind: Mapped[str] = mapped_column(String(20))  # serpapi | anthropic
+    ciphertext: Mapped[str] = mapped_column(Text)
+    last4: Mapped[str] = mapped_column(String(8), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
 class LlmCall(Base):
     """One row per Claude call, from every call site. Cost is frozen at write time so
     historical spend stays correct when Anthropic changes prices; tokens are kept so it

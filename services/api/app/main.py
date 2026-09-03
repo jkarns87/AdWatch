@@ -7,6 +7,7 @@ from sqlalchemy import text
 
 from .coffee.router import router as coffee_router
 from .config import get_settings
+from .crypto import available as crypto_available
 from .db import get_engine, init_db
 from .routers import demo, reads, reports, runs, usage, watchlists
 
@@ -52,6 +53,7 @@ def health():
         "db": db_ok,
         "serpapi_key": bool(settings.serpapi_api_key),
         "anthropic_key": bool(settings.anthropic_api_key),
+        "secrets_encryption": crypto_available(),  # can workspaces store their own keys?
         "model": settings.anthropic_model,
         "env": settings.env,
         "auth_provider": settings.auth_provider,

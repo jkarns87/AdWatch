@@ -16,7 +16,9 @@ from ..collectors.normalize import (
     trend_points_from_timeseries,
 )
 from ..collectors.serpapi_client import SerpApiClient, SerpApiError
+from ..config import get_settings
 from ..redact import redact
+from ..workspace_secrets import resolve_key
 from . import diff
 
 log = logging.getLogger(__name__)
@@ -141,7 +143,14 @@ def upsert_creatives(db: Session, competitor: m.Competitor, run: m.Run, rows: li
 
 
 def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | None = None, fresh: bool = False) -> tuple[m.Run, int, list[m.Change]]:
-    client = client or SerpApiClient()
+    # A workspace that supplied its own SerpApi key spends its own quota; everyone
+    # else falls back to the platform key and the plan budget.
+    client = client or SerpApiClient(
+        api_key=resolve_key(
+            db, workspace_id=watchlist.workspace_id, kind="serpapi",
+            fallback=get_settings().serpapi_api_key,
+        )
+    )
     run = m.Run(watchlist_id=watchlist.id, status="running")
     db.add(run)
     db.flush()
