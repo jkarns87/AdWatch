@@ -23,7 +23,7 @@ from datetime import date
 import pytest
 
 from app import models as m
-from app.reports.data import build_report_data
+from app.reports.data import PROVEN_PER_COMPETITOR, build_report_data
 
 
 @pytest.fixture
@@ -133,3 +133,26 @@ def test_brand_terms_are_not_reported_as_market_keywords(watchlist, db):
     the share-of-voice table as though the customer had chosen to target it."""
     d = build_report_data(db, watchlist, days=7)
     assert [k["term"] for k in d["keywords"]] == ["coffee subscription"]
+
+
+def test_one_prolific_competitor_cannot_monopolise_the_ranking(watchlist, db):
+    """Observed on live data: Starbucks has 92 creatives, its oldest run 1,700+ days,
+    and a global top-10 by days returned ten Starbucks rows. Dunkin' and Peet's were
+    invisible. A competitive brief that shows one competitor is not a competitive
+    brief, so each gets a capped share of the table.
+    """
+    for i in range(20):
+        db.add(m.Creative(competitor_id=10, creative_id=f"CR-BULK-{i}", format="text",
+                          total_days_shown=900 + i, first_shown=date(2022, 1, 1), last_shown=date(2026, 9, 1),
+                          first_seen_run_id=30, last_seen_run_id=30, active=True))
+    db.commit()
+    d = build_report_data(db, watchlist, days=7)
+    names = [c["competitor"] for c in d["proven_creatives"]]
+    assert "Beta" in names, "the prolific competitor crowded everyone else out"
+    assert names.count("Alpha") <= PROVEN_PER_COMPETITOR
+
+
+def test_the_ranking_is_still_ordered_by_days(watchlist, db):
+    d = build_report_data(db, watchlist, days=7)
+    days = [c["days"] for c in d["proven_creatives"]]
+    assert days == sorted(days, reverse=True)

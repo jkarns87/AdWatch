@@ -23,6 +23,11 @@ from ..metering import record_call
 log = logging.getLogger(__name__)
 
 PROVEN_LIMIT = 10
+# Cap per competitor so one prolific advertiser cannot own the table. Observed on live
+# data: a competitor with 92 creatives, the oldest running 1,700+ days, took all ten
+# slots and the other two competitors were invisible. A competitive brief showing one
+# competitor is not a competitive brief.
+PROVEN_PER_COMPETITOR = 3
 
 AUDIENCES = {
     "cfo": {
@@ -218,19 +223,25 @@ def build_report_data(db: Session, w: m.Watchlist, *, audience: str = "marketing
             m.Creative.active.is_(True),
         )
     ).all()
-    proven_creatives = [
-        {
+    # A null day count is unknown, not "longest running", so it sorts last rather than
+    # leading the ranking with the least evidenced creative.
+    ranked = sorted(proven_rows, key=lambda r: (r.total_days_shown is None, -(r.total_days_shown or 0)))
+    per_comp: Counter[int] = Counter()
+    proven_creatives = []
+    for r in ranked:
+        if per_comp[r.competitor_id] >= PROVEN_PER_COMPETITOR:
+            continue
+        per_comp[r.competitor_id] += 1
+        proven_creatives.append({
             "creative_id": r.creative_id,
             "competitor": by_comp[r.competitor_id].name if r.competitor_id in by_comp else "",
             "format": r.format,
             "days": r.total_days_shown,
             "first_shown": r.first_shown.isoformat() if r.first_shown else None,
             "last_shown": r.last_shown.isoformat() if r.last_shown else None,
-        }
-        # A null day count is unknown, not "longest running", so it sorts last rather
-        # than leading the ranking with the least evidenced creative.
-        for r in sorted(proven_rows, key=lambda r: (r.total_days_shown is None, -(r.total_days_shown or 0)))
-    ][:PROVEN_LIMIT]
+        })
+        if len(proven_creatives) >= PROVEN_LIMIT:
+            break
 
     # Conquesting fires as an event only when it starts or stops, so a weekly brief
     # would otherwise never mention a rival that has been camped on the brand all week.
