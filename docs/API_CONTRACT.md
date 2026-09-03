@@ -188,6 +188,29 @@ These three routes are additive: they live in `app/coffee/` on their own router 
 
 ---
 
+## Alerts
+
+`GET /alerts?limit=50` — workspace-wide notification feed, newest first. One call;
+replaces `GET /watchlists` followed by `GET /watchlists/{id}/insights` per watchlist.
+
+```json
+[{ "id": 31, "watchlist_id": 1, "watchlist_name": "Specialty Coffee — Bay Area",
+   "severity": "high", "summary": "…", "why_it_matters": "…",
+   "created_at": "2026-09-02T18:04:11Z",
+   "delivery": { "channel": "slack", "status": "sent",
+                 "target": "https://hooks.slack.com/services/T04…/B07…/***",
+                 "sent_at": "…", "error": null } }]
+```
+
+`id` is the **insight** id — the feed is insight-centric because that is what a person
+reads. `delivery` is `null` for insights that were never dispatched (alerts only fire
+above `min_severity`); those still belong in the feed.
+
+`delivery.target` and `delivery.error` are **redacted server-side**. A webhook URL is a
+credential, and httpx puts the full URL in its error text — see `docs/SECRETS.md`.
+
+---
+
 ## Reports
 
 `GET /watchlists/{id}/report?audience=cfo|marketing&format=pdf|docx|md&days=7` → file download (`Content-Disposition: attachment`).

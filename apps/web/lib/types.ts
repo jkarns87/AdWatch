@@ -250,3 +250,23 @@ export interface XanoAlertsOut {
   unread: number;
   alerts: XanoAlert[];
 }
+
+export interface AlertDelivery {
+  channel: string;
+  status: "pending" | "sent" | "failed";
+  target: string;   // redacted server-side; never the full webhook URL
+  sent_at: string | null;
+  error: string | null;
+}
+
+/** GET /alerts — the workspace-wide feed. `id` is the insight id. */
+export interface AlertFeedItem {
+  id: number;
+  watchlist_id: number;
+  watchlist_name: string;
+  severity: Severity;
+  summary: string;
+  why_it_matters: string;
+  created_at: string;
+  delivery: AlertDelivery | null;
+}

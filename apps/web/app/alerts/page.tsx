@@ -39,10 +39,6 @@ function saveFallbackRead(s: Set<number>) {
   } catch {}
 }
 
-function topSeverity(sevs: Severity[]): Severity {
-  return sevs.includes("high") ? "high" : sevs.includes("medium") ? "medium" : "low";
-}
-
 export default function AlertsPage() {
   const [items, setItems] = useState<InboxItem[] | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
@@ -71,20 +67,18 @@ export default function AlertsPage() {
         );
       } else {
         const read = loadFallbackRead();
-        const lists = await api.watchlists();
-        const all = await Promise.all(lists.map(async (w) => (await api.insights(w.id)).map((i) => ({ w, i }))));
-        const flat = all.flat().sort((a, b) => (a.i.created_at < b.i.created_at ? 1 : -1));
+        const feed = await api.alertFeed();
         setItems(
-          flat.map(({ w, i }) => ({
-            id: i.id,
-            severity: topSeverity(i.changes.map((c) => c.severity)),
-            title: w.name,
-            summary: i.summary,
-            why: i.why_it_matters,
-            when: i.created_at,
-            href: `/watchlists/${w.id}`,
-            read: read.has(i.id),
-            source: "api",
+          feed.map((a) => ({
+            id: a.id,
+            severity: a.severity,
+            title: a.watchlist_name,
+            summary: a.summary,
+            why: a.why_it_matters,
+            when: a.created_at,
+            href: `/watchlists/${a.watchlist_id}`,
+            read: read.has(a.id),
+            source: "api" as const,
           })),
         );
       }

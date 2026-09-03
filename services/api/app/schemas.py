@@ -272,3 +272,25 @@ class UsageOut(BaseModel):
     plans: list[dict[str, Any]]
     llm: LlmUsage
     total_cost_usd: float  # SerpApi searches + Claude tokens
+
+
+class AlertDelivery(BaseModel):
+    """How an insight was dispatched. `target` and `error` are redacted — a webhook
+    URL is a credential, and httpx puts the full URL in its error text."""
+
+    channel: str
+    status: str  # pending | sent | failed
+    target: str
+    sent_at: datetime | None = None
+    error: str | None = None
+
+
+class AlertFeedItem(BaseModel):
+    id: int  # the insight id — the feed is insight-centric, like the page that renders it
+    watchlist_id: int
+    watchlist_name: str
+    severity: str
+    summary: str
+    why_it_matters: str
+    created_at: datetime
+    delivery: AlertDelivery | None = None
