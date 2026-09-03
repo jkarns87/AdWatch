@@ -141,3 +141,33 @@ def test_a_normal_call_does_not_pay_to_bypass_the_server_cache():
     with tempfile.TemporaryDirectory() as d:
         _Capture(Path(d)).search({"engine": "google_trends", "q": "x"}, fresh=False)
     assert "no_cache" not in captured
+
+
+def test_every_consensus_draw_is_requested_fresh():
+    """Consensus needs samples of one moment, not one sample plus history.
+
+    The first draw was taken with the run's own `fresh` flag, which defaults to
+    False, so it could be served from our local disk cache while the other two went
+    live — observed in production logs as `serpapi cache hit google_trends-...`
+    immediately before two `no_cache=true` fetches of the same term. Averaging an
+    hours-old record with two fresh ones is not a majority vote, and the stale draw
+    silently anchors the result.
+    """
+    from app.engine.collect import RELATED_QUERY_DRAWS, _related_query_draws
+
+    calls: list[bool] = []
+
+    class _Client:
+        def trends_related_queries(self, *, q, geo, fresh=False):
+            calls.append(fresh)
+
+            class _R:
+                data = {"related_queries": {"rising": [{"query": "a", "value": "+400%"}]}}
+
+            return _R()
+
+    first, draws = _related_query_draws(_Client(), q="x", geo="US", fresh=False)
+    assert len(calls) == RELATED_QUERY_DRAWS
+    assert all(calls), "a draw was served from cache; consensus over it is circular"
+    assert len(draws) == RELATED_QUERY_DRAWS
+    assert first is not None, "the snapshot still needs the first response"

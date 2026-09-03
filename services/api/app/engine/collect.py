@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 
 from sqlalchemy import select
@@ -30,6 +31,27 @@ log = logging.getLogger(__name__)
 # per keyword per run and is what turns `rising_query` from noise into evidence.
 RELATED_QUERY_DRAWS = 3
 RELATED_QUERY_MIN_DRAWS = 2
+
+
+def _related_query_draws(client, *, q: str, geo: str, fresh: bool):
+    """Take RELATED_QUERY_DRAWS independent samples of one keyword's rising queries.
+
+    Every draw is requested fresh, regardless of the run's own `fresh` flag. A draw
+    served from a cache — ours or SerpApi's — is not a second sample, it is the first
+    one again, and a majority vote over it is circular. Production logs showed exactly
+    that: a local `cache hit` for the first draw immediately before two live fetches
+    of the same term, so an hours-old record was silently anchoring the consensus.
+
+    Run concurrently: the draws are independent, and taken in series they tripled the
+    slowest part of a run for no reason. Returns (first_result, draws) — the caller
+    still needs one raw response for the snapshot audit trail.
+    """
+    def one():
+        return client.trends_related_queries(q=q, geo=geo, fresh=True)
+
+    with ThreadPoolExecutor(max_workers=RELATED_QUERY_DRAWS) as pool:
+        results = list(pool.map(lambda _: one(), range(RELATED_QUERY_DRAWS)))
+    return results[0], [related_queries_from_trends(r.data) for r in results]
 
 
 def _previous_run(db: Session, watchlist_id: int, before_run_id: int) -> m.Run | None:
@@ -256,13 +278,9 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
             # single draw reported that churn as demand. Take RELATED_QUERY_DRAWS
             # samples and keep only what a majority of them agree on.
             prev_rel = related_view(db, kw.id, prev_id)
-            res = client.trends_related_queries(q=kw.term, geo=watchlist.geo or "US", fresh=fresh)
+            res, rel_draws = _related_query_draws(client, q=kw.term, geo=watchlist.geo or "US")
             _snapshot(db, run, "related_queries", "keyword", kw.id, res)
             n_snapshots += 1
-            rel_draws = [related_queries_from_trends(res.data)]
-            for _ in range(RELATED_QUERY_DRAWS - 1):
-                extra = client.trends_related_queries(q=kw.term, geo=watchlist.geo or "US", fresh=True)
-                rel_draws.append(related_queries_from_trends(extra.data))
             rel = consensus_rising(rel_draws, min_draws=RELATED_QUERY_MIN_DRAWS)
             for r in rel:
                 db.add(m.RelatedQuery(keyword_id=kw.id, run_id=run.id, **r))
