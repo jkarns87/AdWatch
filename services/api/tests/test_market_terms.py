@@ -94,3 +94,45 @@ def test_missing_market_terms_is_an_empty_list_not_a_crash(monkeypatch):
 def test_market_terms_of_the_wrong_shape_are_ignored(monkeypatch, bad):
     out = _run(monkeypatch, {**BASE, "market_terms": bad})
     assert out["market_terms"] == []
+
+
+# ---- derived fallback: a weak fence beats no fence ---------------------------------
+
+
+def _wl(terms=None, keywords=()):
+    w = m.Watchlist(name="X", market_terms=terms)
+    w.keywords = [m.Keyword(term=k) for k in keywords]
+    return w
+
+
+def test_a_watchlist_with_keywords_but_no_terms_gets_a_derived_fence():
+    """Every pre-existing watchlist, every CSV import, and any onboarding run where
+    Claude returned nothing usable. They contain their own vocabulary."""
+    pattern = market.for_watchlist(_wl(keywords=["memory foam mattress", "bed frame"]))
+    assert pattern is not None
+    assert in_market("cheap memory foam mattress", pattern)
+    assert not in_market("machine learning course", pattern)
+
+
+def test_supplied_terms_win_over_derived_ones():
+    """Claude read the site; the keywords are a fallback, not a competitor."""
+    w = _wl(terms=["mattress"], keywords=["espresso machine"])
+    pattern = market.for_watchlist(w)
+    assert in_market("mattress sale", pattern)
+    assert not in_market("espresso machine", pattern), "derived terms must not leak in"
+
+
+def test_stopwords_in_keywords_do_not_become_the_fence():
+    """"best coffee online" must not fence on "best" — that matches everything."""
+    pattern = market.for_watchlist(_wl(keywords=["best coffee online"]))
+    assert in_market("cold brew coffee", pattern)
+    assert not in_market("best running shoes", pattern)
+
+
+def test_no_terms_and_no_keywords_is_still_no_fence():
+    assert market.for_watchlist(_wl()) is None
+
+
+def test_derived_terms_are_bounded():
+    many = [f"widget{i} gadget{i}" for i in range(200)]
+    assert len(market.derive_terms(_wl(keywords=many))) <= market.MAX_TERMS
