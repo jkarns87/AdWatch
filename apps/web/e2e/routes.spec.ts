@@ -1,9 +1,11 @@
 import { expect, test } from "./fixtures";
 
 test.describe("watchlist routes", () => {
-  test("/ sends you to the watchlist list", async ({ page }) => {
+  test("/ is the dashboard, no longer a redirect", async ({ page }) => {
+    // It redirected to /watchlists as an interim while the dashboard did not exist.
     await page.goto("/");
-    await expect(page).toHaveURL(/\/watchlists$/);
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
   });
 
   test("/watchlists renders the list page", async ({ page }) => {

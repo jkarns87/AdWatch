@@ -2,6 +2,7 @@ import { authHeaders } from "./auth";
 import type {
   AlertFeedItem,
   Change,
+  SerpApiStatus,
   CollectAnalyzeOut,
   Creative,
   Insight,
@@ -54,6 +55,7 @@ export const api = {
   usage: () => req<UsageOut>("/usage"),
   /** One call for the whole inbox. Replaces watchlists() + insights() per watchlist. */
   alertFeed: (limit = 50) => req<AlertFeedItem[]>(`/alerts?limit=${limit}`),
+  serpapiStatus: () => req<SerpApiStatus>("/providers/serpapi"),
   /** Downloads a generated report; returns the filename. Uses fetch so auth headers apply. */
   downloadReport: async (id: number, audience: "cfo" | "marketing", format: "pdf" | "docx" | "md", days = 7) => {
     const r = await fetch(`${BASE}/watchlists/${id}/report?audience=${audience}&format=${format}&days=${days}`, { headers: authHeaders(), cache: "no-store" });

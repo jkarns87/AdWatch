@@ -8,6 +8,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import type { XanoMe } from "@/lib/types";
 
 const LINKS: { href: string; label: string; match: (p: string) => boolean }[] = [
+  { href: "/", label: "Dashboard", match: (p) => p === "/" },
   { href: "/watchlists", label: "Watchlists", match: (p) => p.startsWith("/watchlists") },
   { href: "/alerts", label: "Alerts", match: (p) => p.startsWith("/alerts") },
   { href: "/usage", label: "Usage & plan", match: (p) => p.startsWith("/usage") },

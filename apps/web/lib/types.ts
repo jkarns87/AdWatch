@@ -178,6 +178,25 @@ export interface WatchlistUsage {
   projected_month_current: number;
   projected_month_plan: number;
   over_plan_limits: boolean;
+  llm_cost_usd: number;
+}
+
+export interface LlmFeatureCost { feature: string; calls: number; cost_usd: number }
+export interface LlmModelCost { model: string; calls: number; cost_usd: number }
+
+/** Claude spend for the period. `unpriced_calls` counts calls whose model has no
+ *  published rate — tokens are recorded but cost is 0, so the total understates. */
+export interface LlmUsage {
+  calls: number;
+  cost_usd: number;
+  unpriced_calls: number;
+  input_tokens: number;
+  output_tokens: number;
+  cache_read_tokens: number;
+  cache_write_tokens: number;
+  by_feature: LlmFeatureCost[];
+  by_model: LlmModelCost[];
+  metering_since: string | null;
 }
 
 export interface UsageOut {
@@ -200,6 +219,9 @@ export interface UsageOut {
   watchlists_limit: number;
   by_watchlist: WatchlistUsage[];
   plans: PlanInfo[];
+  llm: LlmUsage;
+  /** SerpApi searches + Claude tokens */
+  total_cost_usd: number;
 }
 
 // ---- control plane (Xano) ---------------------------------------------------------------------
@@ -269,4 +291,20 @@ export interface AlertFeedItem {
   why_it_matters: string;
   created_at: string;
   delivery: AlertDelivery | null;
+}
+
+export type ProviderStatus = "ok" | "invalid" | "exhausted" | "unset" | "unreachable";
+
+/** GET /providers/serpapi — validity and quota, not mere key presence. */
+export interface SerpApiStatus {
+  status: ProviderStatus;
+  key_source: "workspace" | "platform" | "none";
+  plan: string | null;
+  /** total spendable = plan_searches_left + extra_credits */
+  searches_left: number | null;
+  plan_searches_left: number | null;
+  extra_credits: number | null;
+  searches_per_month: number | null;
+  used_this_month: number | null;
+  cached: boolean;
 }
