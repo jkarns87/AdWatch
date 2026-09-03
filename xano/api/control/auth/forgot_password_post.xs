@@ -47,8 +47,14 @@ query "auth/forgot_password" verb=POST {
             // the first link rather than leaving several live at once. Deliberately inside
             // the rate-limit gate: a throttled request must not invalidate a link the user
             // is still holding.
+            // used_at == null matches nothing here. An unset `timestamp?` column stores
+            // the sentinel 0, not SQL NULL, and a where clause is evaluated by the
+            // database, where IS NULL never matches 0. The comparable precondition in
+            // reset_password is evaluated in-script, where 0 == null is loosely true —
+            // which is why redemption kept working and this silently invalidated nothing,
+            // leaving every link issued within the hour live at the same time.
             db.query "password_reset" {
-              where = $db.password_reset.user_id == $user.id && $db.password_reset.used_at == null
+              where = $db.password_reset.user_id == $user.id && $db.password_reset.used_at == 0 && $db.password_reset.expires_at > $now
               return = { type: "list" }
             } as $outstanding
 

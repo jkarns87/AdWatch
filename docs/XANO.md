@@ -126,6 +126,13 @@ any outstanding tokens for that user, so only the newest link works. Every failu
 unknown, spent, expired, wrong verifier — returns the same message, so the endpoint
 cannot be used to probe which links exist.
 
+> An unset `timestamp?` column stores the sentinel **0, not SQL NULL**. This matters
+> because the two comparisons are evaluated in different places: a `db.query` `where`
+> runs in the database, where `IS NULL` never matches 0, while a `precondition` runs
+> in-script, where `0 == null` is loosely true. `where used_at == null` therefore matched
+> nothing and silently invalidated nothing, while redemption kept working — so every link
+> issued within the hour stayed live at once. Compare against `0` in a `where` clause.
+
 `DASHBOARD_URL` builds the link, so it must be set on the Xano side too or the email
 points nowhere.
 
@@ -143,6 +150,20 @@ holding.
 
 This is per-account, not per-IP. Someone spraying many different addresses is not
 limited by it; that would need a separate counter keyed on the caller.
+
+### Known gap: the response body is neutral, the response *time* is not
+
+Measured against production on 2026-09-03: an address with no account returns in
+0.19–0.24s (n=8, tight cluster), because the whole issue-and-send block is skipped. An
+address **with** an account that is not yet throttled returns in 0.39–0.65s (n=3) — it
+generates a token and calls Resend on the response path. The ranges do not overlap, so a
+single request distinguishes a registered address from an unregistered one despite the
+identical body.
+
+Self-limiting but not closed: after three probes the account is throttled and returns
+fast like an unknown address, so an attacker gets three clean probes per address per
+hour — and one is enough. Closing it means taking the send off the response path so
+every answer costs the same, which is a design change, not a tweak.
 
 
 ## Health
