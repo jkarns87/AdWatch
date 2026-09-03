@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 test.describe("watchlist routes", () => {
   test("/ sends you to the watchlist list", async ({ page }) => {

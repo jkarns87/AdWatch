@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 test.describe("new watchlist wizard", () => {
   test("the name field keeps focus while typing", async ({ page }) => {
@@ -8,11 +8,19 @@ test.describe("new watchlist wizard", () => {
     // input and its focus after a single keystroke. A unit test cannot catch this.
     await page.goto("/onboarding");
     const name = page.getByPlaceholder("e.g. Specialty Coffee — Bay Area");
+    await expect(name).toBeEditable();
     await name.click();
-    await name.pressSequentially("Specialty Coffee", { delay: 20 });
+    await expect(name).toBeFocused(); // hydration settled, focus actually took
 
-    await expect(name).toBeFocused();
+    // keyboard.type targets whatever holds focus rather than a captured element
+    // handle, so a remount shows up as a short value instead of a detached-node
+    // error. Character by character, because the bug drops focus per keystroke.
+    for (const ch of "Specialty Coffee") {
+      await page.keyboard.type(ch);
+    }
+
     await expect(name).toHaveValue("Specialty Coffee");
+    await expect(name).toBeFocused();
   });
 
   test("every text field on step one survives multi-character input", async ({ page }) => {
