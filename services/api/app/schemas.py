@@ -132,6 +132,8 @@ class CreativeOut(ORM):
     first_seen_run_id: int
     last_seen_run_id: int
     text: dict[str, Any] | None
+    # Days actually served, distinct from the first_shown -> last_shown span.
+    total_days_shown: int | None = None
 
 
 class SerpAdOut(BaseModel):

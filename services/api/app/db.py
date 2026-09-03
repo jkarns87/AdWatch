@@ -53,3 +53,7 @@ def init_db() -> None:
         # Retention drops the payload and keeps the row, which the original NOT NULL
         # forbids. DROP NOT NULL is idempotent, so this is safe on every boot.
         conn.execute(text("ALTER TABLE snapshots ALTER COLUMN raw DROP NOT NULL"))
+        # Signals that were always in the responses we paid for and were being discarded.
+        conn.execute(text("ALTER TABLE serp_ads ADD COLUMN IF NOT EXISTS source VARCHAR(255)"))
+        conn.execute(text("ALTER TABLE serp_ads ADD COLUMN IF NOT EXISTS sitelinks JSON"))
+        conn.execute(text("ALTER TABLE creatives ADD COLUMN IF NOT EXISTS total_days_shown INTEGER"))

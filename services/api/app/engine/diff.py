@@ -20,6 +20,10 @@ SPIKE_MIN_VALUE = 20
 DECLINE_RATIO = 0.6
 RISING_MIN_PCT = 300.0
 TRAILING_WINDOW = 4
+# Repeated identical product queries showed no spurious price movement at all, so the
+# floor exists only to ignore rounding and currency jitter, not sampling noise.
+PRICE_MIN_PCT = 2.0
+PRICE_CUT_HIGH_PCT = 10.0
 
 
 def _chg(kind: str, severity: str, subject_type: str, subject_id: int, label: str, payload: dict[str, Any]) -> dict:
@@ -146,6 +150,50 @@ def diff_serp_ads(
         )
     for d in cur.keys() & prev.keys():
         p, c = prev[d], cur[d]
+
+        # Ad copy was stored on every row from the first run and never compared, so a
+        # competitor rewriting their headline produced no event at all — arguably the
+        # most direct read on a rival's positioning available on the page.
+        # Only for advertisers present in both runs: an arrival already reports itself.
+        if (c.get("title") or "") != (p.get("title") or "") or (c.get("description") or "") != (p.get("description") or ""):
+            changes.append(
+                _chg(
+                    "ad_copy_changed",
+                    "medium",
+                    "keyword",
+                    keyword_id,
+                    label,
+                    {
+                        "advertiser_domain": d,
+                        "from_title": p.get("title"),
+                        "to_title": c.get("title"),
+                        "from_description": p.get("description"),
+                        "to_description": c.get("description"),
+                        "is_tracked_competitor": d in tracked,
+                    },
+                )
+            )
+
+        # Sitelinks compared as a set: order varies between identical calls, membership
+        # does not. Observed on 3 of 4 ads and the only place extensions surface.
+        before_sl, after_sl = set(p.get("sitelinks") or []), set(c.get("sitelinks") or [])
+        if before_sl != after_sl:
+            changes.append(
+                _chg(
+                    "ad_sitelinks_changed",
+                    "low",
+                    "keyword",
+                    keyword_id,
+                    label,
+                    {
+                        "advertiser_domain": d,
+                        "added": sorted(after_sl - before_sl),
+                        "removed": sorted(before_sl - after_sl),
+                        "is_tracked_competitor": d in tracked,
+                    },
+                )
+            )
+
         moved = abs(int(c.get("position", 0)) - int(p.get("position", 0))) >= POSITION_SHIFT_MIN
         block_changed = c.get("block") != p.get("block")
         if (moved or block_changed) and (d in tracked or not tracked):
@@ -164,6 +212,59 @@ def diff_serp_ads(
                         "to_block": c.get("block"),
                         "is_tracked_competitor": d in tracked,
                     },
+                )
+            )
+    return changes
+
+
+# ---- products (per keyword) ---------------------------------------------------------------------
+
+
+def diff_products(previous: list[dict] | None, current: list[dict], *, keyword_id: int, label: str) -> list[dict]:
+    """Price and promotion moves among the product listings on a keyword.
+
+    Deliberately price-only. Measured on repeated identical queries: prices held
+    steady with zero spurious changes, while the *set* of listings churned heavily
+    between draws. So a price move is evidence and a product appearing or vanishing
+    is usually sampling — emitting the latter would bury the former.
+
+    Keyed on (merchant, title) because product ids were measured unstable run to run.
+    """
+    if previous is None:
+        return []
+
+    def by_key(rows: list[dict]) -> dict[tuple[str, str], dict]:
+        return {(str(r.get("merchant", "")).strip().lower(), str(r.get("title", "")).strip().lower()): r for r in rows}
+
+    prev, cur = by_key(previous), by_key(current)
+    changes: list[dict] = []
+    for key in cur.keys() & prev.keys():
+        p, c = prev[key], cur[key]
+        before, after = p.get("price"), c.get("price")
+        if before and after and before > 0:
+            delta_pct = round(100 * (after - before) / before, 1)
+            if abs(delta_pct) >= PRICE_MIN_PCT:
+                changes.append(
+                    _chg(
+                        "product_price_changed",
+                        "high" if delta_pct <= -PRICE_CUT_HIGH_PCT else "medium",
+                        "keyword",
+                        keyword_id,
+                        label,
+                        {"merchant": c.get("merchant"), "title": c.get("title"), "from_price": before,
+                         "to_price": after, "delta_pct": delta_pct},
+                    )
+                )
+        if c.get("promo") and not p.get("promo"):
+            changes.append(
+                _chg(
+                    "product_promo_appeared",
+                    "medium",
+                    "keyword",
+                    keyword_id,
+                    label,
+                    {"merchant": c.get("merchant"), "title": c.get("title"), "promo": c.get("promo"),
+                     "original_price": c.get("original_price"), "price": after},
                 )
             )
     return changes

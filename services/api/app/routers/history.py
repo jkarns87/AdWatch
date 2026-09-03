@@ -75,6 +75,7 @@ def creative_flights(
             "details_url": r.details_url,
             "image_url": r.image_url,
             "text": r.text,
+            "total_days_shown": r.total_days_shown,
         })
     return out
 

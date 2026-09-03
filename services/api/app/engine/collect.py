@@ -12,6 +12,7 @@ from .. import models as m
 from ..collectors.normalize import (
     consensus_rising,
     creatives_from_ads_transparency,
+    products_from_google,
     related_queries_from_trends,
     serp_ads_from_google,
     trend_points_from_timeseries,
@@ -95,8 +96,40 @@ def serp_view(db: Session, keyword_id: int, run_id: int | None) -> list[dict] | 
             )
         )
         return [] if snap else None
+    # description and sitelinks must be here: diff_serp_ads compares them, and a view
+    # that omitted them would read every ad as freshly rewritten on every run.
     return [
-        {"advertiser_domain": r.advertiser_domain, "position": r.position, "block": r.block, "title": r.title}
+        {
+            "advertiser_domain": r.advertiser_domain,
+            "position": r.position,
+            "block": r.block,
+            "title": r.title,
+            "description": r.description,
+            "sitelinks": r.sitelinks or [],
+        }
+        for r in rows
+    ]
+
+
+def product_view(db: Session, keyword_id: int, run_id: int | None) -> list[dict] | None:
+    if run_id is None:
+        return None
+    rows = db.scalars(
+        select(m.ProductListing).where(m.ProductListing.keyword_id == keyword_id, m.ProductListing.run_id == run_id)
+    ).all()
+    if not rows:
+        # Same distinction as serp_view: a keyword with no products is not a keyword
+        # that was never collected, and only the latter should suppress the diff.
+        snap = db.scalar(
+            select(m.Snapshot.id).where(
+                m.Snapshot.run_id == run_id, m.Snapshot.subject_type == "keyword",
+                m.Snapshot.subject_id == keyword_id, m.Snapshot.kind == "search_ads",
+            )
+        )
+        return [] if snap else None
+    return [
+        {"merchant": r.merchant, "title": r.title, "price": r.price, "original_price": r.original_price,
+         "promo": r.promo}
         for r in rows
     ]
 
@@ -196,6 +229,15 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
             for a in ads:
                 db.add(m.SerpAd(keyword_id=kw.id, run_id=run.id, **a))
             for ch in diff.diff_serp_ads(prev_serp, ads, keyword_id=kw.id, label=kw.term, tracked_domains=tracked):
+                changes.append(m.Change(watchlist_id=watchlist.id, run_id=run.id, **ch))
+
+            # Product listings ride along in the same response — no extra search. Empty
+            # for non-commercial verticals, which is why nothing here is conditional.
+            prev_products = product_view(db, kw.id, prev_id)
+            products = products_from_google(res.data)
+            for p in products:
+                db.add(m.ProductListing(keyword_id=kw.id, run_id=run.id, **p))
+            for ch in diff.diff_products(prev_products, products, keyword_id=kw.id, label=kw.term):
                 changes.append(m.Change(watchlist_id=watchlist.id, run_id=run.id, **ch))
 
             # demand

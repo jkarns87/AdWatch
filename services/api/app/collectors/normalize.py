@@ -62,6 +62,10 @@ def creatives_from_ads_transparency(raw: dict[str, Any]) -> list[dict[str, Any]]
                 "last_shown": _to_date(ad.get("last_shown")),
                 "advertiser_name": ad.get("advertiser"),
                 "advertiser_id": ad.get("advertiser_id"),
+                # Present on 100% of creatives and previously discarded. It counts days
+                # actually served, not the span between first and last shown, so it
+                # separates a proven evergreen creative from a one-week test.
+                "total_days_shown": ad.get("total_days_shown"),
                 "text": {k: ad[k] for k in ("headline", "description", "title") if ad.get(k)} or None,
             }
         )
@@ -83,6 +87,42 @@ def serp_ads_from_google(raw: dict[str, Any]) -> list[dict[str, Any]]:
                 "description": ad.get("description"),
                 "displayed_link": ad.get("displayed_link"),
                 "link": ad.get("link"),
+                # The advertiser's own display name ("Nespresso(R)"), distinct from the
+                # domain and often the only place a legal or brand name appears.
+                "source": ad.get("source"),
+                # Titles only. The hrefs are google.com/goto redirects that differ
+                # between identical calls, so storing them would churn the diff
+                # without carrying information. Observed on 3 of 4 ads; null on the rest.
+                "sitelinks": [s.get("title") for s in (ad.get("sitelinks") or []) if s.get("title")],
+            }
+        )
+    return out
+
+
+def products_from_google(raw: dict[str, Any]) -> list[dict[str, Any]]:
+    """Product listings riding free on the paid-search response.
+
+    `immersive_products` appears on commercial queries (24-49 items observed) with
+    merchant, title, price, rating and reviews at 100% coverage. It carries no `link`
+    and no click-tracking parameter, so it evidences merchandising presence and price,
+    not paid placement — which is why these rows are kept apart from `ads`.
+    """
+    out: list[dict[str, Any]] = []
+    for p in raw.get("immersive_products") or []:
+        price = p.get("extracted_price")
+        merchant, title = p.get("source"), p.get("title")
+        if price is None or not merchant or not title:
+            continue  # a listing without a price cannot be diffed, which is the point of the row
+        ext = p.get("extensions") or []
+        out.append(
+            {
+                "merchant": str(merchant),
+                "title": str(title),
+                "price": float(price),
+                "original_price": p.get("extracted_original_price"),
+                "promo": str(ext[0]) if ext else None,
+                "rating": p.get("rating"),
+                "reviews": p.get("reviews"),
             }
         )
     return out

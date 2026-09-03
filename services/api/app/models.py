@@ -127,6 +127,9 @@ class Creative(Base):
     first_shown: Mapped[date | None] = mapped_column(Date)
     last_shown: Mapped[date | None] = mapped_column(Date)
     text: Mapped[dict | None] = mapped_column(JSON)  # {headline, description} when available
+    # Days actually served, not the span between first and last shown — a creative can
+    # run 490 of the 520 days between them, or 12. Separates evergreen from test.
+    total_days_shown: Mapped[int | None] = mapped_column(Integer)
     first_seen_run_id: Mapped[int] = mapped_column(ForeignKey("runs.id"))
     last_seen_run_id: Mapped[int] = mapped_column(ForeignKey("runs.id"))
     active: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -146,6 +149,28 @@ class SerpAd(Base):
     description: Mapped[str | None] = mapped_column(Text)
     displayed_link: Mapped[str | None] = mapped_column(Text)
     link: Mapped[str | None] = mapped_column(Text)
+    source: Mapped[str | None] = mapped_column(String(255))  # advertiser display name, e.g. "Nespresso®"
+    sitelinks: Mapped[list | None] = mapped_column(JSON)  # titles only; the hrefs are unstable redirects
+
+
+class ProductListing(Base):
+    """Product listings from the paid-search response's `immersive_products` block.
+
+    Separate from SerpAd on purpose: these rows carry no click-tracking link, so they
+    evidence merchandising presence and price rather than paid placement.
+    """
+
+    __tablename__ = "product_listings"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    keyword_id: Mapped[int] = mapped_column(ForeignKey("keywords.id"), index=True)
+    run_id: Mapped[int] = mapped_column(ForeignKey("runs.id"), index=True)
+    merchant: Mapped[str] = mapped_column(String(255))
+    title: Mapped[str] = mapped_column(Text)
+    price: Mapped[float] = mapped_column(Float)
+    original_price: Mapped[float | None] = mapped_column(Float)
+    promo: Mapped[str | None] = mapped_column(String(120))
+    rating: Mapped[float | None] = mapped_column(Float)
+    reviews: Mapped[int | None] = mapped_column(Integer)
 
 
 class TrendPoint(Base):

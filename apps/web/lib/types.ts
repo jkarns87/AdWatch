@@ -107,6 +107,8 @@ export interface Creative {
   first_seen_run_id: number;
   last_seen_run_id: number;
   text: { headline?: string; description?: string; title?: string } | null;
+  /** Days actually served, distinct from the first_shown -> last_shown span. */
+  total_days_shown?: number | null;
 }
 
 export interface SerpAd {
