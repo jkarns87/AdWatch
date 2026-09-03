@@ -11,7 +11,17 @@ export type ChangeKind =
   | "serp_position_shift"
   | "trend_spike"
   | "trend_decline"
-  | "rising_query";
+  | "rising_query"
+  // Signals that were already in responses we pay for and were being discarded.
+  | "ad_copy_changed"
+  | "ad_sitelinks_changed"
+  | "product_price_changed"
+  | "product_promo_appeared"
+  // Brand conquesting: who is paying for someone else's name.
+  | "brand_conquest"
+  | "brand_conquest_ended"
+  | "brand_undefended"
+  | "brand_defended";
 
 export interface WatchlistSummary {
   id: number;
@@ -345,4 +355,24 @@ export interface OnboardingResult {
   /** domains the user kept that were not persisted, and why */
   skipped: { domain: string; reason: string }[];
   searches_used: number;
+}
+
+/** One tracked brand's current paid block: who is bidding on this company's name. */
+export interface BrandDefence {
+  brand: string;
+  competitor_id: number;
+  is_self: boolean;
+  owner_domain: string;
+  /** false when the brand term has not been collected in a completed run yet. */
+  collected: boolean;
+  owner_present: boolean;
+  owner_position: number | null;
+  /** Someone is bidding and the owner is absent. Nobody bidding at all is not this. */
+  undefended: boolean;
+  conquerors: { advertiser_domain: string; position: number | null; block: string | null; title: string | null }[];
+}
+
+export interface BrandsOut {
+  run_id: number | null;
+  brands: BrandDefence[];
 }

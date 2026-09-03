@@ -2,16 +2,18 @@
 
 import { use, useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import type { Change, Creative, Insight, SerpOut, TrendsOut, WatchlistDetail } from "@/lib/types";
+import type { BrandsOut, Change, Creative, Insight, SerpOut, TrendsOut, WatchlistDetail } from "@/lib/types";
 import { fmtTime } from "@/components/Badges";
 import { ChangeRow } from "@/components/ChangeRow";
 import { InsightCard } from "@/components/InsightCard";
+import { BrandDefenceTable } from "@/components/BrandDefenceTable";
 import { CreativeCard } from "@/components/CreativeCard";
 import { SerpTable } from "@/components/SerpTable";
 import { TrendSparkline } from "@/components/TrendSparkline";
 import { ExportMenu } from "@/components/ExportMenu";
+import { DEFAULT_WINDOW_MONTHS, sortCreatives, withinMonths, type CreativeSortKey } from "@/lib/sortCreatives";
 
-type Tab = "insights" | "changes" | "competitors" | "keywords";
+type Tab = "insights" | "changes" | "brands" | "competitors" | "keywords";
 
 export default function WatchlistPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: idStr } = use(params);
@@ -23,6 +25,7 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
   const [creatives, setCreatives] = useState<Creative[]>([]);
   const [serp, setSerp] = useState<SerpOut | null>(null);
   const [trends, setTrends] = useState<TrendsOut | null>(null);
+  const [brands, setBrands] = useState<BrandsOut | null>(null);
   const [kwId, setKwId] = useState<number | null>(null);
   const [tab, setTab] = useState<Tab>("insights");
   const [busy, setBusy] = useState(false);
@@ -30,11 +33,16 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
   const [err, setErr] = useState<string | null>(null);
   const [newComp, setNewComp] = useState({ name: "", domain: "" });
   const [newKw, setNewKw] = useState("");
+  const [sortKey, setSortKey] = useState<CreativeSortKey>("last_shown");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const load = useCallback(async () => {
     try {
-      const [d, ins, ch, cr] = await Promise.all([api.watchlist(id), api.insights(id), api.changes(id, 100), api.creatives(id)]);
-      setW(d); setInsights(ins); setChanges(ch); setCreatives(cr);
+      const [d, ins, ch, cr, br] = await Promise.all([
+        api.watchlist(id), api.insights(id), api.changes(id, 100), api.creatives(id),
+        api.brands(id).catch(() => null),
+      ]);
+      setW(d); setInsights(ins); setChanges(ch); setCreatives(cr); setBrands(br);
       // Pick a default keyword without reading kwId. Depending on it here recreated
       // `load`, which re-fired the effect below and fetched the whole page twice.
       setKwId((prev) => prev ?? d.keywords[0]?.id ?? null);
@@ -102,7 +110,7 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
       {err && <div className="panel p-2 mt-3 text-sm" style={{ color: "var(--high)" }}>{err}</div>}
 
       <nav className="flex gap-1 mt-5 border-b" style={{ borderColor: "var(--line)" }}>
-        {(["insights", "changes", "competitors", "keywords"] as Tab[]).map((t) => (
+        {(["insights", "changes", "brands", "competitors", "keywords"] as Tab[]).map((t) => (
           <button key={t} className="tab text-sm capitalize" data-active={tab === t} onClick={() => setTab(t)}>
             {t}{t === "insights" ? ` (${insights.length})` : t === "changes" ? ` (${changes.length})` : ""}
           </button>
@@ -123,6 +131,12 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
         </div>
       )}
 
+      {tab === "brands" && (
+        <div className="mt-4">
+          {brands ? <BrandDefenceTable b={brands} /> : <div className="muted text-sm">loading…</div>}
+        </div>
+      )}
+
       {tab === "competitors" && (
         <div className="mt-4 space-y-6">
           <div className="panel-2 p-3 flex flex-wrap gap-2 items-center">
@@ -131,13 +145,35 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
             <input className="panel-2 p-1.5 text-sm flex-1 min-w-[200px]" placeholder="competitor-domain.com" value={newComp.domain} onChange={(e) => setNewComp({ ...newComp, domain: e.target.value })} onKeyDown={(e) => e.key === "Enter" && addComp()} />
             <button className="btn text-sm" onClick={addComp}>Add</button>
           </div>
+          <div className="panel-2 p-3 flex flex-wrap gap-2 items-center">
+            <span className="muted text-xs">Last {DEFAULT_WINDOW_MONTHS} months · sort by</span>
+            <select
+              className="panel-2 p-1.5 text-sm"
+              value={sortKey}
+              onChange={(e) => setSortKey(e.target.value as CreativeSortKey)}
+              aria-label="Sort creatives by"
+            >
+              <option value="last_shown">Last shown</option>
+              <option value="first_shown">First shown</option>
+              <option value="total_days_shown">Days running</option>
+              <option value="format">Format</option>
+            </select>
+            <button
+              className="btn text-sm"
+              onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
+              aria-label={`Sort ${sortDir === "asc" ? "ascending" : "descending"}`}
+              title={sortDir === "asc" ? "Ascending — click for descending" : "Descending — click for ascending"}
+            >
+              {sortDir === "asc" ? "ASC ↑" : "DESC ↓"}
+            </button>
+          </div>
           {w.competitors.map((c) => {
-            const mine = creatives.filter((x) => x.competitor_id === c.id);
+            const mine = sortCreatives(withinMonths(creatives.filter((x) => x.competitor_id === c.id)), sortKey, sortDir);
             return (
               <section key={c.id}>
                 <div className="flex items-baseline gap-3">
                   <h2 className="font-medium text-lg">{c.name}</h2>
-                  <span className="muted text-sm">{c.domain} · {c.active_creatives} active creatives</span>
+                  <span className="muted text-sm">{c.domain} · {c.active_creatives} active creatives · showing {mine.length}</span>
                 </div>
                 <div className="grid gap-3 mt-2 sm:grid-cols-2 lg:grid-cols-4">
                   {mine.slice(0, 12).map((cr) => <CreativeCard key={cr.id} c={cr} isNew={newIds.has(cr.creative_id)} />)}

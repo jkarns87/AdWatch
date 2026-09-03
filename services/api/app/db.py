@@ -57,3 +57,6 @@ def init_db() -> None:
         conn.execute(text("ALTER TABLE serp_ads ADD COLUMN IF NOT EXISTS source VARCHAR(255)"))
         conn.execute(text("ALTER TABLE serp_ads ADD COLUMN IF NOT EXISTS sitelinks JSON"))
         conn.execute(text("ALTER TABLE creatives ADD COLUMN IF NOT EXISTS total_days_shown INTEGER"))
+        # Brand terms ride the keywords table with a kind flag and an owner.
+        conn.execute(text("ALTER TABLE keywords ADD COLUMN IF NOT EXISTS kind VARCHAR(10) NOT NULL DEFAULT 'keyword'"))
+        conn.execute(text("ALTER TABLE keywords ADD COLUMN IF NOT EXISTS owner_competitor_id INTEGER REFERENCES competitors(id)"))

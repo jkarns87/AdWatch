@@ -78,6 +78,13 @@ class Keyword(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     watchlist_id: Mapped[int] = mapped_column(ForeignKey("watchlists.id"), index=True)
     term: Mapped[str] = mapped_column(String(255))
+    # "keyword" is a market term the customer wants to rank on. "brand" is a
+    # competitor's own name, collected to see who is bidding on it. Brand terms take
+    # the paid-block call only — demand for a brand name is not the signal, so the
+    # trends and related-query calls an ordinary keyword makes would be waste.
+    kind: Mapped[str] = mapped_column(String(10), default="keyword")
+    # For a brand term, whose brand it is. Null for ordinary keywords.
+    owner_competitor_id: Mapped[int | None] = mapped_column(ForeignKey("competitors.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     watchlist: Mapped[Watchlist] = relationship(back_populates="keywords")

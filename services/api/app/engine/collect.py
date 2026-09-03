@@ -22,7 +22,7 @@ from ..collectors.serpapi_client import SerpApiClient, SerpApiError
 from ..config import get_settings
 from ..redact import redact
 from ..workspace_secrets import resolve_key
-from . import diff
+from . import brand, diff
 
 log = logging.getLogger(__name__)
 
@@ -238,6 +238,13 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
             fallback=get_settings().serpapi_api_key,
         )
     )
+    # Every competitor gets a brand term, provisioned here rather than only on add so
+    # watchlists that predate the feature pick it up on their next run. Costs one
+    # search per competitor per run.
+    if brand.ensure_brand_terms(db, watchlist):
+        db.flush()
+        db.refresh(watchlist)
+
     run = m.Run(watchlist_id=watchlist.id, status="running")
     db.add(run)
     db.flush()
@@ -259,6 +266,7 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
                 changes.append(m.Change(watchlist_id=watchlist.id, run_id=run.id, **ch))
 
         gl = (watchlist.geo or "US").lower()
+        owner_by_kw = {c.id: c for c in watchlist.competitors}
         for kw in watchlist.keywords:
             # paid block
             prev_serp = serp_view(db, kw.id, prev_id)
@@ -268,6 +276,19 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
             ads = serp_ads_from_google(res.data)
             for a in ads:
                 db.add(m.SerpAd(keyword_id=kw.id, run_id=run.id, **a))
+
+            # A brand term asks a different question of the same response: not "who is
+            # on this market keyword" but "who is paying for this company's name".
+            # It stops here — one search, no trends and no related-query draws, because
+            # demand for a brand name is not the signal and would cost three more.
+            if getattr(kw, "kind", "keyword") == "brand":
+                owner = owner_by_kw.get(kw.owner_competitor_id)
+                if owner is not None:
+                    for ch in brand.diff_brand(prev_serp, ads, owner_domain=owner.domain,
+                                               competitor_id=owner.id, label=kw.term):
+                        changes.append(m.Change(watchlist_id=watchlist.id, run_id=run.id, **ch))
+                continue
+
             for ch in diff.diff_serp_ads(prev_serp, ads, keyword_id=kw.id, label=kw.term, tracked_domains=tracked):
                 changes.append(m.Change(watchlist_id=watchlist.id, run_id=run.id, **ch))
 

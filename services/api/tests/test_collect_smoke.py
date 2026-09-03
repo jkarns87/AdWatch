@@ -108,26 +108,33 @@ def test_the_consensus_takes_more_than_one_related_draw(db, watchlist, faked):
     assert faked.calls.count("related") == collect_mod.RELATED_QUERY_DRAWS
 
 
+def _market_kw(db):
+    """The ordinary keyword. Brand terms are collected too and write their own rows,
+    so anything asserting on a single SERP result has to say which keyword it means."""
+    return db.query(m.Keyword).filter_by(kind="keyword").one()
+
+
 def test_rows_land_in_every_table_the_collector_writes(db, watchlist, faked):
     """Each normalizer is wired to a model whose columns actually exist — a renamed
     or missing column raises here rather than at the first production request."""
     collect_mod.run_collect(db, watchlist, fresh=False)
     db.flush()
+    kw = _market_kw(db)
     assert db.query(m.Creative).count() == 1
-    assert db.query(m.SerpAd).count() == 1
-    assert db.query(m.ProductListing).count() == 1
+    assert db.query(m.SerpAd).filter_by(keyword_id=kw.id).count() == 1
+    assert db.query(m.ProductListing).filter_by(keyword_id=kw.id).count() == 1
     assert db.query(m.TrendPoint).count() >= 1
 
 
 def test_the_new_fields_are_persisted_not_just_parsed(db, watchlist, faked):
     collect_mod.run_collect(db, watchlist, fresh=False)
     db.flush()
-    ad = db.query(m.SerpAd).one()
+    ad = db.query(m.SerpAd).filter_by(keyword_id=_market_kw(db).id).one()
     assert ad.sitelinks == ["Pricing"]
     assert ad.source == "Rival®"
     assert ad.advertiser_domain == "rival.com", "breadcrumb leaked into the diff key"
     assert db.query(m.Creative).one().total_days_shown == 120
-    p = db.query(m.ProductListing).one()
+    p = db.query(m.ProductListing).filter_by(keyword_id=_market_kw(db).id).one()
     assert (p.merchant, p.price, p.promo) == ("AShop", 99.0, "10% OFF")
 
 

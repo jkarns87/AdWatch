@@ -1,5 +1,6 @@
 import { authHeaders } from "./auth";
 import type {
+  BrandsOut,
   AlertFeedItem,
   Change,
   CompanyAssetIn,
@@ -52,6 +53,7 @@ export const api = {
     req(`/watchlists/${id}/keywords`, { method: "POST", body: JSON.stringify({ term }) }),
   changes: (id: number, limit = 50) => req<Change[]>(`/watchlists/${id}/changes?limit=${limit}`),
   insights: (id: number) => req<Insight[]>(`/watchlists/${id}/insights`),
+  brands: (id: number) => req<BrandsOut>(`/watchlists/${id}/brands`),
   creatives: (id: number, competitorId?: number) =>
     req<Creative[]>(`/watchlists/${id}/creatives?active=true${competitorId ? `&competitor_id=${competitorId}` : ""}`),
   serp: (id: number, keywordId: number) => req<SerpOut>(`/watchlists/${id}/serp?keyword_id=${keywordId}`),

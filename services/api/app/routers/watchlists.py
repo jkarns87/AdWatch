@@ -8,6 +8,8 @@ from .. import models as m
 from .. import schemas as s
 from ..auth import current_workspace_id, ensure_workspace, get_watchlist
 from ..db import get_db
+from ..engine import brand as brand_engine
+from ..engine.collect import serp_view
 
 router = APIRouter(prefix="/watchlists", tags=["watchlists"])
 
@@ -109,3 +111,45 @@ def delete_keyword(keyword_id: int, w: m.Watchlist = Depends(get_watchlist), db:
     db.delete(k)
     db.commit()
     return Response(status_code=204)
+
+
+@router.get("/{watchlist_id}/brands", summary="Who is bidding on each tracked brand right now")
+def brand_defence(w: m.Watchlist = Depends(get_watchlist), db: Session = Depends(get_db)):
+    """Current state per brand, not the change feed.
+
+    Conquesting is reported as an event only when it starts or stops, because the
+    paid block flickers and re-announcing a standing rival every run would bury the
+    run where one arrives. That makes the standing position invisible in the feed,
+    which is exactly what someone defending a brand needs to see — so it lives here.
+    """
+    last = db.scalar(
+        select(m.Run).where(m.Run.watchlist_id == w.id, m.Run.status == "done").order_by(m.Run.id.desc()).limit(1)
+    )
+    owners = {c.id: c for c in w.competitors}
+    out = []
+    for kw in w.keywords:
+        if getattr(kw, "kind", "keyword") != "brand":
+            continue
+        owner = owners.get(kw.owner_competitor_id)
+        if owner is None:
+            continue
+        ads = serp_view(db, kw.id, last.id) if last else None
+        state = brand_engine.assess(ads or [], owner_domain=owner.domain)
+        out.append({
+            "brand": kw.term,
+            "competitor_id": owner.id,
+            "is_self": owner.is_self,
+            "owner_domain": owner.domain,
+            "collected": ads is not None,
+            "owner_present": state["owner_present"],
+            "owner_position": state["owner_position"],
+            "undefended": state["undefended"],
+            "conquerors": [
+                {"advertiser_domain": a.get("advertiser_domain"), "position": a.get("position"),
+                 "block": a.get("block"), "title": a.get("title")}
+                for a in state["conquerors"]
+            ],
+        })
+    # Our own brand first — it is the one the customer can act on today.
+    out.sort(key=lambda b: (not b["is_self"], b["brand"].lower()))
+    return {"run_id": last.id if last else None, "brands": out}
