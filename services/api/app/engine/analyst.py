@@ -104,9 +104,11 @@ class Analyst:
             # passing it raised TypeError on every single call — which the except below
             # swallowed into the fallback, so the analyst never once reached Claude in
             # production while the product looked like it was working.
+            # 900 was not headroom. Measured in production, briefs land at 498-609 output
+            # tokens and every one that reached 900 was cut off mid-JSON — three of seven.
             msg = self.client.messages.create(
                 model=self.model,
-                max_tokens=900,
+                max_tokens=2000,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
             )
@@ -119,6 +121,17 @@ class Analyst:
         usage = getattr(msg, "usage", None)
         parsed = _extract_json(text)
         if not parsed:
+            # A brief cut off by the token cap is a failed brief, not a partial one:
+            # rendering the debris put a wall of unterminated JSON on the insight card
+            # at 0% confidence. Degrading to readable prose is still deliberate (see the
+            # module docstring), so only throw away output that was truncated or is
+            # visibly JSON that would not parse.
+            truncated = getattr(msg, "stop_reason", None) == "max_tokens"
+            if truncated or text.lstrip().startswith("{"):
+                reason = "response truncated at the token cap" if truncated else "malformed JSON response"
+                out = self._fallback(changes, reason=reason)
+                out["_usage"] = usage  # tokens were spent either way; the ledger wants them
+                return out
             return {"summary": text[:2000], "why_it_matters": "", "recommended_actions": [], "confidence": 0.0, "model": self.model, "_usage": usage}
         parsed.setdefault("recommended_actions", [])
         parsed.setdefault("why_it_matters", "")

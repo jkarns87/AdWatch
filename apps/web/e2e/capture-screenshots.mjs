@@ -23,7 +23,8 @@ if (!EMAIL || !PASSWORD) {
 const SHOTS = [
   ['01-dashboard', '/'],
   ['02-watchlists', '/watchlists'],
-  ['03-watchlist-detail', '/watchlists/3'],
+  // Detail path is discovered after sign-in — re-seeding the demo data changes the id.
+  ['03-watchlist-detail', null],
   ['04-usage', '/usage'],
   ['05-alerts', '/alerts'],
   ['06-integrations', '/settings/integrations'],
@@ -45,7 +46,20 @@ await page.getByRole('button', { name: /^sign in$/i }).click()
 await page.waitForURL((u) => !u.pathname.startsWith('/login'), { timeout: 30_000 })
 console.log(`signed in, landed on ${new URL(page.url()).pathname}`)
 
-for (const [name, path] of SHOTS) {
+// Find a real watchlist id rather than hardcoding one that re-seeding will invalidate.
+await page.goto(`${BASE}/watchlists`, { waitUntil: 'networkidle' })
+const detailPath = await page
+  .locator('a[href^="/watchlists/"]')
+  .first()
+  .getAttribute('href')
+console.log(`watchlist detail resolved to ${detailPath}`)
+
+for (const [name, rawPath] of SHOTS) {
+  const path = rawPath ?? detailPath
+  if (!path) {
+    console.log(`  SKIP ${name} — no watchlist found to link to`)
+    continue
+  }
   try {
     await page.goto(`${BASE}${path}`, { waitUntil: 'networkidle', timeout: 45_000 })
     // Give charts and any client-side fetch a beat to paint before capturing.
