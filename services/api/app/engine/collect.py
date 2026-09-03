@@ -175,6 +175,12 @@ def upsert_creatives(db: Session, competitor: m.Competitor, run: m.Run, rows: li
     seen: set[str] = set()
     for r in rows:
         cid = r["creative_id"]
+        if cid in seen:
+            # The same creative can appear twice in one response. `existing` is read
+            # once up front, so without this the second copy looked new as well and
+            # both were inserted, violating the (competitor_id, creative_id) unique
+            # constraint and failing the entire run at flush.
+            continue
         seen.add(cid)
         c = existing.get(cid)
         if c is None:

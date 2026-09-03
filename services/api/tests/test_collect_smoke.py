@@ -239,3 +239,28 @@ def test_analyze_releases_its_transaction_before_calling_the_model(db, watchlist
 
     assert in_transaction, "the analyst was never reached"
     assert in_transaction[0] is False, "a transaction was open across the model calls"
+
+
+def test_a_creative_repeated_in_one_response_is_inserted_once(db, watchlist, monkeypatch):
+    """The Ads Transparency response can list the same creative twice.
+
+    upsert_creatives loaded existing rows once, then created a Creative per response
+    row without tracking what it had already created in this batch, so a duplicate
+    produced two INSERTs of the same (competitor_id, creative_id) in one flush.
+    Production: 'Key (competitor_id, creative_id)=(21, CR097050...) already exists',
+    which failed the whole run.
+    """
+    class _Dupes(_FakeClient):
+        def ads_transparency(self, **k):
+            self.calls.append("atc")
+            return _Res({"ad_creatives": [
+                {"ad_creative_id": "CR1", "format": "text", "total_days_shown": 10},
+                {"ad_creative_id": "CR1", "format": "text", "total_days_shown": 10},
+                {"ad_creative_id": "CR2", "format": "text"},
+            ]})
+
+    monkeypatch.setattr(collect_mod, "SerpApiClient", lambda *a, **k: _Dupes())
+    run, _, _ = collect_mod.run_collect(db, watchlist, fresh=False)
+    db.flush()
+    assert run.status == "done", f"run failed: {run.error}"
+    assert db.query(m.Creative).count() == 2
