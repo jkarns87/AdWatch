@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from .. import models as m
 from ..config import get_settings
+from ..redact import redact
 from .webhook import SEVERITY_ORDER
 
 log = logging.getLogger(__name__)
@@ -48,6 +49,7 @@ def dispatch_via_xano(db: Session, watchlist: m.Watchlist, insight: m.Insight, c
         alert.error = None if sent else "no destinations accepted it"
         return sent > 0
     except Exception as e:  # noqa: BLE001
-        log.warning("xano dispatch failed: %s", e)
-        alert.status, alert.error = "failed", str(e)[:500]
+        detail = redact(str(e))[:500]
+        log.warning("xano dispatch failed: %s", detail)
+        alert.status, alert.error = "failed", detail
         return False

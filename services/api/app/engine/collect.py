@@ -16,6 +16,7 @@ from ..collectors.normalize import (
     trend_points_from_timeseries,
 )
 from ..collectors.serpapi_client import SerpApiClient, SerpApiError
+from ..redact import redact
 from . import diff
 
 log = logging.getLogger(__name__)
@@ -200,7 +201,7 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
     except SerpApiError as e:
         log.exception("collect failed")
         run.status = "failed"
-        run.error = str(e)
+        run.error = redact(str(e))
     finally:
         run.searches_used = client.searches_used
         run.finished_at = datetime.now(UTC)

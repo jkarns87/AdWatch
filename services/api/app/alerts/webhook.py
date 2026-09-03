@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from .. import models as m
 from ..config import get_settings
+from ..redact import redact
 
 log = logging.getLogger(__name__)
 
@@ -97,6 +98,8 @@ def dispatch_insight(db: Session, watchlist: m.Watchlist, insight: m.Insight, ch
         alert.status, alert.sent_at = "sent", datetime.now(UTC)
         return True
     except Exception as e:  # noqa: BLE001
-        log.warning("webhook failed: %s", e)
-        alert.status, alert.error = "failed", str(e)[:500]
+        # httpx puts the full request URL — token included — in its message.
+        detail = redact(str(e))[:500]
+        log.warning("webhook failed: %s", detail)
+        alert.status, alert.error = "failed", detail
         return False
