@@ -9,7 +9,7 @@ from .coffee.router import router as coffee_router
 from .config import get_settings
 from .crypto import available as crypto_available
 from .db import get_engine, init_db
-from .routers import alerts, demo, reads, reports, runs, usage, watchlists
+from .routers import alerts, demo, providers, reads, reports, runs, usage, watchlists
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -37,6 +37,7 @@ app.include_router(reads.router, prefix=API)
 app.include_router(demo.router, prefix=API)
 app.include_router(usage.router, prefix=API)
 app.include_router(alerts.router, prefix=API)
+app.include_router(providers.router, prefix=API)
 app.include_router(reports.router, prefix=API)
 app.include_router(coffee_router, prefix=API)
 
@@ -52,8 +53,9 @@ def health():
     return {
         "status": "ok" if db_ok == "ok" else "degraded",
         "db": db_ok,
-        "serpapi_key": bool(settings.serpapi_api_key),
-        "anthropic_key": bool(settings.anthropic_api_key),
+        # Presence only — GET /providers/serpapi asks whether the key actually works.
+        "serpapi_key_present": bool(settings.serpapi_api_key),
+        "anthropic_key_present": bool(settings.anthropic_api_key),
         "secrets_encryption": crypto_available(),  # can workspaces store their own keys?
         "model": settings.anthropic_model,
         "env": settings.env,

@@ -10,7 +10,17 @@ Frontend builds against this document. Backend implements it. **Changes to this 
 
 ## Health
 
-`GET /health` → `{ "status": "ok", "db": "ok", "serpapi_key": true, "anthropic_key": true }`
+`GET /health` → `{ "status": "ok", "db": "ok", "serpapi_key_present": true, "anthropic_key_present": true }`
+
+The `_present` fields are exactly that — presence, not validity. `bool("apiworld2026")`
+is `true`. For whether the key actually works, and how much quota is left:
+
+`GET /providers/serpapi` → `{ "key_source": "workspace|platform|none",
+  "status": "ok|invalid|exhausted|unset|unreachable", "plan": "Free Plan",
+  "searches_left": 184, "searches_per_month": 250, "cached": true }`
+
+Cached for 60s per key. `invalid` and `unreachable` are distinct: a bad key versus
+SerpApi being down.
 
 ---
 

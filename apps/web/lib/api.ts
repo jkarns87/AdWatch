@@ -34,7 +34,7 @@ async function req<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  health: () => req<{ status: string; db: string; serpapi_key: boolean; anthropic_key: boolean }>("/health"),
+  health: () => req<{ status: string; db: string; serpapi_key_present: boolean; anthropic_key_present: boolean }>("/health"),
   watchlists: () => req<WatchlistSummary[]>("/watchlists"),
   watchlist: (id: number) => req<WatchlistDetail>(`/watchlists/${id}`),
   createWatchlist: (body: { name: string; vertical: string; geo?: string; location?: string | null }) =>
