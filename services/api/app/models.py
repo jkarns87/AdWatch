@@ -41,6 +41,11 @@ class Watchlist(Base):
     vertical: Mapped[str] = mapped_column(String(200), default="")
     geo: Mapped[str] = mapped_column(String(10), default="US")
     location: Mapped[str | None] = mapped_column(String(120))  # SerpApi `location` for Google Search, e.g. "San Francisco, California, United States"
+    # Google Trends taxonomy node (app/taxonomy.py); `vertical` stays the human label.
+    trends_category_id: Mapped[int | None] = mapped_column(Integer)
+    company_domain: Mapped[str | None] = mapped_column(String(255))
+    # What Claude was given at onboarding, kept so a re-analysis is reproducible.
+    company_description: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     competitors: Mapped[list[Competitor]] = relationship(back_populates="watchlist", cascade="all, delete-orphan")
@@ -54,6 +59,10 @@ class Competitor(Base):
     name: Mapped[str] = mapped_column(String(200))
     domain: Mapped[str] = mapped_column(String(255))
     advertiser_id: Mapped[str | None] = mapped_column(String(100))
+    # The workspace's own domain, tracked so SERP reads answer "where am I versus them".
+    # Excluded from user-facing competitor counts and plan limits; included in collection
+    # and share of voice. See tests/test_self_competitor.py for the rule.
+    is_self: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     watchlist: Mapped[Watchlist] = relationship(back_populates="competitors")
@@ -175,6 +184,22 @@ class Insight(Base):
     why_it_matters: Mapped[str] = mapped_column(Text, default="")
     recommended_actions: Mapped[list] = mapped_column(JSON, default=list)
     confidence: Mapped[float] = mapped_column(Float, default=0.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class CompanyAsset(Base):
+    """One extracted fact about the company. A narrow table rather than wide columns:
+    the kinds have nothing in common and more will follow. Their own ad creatives are
+    NOT here — those are Creative rows against the is_self competitor, so
+    creative_launched fires on the user's own ads for free."""
+
+    __tablename__ = "company_assets"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    watchlist_id: Mapped[int] = mapped_column(ForeignKey("watchlists.id"), index=True)
+    kind: Mapped[str] = mapped_column(String(20))  # brand | property | catalogue
+    key: Mapped[str] = mapped_column(String(80))
+    value: Mapped[str] = mapped_column(Text, default="")
+    source_url: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

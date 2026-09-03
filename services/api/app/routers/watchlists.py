@@ -31,7 +31,7 @@ def list_watchlists(db: Session = Depends(get_db), workspace_id: int = Depends(c
                 vertical=w.vertical,
                 geo=w.geo,
                 location=w.location,
-                competitor_count=len(w.competitors),
+                competitor_count=len([c for c in w.competitors if not c.is_self]),  # you are not your own competitor
                 keyword_count=len(w.keywords),
                 last_run_at=lr.finished_at if lr else None,
                 open_changes=open_changes,
@@ -53,7 +53,9 @@ def _detail(db: Session, w: m.Watchlist) -> s.WatchlistDetail:
     comps = []
     for c in w.competitors:
         active = db.scalar(select(func.count(m.Creative.id)).where(m.Creative.competitor_id == c.id, m.Creative.active.is_(True))) or 0
-        comps.append(s.CompetitorOut(id=c.id, name=c.name, domain=c.domain, advertiser_id=c.advertiser_id, active_creatives=active))
+        # is_self is listed, not filtered — the detail view labels your own row
+        comps.append(s.CompetitorOut(id=c.id, name=c.name, domain=c.domain, advertiser_id=c.advertiser_id,
+                                     is_self=c.is_self, active_creatives=active))
     lr = _last_run(db, w.id)
     return s.WatchlistDetail(
         id=w.id,

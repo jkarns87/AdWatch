@@ -17,7 +17,8 @@ def watchlist_context(w: m.Watchlist) -> dict:
         "watchlist": w.name,
         "vertical": w.vertical,
         "geo": w.geo,
-        "tracked_competitors": [{"name": c.name, "domain": c.domain} for c in w.competitors],
+        "tracked_competitors": [{"name": c.name, "domain": c.domain} for c in w.competitors if not c.is_self],
+        "our_domain": next((c.domain for c in w.competitors if c.is_self), None),
         "tracked_keywords": [k.term for k in w.keywords],
     }
 

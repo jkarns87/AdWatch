@@ -142,6 +142,13 @@ def upsert_creatives(db: Session, competitor: m.Competitor, run: m.Run, rows: li
             c.active = False
 
 
+def competitors_to_collect(watchlist: m.Watchlist) -> list[m.Competitor]:
+    """Every tracked domain, the workspace's own included — collecting your own
+    creatives is the point of tracking yourself, and it makes creative_launched fire
+    on your ads too."""
+    return list(watchlist.competitors)
+
+
 def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | None = None, fresh: bool = False) -> tuple[m.Run, int, list[m.Change]]:
     # A workspace that supplied its own SerpApi key spends its own quota; everyone
     # else falls back to the platform key and the plan budget.
@@ -161,7 +168,7 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
     n_snapshots = 0
 
     try:
-        for comp in watchlist.competitors:
+        for comp in competitors_to_collect(watchlist):
             previous = active_creatives_view(db, comp.id, prev_id)
             res = client.ads_transparency(domain=comp.domain, advertiser_id=comp.advertiser_id, fresh=fresh)
             _snapshot(db, run, "ads_transparency", "competitor", comp.id, res)

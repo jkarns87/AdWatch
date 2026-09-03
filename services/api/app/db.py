@@ -45,3 +45,7 @@ def init_db() -> None:
 
     with get_engine().begin() as conn:
         conn.execute(text("ALTER TABLE watchlists ADD COLUMN IF NOT EXISTS location VARCHAR(120)"))
+        conn.execute(text("ALTER TABLE watchlists ADD COLUMN IF NOT EXISTS trends_category_id INTEGER"))
+        conn.execute(text("ALTER TABLE watchlists ADD COLUMN IF NOT EXISTS company_domain VARCHAR(255)"))
+        conn.execute(text("ALTER TABLE watchlists ADD COLUMN IF NOT EXISTS company_description TEXT"))
+        conn.execute(text("ALTER TABLE competitors ADD COLUMN IF NOT EXISTS is_self BOOLEAN NOT NULL DEFAULT FALSE"))

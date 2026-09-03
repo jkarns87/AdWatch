@@ -51,7 +51,8 @@ def usage(
                 m.Run.watchlist_id == w.id, m.Run.started_at >= start
             )
         ).one()
-        c, k = len(w.competitors), len(w.keywords)
+        # self excluded: charging a competitor slot for your own domain would be absurd
+        c, k = len([x for x in w.competitors if not x.is_self]), len(w.keywords)
         per_run = searches_per_run(c, k)
         cur = searches_per_month(c, k, CURRENT_CADENCE, batch_trends=False)
         opt = searches_per_month(c, k, plan.cadence, batch_trends=True)

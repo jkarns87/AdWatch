@@ -17,6 +17,12 @@ from ..db import get_db
 router = APIRouter(prefix="/watchlists", tags=["reads"])
 
 
+def tracked_domains(w: m.Watchlist) -> set[str]:
+    """Domains that count as ours in a paid block, the workspace's own included —
+    otherwise the SERP table marks every rival as tracked and the user as a stranger."""
+    return {c.domain.lower() for c in w.competitors}
+
+
 def _latest_run_id(db: Session, watchlist_id: int) -> int | None:
     return db.scalar(select(m.Run.id).where(m.Run.watchlist_id == watchlist_id, m.Run.status == "done").order_by(m.Run.id.desc()).limit(1))
 
@@ -62,7 +68,7 @@ def serp(keyword_id: int, w: m.Watchlist = Depends(get_watchlist), db: Session =
     if kw is None:
         raise HTTPException(404, "keyword not in watchlist")
     run_id = _latest_run_id(db, w.id)
-    tracked = {c.domain.lower(): c.id for c in w.competitors}
+    tracked = {c.domain.lower(): c.id for c in w.competitors}  # self included: see tracked_domains
     ads: list[s.SerpAdOut] = []
     if run_id:
         # block.desc() puts 'top' before 'bottom'

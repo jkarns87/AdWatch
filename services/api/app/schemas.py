@@ -48,6 +48,7 @@ class CompetitorOut(ORM):
     name: str
     domain: str
     advertiser_id: str | None
+    is_self: bool = False  # the workspace's own domain
     active_creatives: int = 0
 
 
