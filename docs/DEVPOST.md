@@ -48,9 +48,14 @@ Re-pull before submitting if more runs happen: `GET /api/v1/usage`.
 
 ## Demo account for judges
 
-Created off the public signup endpoint and seeded with **synthetic** data — fictitious
-advertisers (RoastNest, BeanLoop, DripCrate, Grindhaus), no real brands, no quota spent.
-The insights in it are genuine Claude output over that synthetic diff.
+Created off the public signup endpoint and seeded **live** from `seed/demo_config.json`:
+three real US coffee advertisers, collected through SerpApi, so the creatives, paid
+blocks and insights are all real rather than fabricated. The advertisers are the
+*subjects* being monitored — they are not named anywhere in the story as competitors of
+ours or as incumbents, which is what the rule at the top of this file governs.
+
+Seeding this way spends quota (~15 searches a run) and the synthetic mode remains
+available at zero cost via `{"mode": "synthetic"}`.
 
 ```
 https://adwatch.dev
