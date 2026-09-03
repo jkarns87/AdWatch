@@ -143,3 +143,30 @@ holding.
 
 This is per-account, not per-IP. Someone spraying many different addresses is not
 limited by it; that would need a separate counter keyed on the caller.
+
+
+## Health
+
+`GET /health` → `{status, dataplane_configured, dashboard_url_configured,
+dataplane_secret_configured, dataplane_probe_status}`
+
+The three `*_configured` flags are presence checks on env vars, reported separately
+because they fail differently:
+
+| | Symptom when missing |
+|---|---|
+| `DATAPLANE_URL` | the collect task builds a relative path that never resolves |
+| `DATAPLANE_SHARED_SECRET` | the data plane answers 401 |
+| `DASHBOARD_URL` | reset emails send with a link pointing nowhere |
+
+`GET /health?deep=true` additionally calls `GET {DATAPLANE_URL}/api/v1/watchlists` with
+the shared secret — the same authenticated endpoint `task/collect_all_watchlists` uses —
+and reports the status in `dataplane_probe_status`. **200 means the scheduler can
+actually do its job.**
+
+Both variables being set proves nothing about whether the secret *matches* the one the
+data plane holds. That mismatch otherwise surfaces only as a 401 on an unattended
+nightly run, which looks identical to "nothing changed overnight".
+
+Deep is opt-in because it makes an outbound request; the default stays a cheap liveness
+check and returns `dataplane_probe_status: null`.
