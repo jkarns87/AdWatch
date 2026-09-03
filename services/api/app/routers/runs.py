@@ -47,6 +47,17 @@ def collect_and_analyze(
     run, n, changes = run_collect(db, w, fresh=fresh)
     if run.status == "failed":
         raise HTTPException(502, f"collect failed: {run.error}")
+
+    # Collect is minutes of network I/O against SerpApi while this request holds one
+    # pooled connection open and idle. Postgres closed it underneath us, and the first
+    # write in run_analyze died with "server closed the connection unexpectedly" —
+    # after the collect had already succeeded and committed, so the run looked done
+    # while the endpoint returned 500. pool_pre_ping does not help here: it validates
+    # a connection on checkout, and this one was checked out before the wait began.
+    # Releasing it hands the next statement a freshly pre-pinged connection.
+    db.commit()
+    db.close()
+
     insights, sent = run_analyze(db, w)
     return s.CollectAnalyzeOut(
         run=s.RunOut.model_validate(run),

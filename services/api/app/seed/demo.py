@@ -46,6 +46,7 @@ def reset(db: Session, *, workspace_id: int) -> None:
         delete(m.RelatedQuery).where(m.RelatedQuery.keyword_id.in_(keywords)),
         delete(m.TrendPoint).where(m.TrendPoint.keyword_id.in_(keywords)),
         delete(m.SerpAd).where(m.SerpAd.keyword_id.in_(keywords)),
+        delete(m.ProductListing).where(m.ProductListing.keyword_id.in_(keywords)),
         delete(m.Creative).where(m.Creative.competitor_id.in_(competitors)),
         delete(m.Snapshot).where(m.Snapshot.watchlist_id.in_(watchlists)),
         delete(m.LlmCall).where(m.LlmCall.workspace_id == workspace_id),

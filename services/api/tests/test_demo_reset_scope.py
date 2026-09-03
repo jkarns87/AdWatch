@@ -5,7 +5,7 @@ was still global — any authenticated user of any workspace could wipe every ot
 workspace's data. These tests pin the blast radius to the caller.
 """
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app import models as m
 from app.seed.demo import reset
@@ -26,6 +26,7 @@ def _workspace_with_data(db, ws_id: int, name: str):
         [
             m.Creative(competitor_id=comp.id, creative_id=f"CR-{name}", first_seen_run_id=run.id, last_seen_run_id=run.id),
             m.SerpAd(keyword_id=kw.id, run_id=run.id, position=1, block="top", advertiser_domain="x.com"),
+            m.ProductListing(keyword_id=kw.id, run_id=run.id, merchant="AShop", title="Grinder", price=99.0),
             m.TrendPoint(keyword_id=kw.id, run_id=run.id, date=__import__("datetime").date(2026, 9, 1), value=50),
             m.RelatedQuery(keyword_id=kw.id, run_id=run.id, query="q", bucket="rising"),
             m.Snapshot(run_id=run.id, watchlist_id=w.id, kind="search_ads", subject_type="keyword", subject_id=kw.id, raw={}),
@@ -54,6 +55,7 @@ def _counts(db, ws_id: int) -> dict[str, int]:
         "keywords": n(kw_ids),
         "creatives": n(db.scalars(select(m.Creative.id).where(m.Creative.competitor_id.in_(comp_ids))).all()) if comp_ids else 0,
         "serp_ads": n(db.scalars(select(m.SerpAd.id).where(m.SerpAd.keyword_id.in_(kw_ids))).all()) if kw_ids else 0,
+        "product_listings": n(db.scalars(select(m.ProductListing.id).where(m.ProductListing.keyword_id.in_(kw_ids))).all()) if kw_ids else 0,
         "trend_points": n(db.scalars(select(m.TrendPoint.id).where(m.TrendPoint.keyword_id.in_(kw_ids))).all()) if kw_ids else 0,
         "snapshots": n(db.scalars(select(m.Snapshot.id).where(m.Snapshot.watchlist_id.in_(wl_ids))).all()) if wl_ids else 0,
         "changes": n(db.scalars(select(m.Change.id).where(m.Change.watchlist_id.in_(wl_ids))).all()) if wl_ids else 0,
@@ -89,3 +91,29 @@ def test_reset_of_an_empty_workspace_is_a_no_op(db):
     before = _counts(db, 2)
     reset(db, workspace_id=999)
     assert _counts(db, 2) == before
+
+
+def test_reset_leaves_no_orphaned_rows_anywhere(db):
+    """Count globally, not through the parent.
+
+    `_counts` resolves every child through its watchlist, so once reset deletes the
+    watchlist an undeleted child reads as zero and the scope tests pass while rows
+    are still in the table. That is how a new table with foreign keys to keywords and
+    runs was added without being added to reset(): the suite stayed green and
+    production returned 500 on the first reset, because Postgres does enforce the
+    constraint even though SQLite here does not.
+    """
+    _workspace_with_data(db, 1, "acme")
+    db.flush()
+    reset(db, workspace_id=1)
+    db.flush()
+
+    leftovers = {
+        table.__name__: db.scalar(select(func.count()).select_from(table))
+        for table in (
+            m.Creative, m.SerpAd, m.ProductListing, m.TrendPoint, m.RelatedQuery,
+            m.Snapshot, m.Change, m.Insight, m.Alert, m.LlmCall, m.Run, m.Keyword,
+            m.Competitor, m.Watchlist,
+        )
+    }
+    assert not {k: v for k, v in leftovers.items() if v}, f"rows survived reset: {leftovers}"
