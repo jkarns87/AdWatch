@@ -35,24 +35,34 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
     try {
       const [d, ins, ch, cr] = await Promise.all([api.watchlist(id), api.insights(id), api.changes(id, 100), api.creatives(id)]);
       setW(d); setInsights(ins); setChanges(ch); setCreatives(cr);
-      if (kwId === null && d.keywords.length) setKwId(d.keywords[0].id);
+      // Pick a default keyword without reading kwId. Depending on it here recreated
+      // `load`, which re-fired the effect below and fetched the whole page twice.
+      setKwId((prev) => prev ?? d.keywords[0]?.id ?? null);
     } catch (e: any) { setErr(String(e.message ?? e)); }
-  }, [id, kwId]);
+  }, [id]);
+
+  // The per-keyword panels (paid block, demand) are fetched separately from the rest
+  // of the page, so they need refetching explicitly after a run. Leaving it to the
+  // effect below meant a collect that did not change the selected keyword left the
+  // SerpApi table showing the previous run's ads.
+  const loadKeyword = useCallback(async (k: number | null) => {
+    if (k === null) return;
+    await Promise.all([
+      api.serp(id, k).then(setSerp).catch(() => setSerp(null)),
+      api.trends(id, k).then(setTrends).catch(() => setTrends(null)),
+    ]);
+  }, [id]);
 
   useEffect(() => { load(); }, [load]);
 
-  useEffect(() => {
-    if (kwId === null) return;
-    api.serp(id, kwId).then(setSerp).catch(() => setSerp(null));
-    api.trends(id, kwId).then(setTrends).catch(() => setTrends(null));
-  }, [id, kwId]);
+  useEffect(() => { loadKeyword(kwId); }, [loadKeyword, kwId]);
 
   const collect = async () => {
     setBusy(true); setStatus("collecting live data via SerpApi…"); setErr(null);
     try {
       const r = await api.collectAndAnalyze(id);
       setStatus(`run #${r.run.id}: ${r.snapshots} snapshots, ${r.changes.length} changes, ${r.insights.length} insights, ${r.alerts_sent} alert${r.alerts_sent === 1 ? "" : "s"} sent`);
-      await load();
+      await Promise.all([load(), loadKeyword(kwId)]);
       setTab(r.insights.length ? "insights" : "changes");
     } catch (e: any) { setErr(String(e.message ?? e)); setStatus(null); }
     finally { setBusy(false); }
