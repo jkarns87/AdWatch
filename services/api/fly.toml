@@ -9,7 +9,9 @@ primary_region = "sjc"
   ENV = "prod"
   PORT = "8000"
   DEMO_ENDPOINTS = "true"
-  ANTHROPIC_MODEL = "claude-sonnet-4-5"
+  # Must exist in app/pricing.py RATES or every call records as unpriced and the
+  # usage page reports $0.00 while spending real money. Matches .env locally.
+  ANTHROPIC_MODEL = "claude-sonnet-5"
   SERPAPI_CACHE_DIR = "/app/.cache/serpapi"
   AUTH_PROVIDER = "xano"
   XANO_BASE_URL = "https://xcne-4ruo-ej7c.n7e.xano.io/api:adwatch-control"
