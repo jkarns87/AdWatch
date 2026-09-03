@@ -2,8 +2,12 @@ import { authHeaders } from "./auth";
 import type {
   AlertFeedItem,
   Change,
+  CompanyAssetIn,
+  OnboardingProposal,
+  OnboardingResult,
   ProviderKind,
   SerpApiStatus,
+  TrendsCategory,
   WorkspaceKey,
   CollectAnalyzeOut,
   Creative,
@@ -66,6 +70,16 @@ export const api = {
       body: JSON.stringify({ key }),
     }),
   deleteWorkspaceKey: (kind: ProviderKind) => req(`/workspace/keys/${kind}`, { method: "DELETE" }),
+  /** Reads the company's site. Costs Anthropic tokens, no SerpApi quota. */
+  analyzeCompany: (body: { name: string; domain: string; description: string }) =>
+    req<OnboardingProposal>("/onboarding/analyze", { method: "POST", body: JSON.stringify(body) }),
+  /** Verifies each kept competitor against Ads Transparency, then builds the watchlist. */
+  createFromOnboarding: (body: {
+    name: string; domain: string; description: string;
+    vertical_id: number | null; keywords: string[]; competitors: string[]; assets: CompanyAssetIn[];
+  }) => req<OnboardingResult>("/onboarding/create", { method: "POST", body: JSON.stringify(body) }),
+  searchVerticals: (q: string) =>
+    req<TrendsCategory[]>(`/onboarding/verticals?q=${encodeURIComponent(q)}&limit=8`),
   /** Downloads a generated report; returns the filename. Uses fetch so auth headers apply. */
   downloadReport: async (id: number, audience: "cfo" | "marketing", format: "pdf" | "docx" | "md", days = 7) => {
     const r = await fetch(`${BASE}/watchlists/${id}/report?audience=${audience}&format=${format}&days=${days}`, { headers: authHeaders(), cache: "no-store" });

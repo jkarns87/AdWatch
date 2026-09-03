@@ -318,3 +318,27 @@ export interface WorkspaceKey {
   created_at: string;
   updated_at: string;
 }
+
+export interface TrendsCategory { id: number; name: string }
+
+export interface ProposedCompetitor { domain: string; name: string; reason: string }
+
+export interface CompanyAssetIn { kind: "brand" | "property" | "catalogue"; key: string; value: string }
+
+/** POST /onboarding/analyze — a proposal. Nothing is persisted until /create. */
+export interface OnboardingProposal {
+  vertical: TrendsCategory | null;
+  keywords: string[];
+  competitors: ProposedCompetitor[];
+  assets: CompanyAssetIn[];
+  /** false when the site could not be fetched; the answer came from the description alone */
+  site_read: boolean;
+}
+
+export interface OnboardingResult {
+  watchlist_id: number;
+  competitors: { domain: string; verified: boolean }[];
+  /** domains the user kept that were not persisted, and why */
+  skipped: { domain: string; reason: string }[];
+  searches_used: number;
+}

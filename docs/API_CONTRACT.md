@@ -198,6 +198,42 @@ These three routes are additive: they live in `app/coffee/` on their own router 
 
 ---
 
+## Onboarding
+
+`GET /onboarding/verticals?q=&limit=8` → `[{ "id": 71, "name": "Food & Drink" }]` —
+Google Trends taxonomy search, backs the typeahead.
+
+`POST /onboarding/analyze` `{name, domain, description}` — reads the company's own site.
+Costs Anthropic tokens, **no SerpApi quota**. Persists nothing.
+
+```json
+{ "vertical": { "id": 71, "name": "Food & Drink" },
+  "keywords": ["coffee subscription"],
+  "competitors": [{ "domain": "bluebottlecoffee.com", "name": "Blue Bottle", "reason": "DTC roaster" }],
+  "assets": [{ "kind": "brand", "key": "primary_color", "value": "#B5121B" }],
+  "site_read": true }
+```
+
+`site_read: false` means the page could not be fetched and the answer came from the
+description alone — the UI says so rather than presenting it as read.
+
+`POST /onboarding/create` `{name, domain, description, vertical_id, keywords, competitors, assets}`
+→ 201. Verifies each competitor against the Ads Transparency Center — **one search each** —
+and builds the watchlist with the company's own domain tracked as `is_self`.
+
+```json
+{ "watchlist_id": 1,
+  "competitors": [{ "domain": "bluebottlecoffee.com", "verified": true }],
+  "skipped": [{ "domain": "madeup.invalid", "reason": "no advertiser found" }],
+  "searches_used": 2 }
+```
+
+`skipped` is not an error — a domain that buys no ads would cost a search every run
+forever. `"could not be checked"` means SerpApi was unreachable, which is not evidence
+the company does not advertise; the watchlist is still created.
+
+---
+
 ## Alerts
 
 `GET /alerts?limit=50` — workspace-wide notification feed, newest first. One call;

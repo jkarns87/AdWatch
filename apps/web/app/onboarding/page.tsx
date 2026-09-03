@@ -4,129 +4,187 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { hasToken } from "@/lib/auth";
+import { VerticalPicker } from "@/components/VerticalPicker";
+import type { OnboardingProposal, TrendsCategory } from "@/lib/types";
 
-type Comp = { name: string; domain: string };
-
-const VERTICALS = ["specialty coffee", "meal kits", "mattresses", "VPN", "fitness apps", "online banking", "B2B SaaS", "other"];
-
-function cleanDomain(s: string) {
-  return s.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "");
-}
-
-/** Must stay at module scope. Defined inside Onboarding it gets a new function
- *  identity every render, so React remounts the subtree and every input loses
- *  focus after a single keystroke. */
-const Field = ({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) => (
-  <label className="block mb-3">
-    <div className="text-sm font-medium mb-1">{label}</div>
-    {children}
-    {hint && <div className="muted text-xs mt-1">{hint}</div>}
-  </label>
-);
-
-const input = "panel-2 w-full p-2 text-sm";
-
+/**
+ * Two screens. The old wizard asked for a vertical from a list of eight, then competitor
+ * domains typed from memory — what the user is least able to supply. Now: three fields,
+ * Claude reads the site, and the only thing needing confirmation is the competitor list.
+ *
+ * A wrong keyword is cheap and self-evident: an empty paid block on the first run, then
+ * you delete it. A wrong competitor burns a SerpApi search every run forever and quietly
+ * skews share of voice while looking legitimate. The human goes where the cost is.
+ */
 export default function Onboarding() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<"ask" | "review">("ask");
+
   const [name, setName] = useState("");
-  const [vertical, setVertical] = useState("specialty coffee");
-  const [geo, setGeo] = useState("US");
-  const [location, setLocation] = useState("San Francisco, California, United States");
-  const [comps, setComps] = useState<Comp[]>([{ name: "", domain: "" }, { name: "", domain: "" }, { name: "", domain: "" }]);
+  const [domain, setDomain] = useState("");
+  const [description, setDescription] = useState("");
+
+  const [proposal, setProposal] = useState<OnboardingProposal | null>(null);
+  const [vertical, setVertical] = useState<TrendsCategory | null>(null);
   const [keywords, setKeywords] = useState("");
-  const [runNow, setRunNow] = useState(true);
+  const [chosen, setChosen] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
-  useEffect(() => { if (!hasToken()) router.replace("/login"); }, [router]);
+  useEffect(() => {
+    if (!hasToken()) router.replace("/login");
+  }, [router]);
 
-  const validComps = comps.map((c) => ({ name: c.name.trim() || cleanDomain(c.domain).split(".")[0], domain: cleanDomain(c.domain) })).filter((c) => c.domain.length > 3);
-  const kwList = keywords.split(/\n|,/).map((k) => k.trim()).filter(Boolean);
-  const cost = validComps.length + kwList.length * 3;
+  const analyse = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy("Reading the site…");
+    setErr(null);
+    try {
+      const p = await api.analyzeCompany({ name: name.trim(), domain: domain.trim(), description: description.trim() });
+      setProposal(p);
+      setVertical(p.vertical);
+      setKeywords(p.keywords.join("\n"));
+      // Everything Claude proposed starts checked; unchecking is the cheap action.
+      setChosen(Object.fromEntries(p.competitors.map((c) => [c.domain, true])));
+      setStep("review");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const create = async () => {
-    setBusy("Creating watchlist…"); setErr(null);
+    const kept = Object.entries(chosen).filter(([, on]) => on).map(([d]) => d);
+    const plural = kept.length === 1 ? "" : "s";
+    setBusy(kept.length ? `Checking ${kept.length} competitor${plural}…` : "Creating…");
+    setErr(null);
     try {
-      const w = await api.createWatchlist({ name: name.trim() || `${vertical} watch`, vertical, geo, location: location.trim() || null });
-      for (const c of validComps) { setBusy(`Adding ${c.domain}…`); await api.addCompetitor(w.id, c); }
-      for (const k of kwList) { setBusy(`Adding “${k}”…`); await api.addKeyword(w.id, k); }
-      if (runNow) {
-        setBusy(`Running baseline collection (${cost} SerpApi searches)…`);
-        try { await api.collectAndAnalyze(w.id); } catch (e: any) { setErr(`Watchlist created, but the first collection failed: ${e.message}. You can run it from the watchlist page.`); }
+      const r = await api.createFromOnboarding({
+        name: name.trim(),
+        domain: domain.trim(),
+        description: description.trim(),
+        vertical_id: vertical?.id ?? null,
+        keywords: keywords.split(/[\n,]/).map((k) => k.trim()).filter(Boolean),
+        competitors: kept,
+        assets: proposal?.assets ?? [],
+      });
+      if (r.skipped.length) {
+        // Say what was dropped rather than quietly persisting less than they confirmed.
+        setErr(
+          `Created, but ${r.skipped.length} not added: ` +
+            r.skipped.map((s) => `${s.domain} (${s.reason})`).join(", "),
+        );
+        setTimeout(() => router.push(`/watchlists/${r.watchlist_id}`), 2500);
+      } else {
+        router.push(`/watchlists/${r.watchlist_id}`);
       }
-      router.push(`/watchlists/${w.id}`);
-    } catch (e: any) { setErr(String(e.message ?? e)); setBusy(null); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(null);
+    }
   };
+
+  const keptCount = Object.values(chosen).filter(Boolean).length;
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-2 muted text-xs mb-4">
-        {["Watchlist", "Competitors", "Keywords", "Review"].map((s, i) => (
-          <span key={s} className="badge" style={{ background: step === i + 1 ? "rgba(110,168,254,.15)" : "transparent", color: step === i + 1 ? "var(--accent)" : "var(--muted)", border: "1px solid var(--line)" }}>{i + 1}. {s}</span>
-        ))}
-      </div>
+      <h1 className="text-2xl font-semibold tracking-tight">
+        {step === "ask" ? "Tell us about your company" : "Check what we found"}
+      </h1>
 
-      {step === 1 && (
-        <section className="panel p-5">
-          <h1 className="text-xl font-semibold tracking-tight">What are we watching?</h1>
-          <p className="muted text-sm mt-1 mb-4">A watchlist is one market: a vertical, the competitors in it, and the keywords you bid on.</p>
-          <Field label="Watchlist name"><input className={input} placeholder="e.g. Specialty Coffee — Bay Area" value={name} onChange={(e) => setName(e.target.value)} /></Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Vertical">
-              <select className={input} value={vertical} onChange={(e) => setVertical(e.target.value)}>{VERTICALS.map((v) => <option key={v}>{v}</option>)}</select>
-            </Field>
-            <Field label="Market (geo)" hint="Country code for Search and Trends">
-              <input className={input} value={geo} onChange={(e) => setGeo(e.target.value.toUpperCase().slice(0, 2))} />
-            </Field>
-          </div>
-          <Field label="Search location (optional)" hint="Geo-targets the paid block, e.g. “San Francisco, California, United States”. Leave blank for national results.">
-            <input className={input} value={location} onChange={(e) => setLocation(e.target.value)} />
-          </Field>
-          <div className="flex justify-end"><button className="btn btn-primary" onClick={() => setStep(2)}>Next: competitors</button></div>
-        </section>
+      {err && (
+        <div className="panel p-3 mt-4 text-sm" style={{ color: "var(--high)" }}>
+          {err}
+        </div>
       )}
 
-      {step === 2 && (
-        <section className="panel p-5">
-          <h1 className="text-xl font-semibold tracking-tight">Who are the competitors?</h1>
-          <p className="muted text-sm mt-1 mb-4">Domains only — AdWatch looks each one up in the Google Ads Transparency Center. Three to five is the sweet spot.</p>
-          {comps.map((c, i) => (
-            <div key={i} className="grid grid-cols-5 gap-2 mb-2">
-              <input className={`${input} col-span-2`} placeholder="Name (optional)" value={c.name} onChange={(e) => setComps(comps.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))} />
-              <input className={`${input} col-span-3`} placeholder="competitor-domain.com" value={c.domain} onChange={(e) => setComps(comps.map((x, j) => (j === i ? { ...x, domain: e.target.value } : x)))} />
+      {step === "ask" && (
+        <form onSubmit={analyse} className="panel p-5 mt-4 grid gap-3" data-testid="onboarding-form">
+          <p className="muted text-sm">
+            We read your site and work out the vertical, the keywords worth watching, and who
+            you&apos;re competing with in the paid results.
+          </p>
+          <input className="panel-2 p-2 text-sm" required aria-label="Company name" placeholder="Company name"
+                 value={name} onChange={(e) => setName(e.target.value)} />
+          <input className="panel-2 p-2 text-sm" required aria-label="Website" placeholder="yourcompany.com"
+                 value={domain} onChange={(e) => setDomain(e.target.value)} />
+          <textarea className="panel-2 p-2 text-sm h-24" aria-label="What you sell"
+                    placeholder="What do you sell, and to whom?"
+                    value={description} onChange={(e) => setDescription(e.target.value)} />
+          <button className="btn btn-primary" type="submit" disabled={!!busy || !name.trim() || !domain.trim()}>
+            {busy ?? "Analyse my site"}
+          </button>
+          <p className="muted text-xs">Reading your site costs no SerpApi quota.</p>
+        </form>
+      )}
+
+      {step === "review" && proposal && (
+        <div className="grid gap-3 mt-4" data-testid="onboarding-review">
+          {!proposal.site_read && (
+            <div className="panel p-3 text-sm" style={{ color: "var(--medium)" }}>
+              We couldn&apos;t read {domain}, so this is based on your description alone. Worth a closer look.
             </div>
-          ))}
-          <button className="muted text-xs" onClick={() => setComps([...comps, { name: "", domain: "" }])}>+ add another</button>
-          <div className="flex justify-between mt-4"><button className="btn" onClick={() => setStep(1)}>Back</button><button className="btn btn-primary" onClick={() => setStep(3)} disabled={validComps.length === 0}>Next: keywords</button></div>
-        </section>
-      )}
+          )}
 
-      {step === 3 && (
-        <section className="panel p-5">
-          <h1 className="text-xl font-semibold tracking-tight">Which keywords matter?</h1>
-          <p className="muted text-sm mt-1 mb-4">One per line. Each keyword costs 3 SerpApi searches per run (paid block, trend, related queries).</p>
-          <textarea className={`${input} h-40 font-mono`} placeholder={"coffee subscription\ncold brew delivery\nspecialty coffee beans"} value={keywords} onChange={(e) => setKeywords(e.target.value)} />
-          <div className="flex justify-between mt-4"><button className="btn" onClick={() => setStep(2)}>Back</button><button className="btn btn-primary" onClick={() => setStep(4)} disabled={kwList.length === 0}>Next: review</button></div>
-        </section>
-      )}
+          <section className="panel p-4">
+            <div className="font-medium">Vertical</div>
+            <p className="muted text-xs mt-1 mb-2">Scopes demand data to your category.</p>
+            <VerticalPicker value={vertical} onChange={(v) => setVertical(v)} />
+          </section>
 
-      {step === 4 && (
-        <section className="panel p-5">
-          <h1 className="text-xl font-semibold tracking-tight">Review</h1>
-          <div className="panel-2 p-3 mt-3 text-sm space-y-1">
-            <div><span className="muted">Watchlist:</span> {name || `${vertical} watch`} · {vertical} · {geo}{location.trim() ? ` · ${location.trim()}` : ""}</div>
-            <div><span className="muted">Competitors:</span> {validComps.map((c) => c.domain).join(", ")}</div>
-            <div><span className="muted">Keywords:</span> {kwList.join(", ")}</div>
-            <div><span className="muted">Cost per run:</span> {cost} SerpApi searches</div>
+          <section className="panel p-4">
+            <div className="font-medium">Keywords</div>
+            <p className="muted text-xs mt-1 mb-2">
+              One per line. A keyword that turns out to be wrong just shows an empty paid block — delete it then.
+            </p>
+            <textarea className="panel-2 p-2 text-sm h-28 w-full font-mono" aria-label="Keywords"
+                      value={keywords} onChange={(e) => setKeywords(e.target.value)} />
+          </section>
+
+          <section className="panel p-4" data-testid="competitor-review">
+            <div className="font-medium">Competitors</div>
+            <p className="muted text-xs mt-1 mb-2">
+              The one thing worth your eye. Each kept domain is checked against Google&apos;s Ads
+              Transparency Center before it&apos;s added, and costs one search.
+            </p>
+
+            <label className="flex items-center gap-2 text-sm py-2" style={{ borderBottom: "1px solid var(--line)" }}>
+              <input type="checkbox" checked disabled aria-label="Your own domain" />
+              <span className="font-mono">{domain.trim()}</span>
+              <span className="badge kind ml-auto">you</span>
+            </label>
+
+            {proposal.competitors.length === 0 && (
+              <p className="muted text-sm mt-3">
+                None found. You can add competitors on the watchlist once it exists.
+              </p>
+            )}
+            {proposal.competitors.map((c) => (
+              <label key={c.domain} className="flex items-start gap-2 text-sm py-2"
+                     style={{ borderBottom: "1px solid var(--line)" }}>
+                <input type="checkbox" className="mt-1" aria-label={c.domain}
+                       checked={!!chosen[c.domain]}
+                       onChange={(e) => setChosen((s) => ({ ...s, [c.domain]: e.target.checked }))} />
+                <span>
+                  <span className="font-mono">{c.domain}</span>
+                  {c.reason && <span className="muted text-xs block">{c.reason}</span>}
+                </span>
+              </label>
+            ))}
+          </section>
+
+          <div className="flex justify-between items-center gap-2 flex-wrap">
+            <button className="btn" onClick={() => setStep("ask")} disabled={!!busy}>Back</button>
+            <span className="muted text-xs">
+              {keptCount} competitor{keptCount === 1 ? "" : "s"} · {keptCount} search{keptCount === 1 ? "" : "es"} to verify
+            </span>
+            <button className="btn btn-primary" onClick={create} disabled={!!busy}>
+              {busy ?? "Create watchlist"}
+            </button>
           </div>
-          <label className="flex items-center gap-2 text-sm mt-4"><input type="checkbox" checked={runNow} onChange={(e) => setRunNow(e.target.checked)} /> Run the baseline collection now (the second run starts producing changes)</label>
-          {err && <div className="text-sm mt-3" style={{ color: "var(--high)" }}>{err}</div>}
-          <div className="flex justify-between mt-4">
-            <button className="btn" onClick={() => setStep(3)} disabled={!!busy}>Back</button>
-            <button className="btn btn-primary" onClick={create} disabled={!!busy}>{busy ?? "Create watchlist"}</button>
-          </div>
-        </section>
+        </div>
       )}
     </div>
   );

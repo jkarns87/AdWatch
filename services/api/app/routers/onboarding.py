@@ -49,6 +49,13 @@ class CreateIn(AnalyzeIn):
     assets: list[AssetIn] = []
 
 
+@router.get("/verticals", summary="Search the Google Trends taxonomy")
+def verticals(q: str = "", limit: int = 20):
+    """Backs the typeahead. Served from the API rather than shipping 1,133 rows to the
+    client, and bounded so a one-letter query stays cheap."""
+    return taxonomy.search(q, limit=min(limit, 50))
+
+
 @router.post("/analyze", summary="Read the company's site and propose a watchlist")
 def analyze(
     body: AnalyzeIn = Body(...),

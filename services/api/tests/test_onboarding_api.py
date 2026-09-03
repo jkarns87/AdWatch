@@ -163,3 +163,19 @@ def test_verification_failure_does_not_lose_the_watchlist(client, monkeypatch):
     }).json()
     assert s.get(m.Watchlist, body["watchlist_id"]) is not None
     assert body["skipped"][0]["reason"] == "could not be checked"
+
+
+def test_vertical_search_backs_the_typeahead(client):
+    c, _ = client
+    hits = c.get("/api/v1/onboarding/verticals", params={"q": "coffee"}).json()
+    assert hits and all("coffee" in h["name"].lower() for h in hits)
+
+
+def test_vertical_search_is_bounded(client):
+    c, _ = client
+    assert len(c.get("/api/v1/onboarding/verticals", params={"q": "a", "limit": 5}).json()) <= 5
+
+
+def test_an_empty_query_returns_nothing_rather_than_everything(client):
+    c, _ = client
+    assert c.get("/api/v1/onboarding/verticals", params={"q": ""}).json() == []
