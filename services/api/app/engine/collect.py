@@ -203,6 +203,14 @@ def upsert_creatives(db: Session, competitor: m.Competitor, run: m.Run, rows: li
             # freezing the value captured on the run that first saw the creative.
             c.total_days_shown = r.get("total_days_shown") or c.total_days_shown
             c.active = True
+    if not rows:
+        # Nothing came back. That is not evidence the advertiser stopped: a domain
+        # absent from the Ads Transparency Center, a transient API error and an
+        # exhausted quota all look identical here, and retiring on it wiped a
+        # competitor's entire creative history in one pass. Leave the state alone and
+        # say so; a genuine full stop still shows up as soon as one response arrives.
+        log.info("no creatives returned for %s; leaving %d existing rows active", competitor.domain, len(existing))
+        return
     for cid, c in existing.items():
         if cid not in seen and c.active:
             c.active = False

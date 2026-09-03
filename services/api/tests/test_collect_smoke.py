@@ -143,3 +143,60 @@ def test_a_second_run_diffs_against_the_first(db, watchlist, faked):
     _, _, changes = collect_mod.run_collect(db, watchlist, fresh=False)
     # Identical payloads, so the only honest answer is no change.
     assert [c.kind for c in changes] == []
+
+
+# ---- absence of evidence ----------------------------------------------------------------------
+
+
+class _EmptyATC(_FakeClient):
+    """The Ads Transparency call returns nothing for this competitor."""
+
+    def ads_transparency(self, **k):
+        self.calls.append("atc")
+        return _Res({"ad_creatives": []})
+
+
+def test_an_empty_transparency_response_does_not_retire_known_creatives(db, watchlist, monkeypatch):
+    """Zero creatives back is not the same as zero creatives running.
+
+    upsert_creatives deactivates everything it did not see this run, so a single
+    empty response — a domain absent from the Ads Transparency Center, an API
+    hiccup, an exhausted quota — silently retired a competitor's entire history.
+    Observed in production: a live run against a watchlist of synthetic `.example`
+    domains took every seeded creative to active=False in one pass.
+
+    The rest of the engine already draws this distinction: serp_view separates "no
+    ads on that run" from "never collected", and the diff suppresses its baseline
+    rather than reporting everything as new.
+    """
+    client = _FakeClient()
+    monkeypatch.setattr(collect_mod, "SerpApiClient", lambda *a, **k: client)
+    collect_mod.run_collect(db, watchlist, fresh=False)
+    db.flush()
+    assert db.query(m.Creative).filter_by(active=True).count() == 1
+
+    empty = _EmptyATC()
+    monkeypatch.setattr(collect_mod, "SerpApiClient", lambda *a, **k: empty)
+    collect_mod.run_collect(db, watchlist, fresh=False)
+    db.flush()
+    assert db.query(m.Creative).filter_by(active=True).count() == 1, "an empty response retired the creative"
+
+
+def test_a_creative_missing_from_a_populated_response_is_still_retired(db, watchlist, monkeypatch):
+    """The guard must not disable genuine retirement — a creative absent from a
+    response that returned other creatives really has stopped."""
+    client = _FakeClient()
+    monkeypatch.setattr(collect_mod, "SerpApiClient", lambda *a, **k: client)
+    collect_mod.run_collect(db, watchlist, fresh=False)
+    db.flush()
+
+    class _Different(_FakeClient):
+        def ads_transparency(self, **k):
+            self.calls.append("atc")
+            return _Res({"ad_creatives": [{"ad_creative_id": "CR2", "format": "text"}]})
+
+    monkeypatch.setattr(collect_mod, "SerpApiClient", lambda *a, **k: _Different())
+    collect_mod.run_collect(db, watchlist, fresh=False)
+    db.flush()
+    assert db.query(m.Creative).filter_by(creative_id="CR1").one().active is False
+    assert db.query(m.Creative).filter_by(creative_id="CR2").one().active is True
