@@ -7,10 +7,11 @@ from sqlalchemy.orm import Session
 from .. import models as m
 from .. import purge
 from .. import schemas as s
-from ..auth import current_workspace_id, ensure_workspace, get_watchlist
+from ..auth import current_plan, current_workspace_id, ensure_workspace, get_watchlist
 from ..db import get_db
 from ..engine import brand as brand_engine
 from ..engine.collect import serp_view
+from ..plans import plan_for
 
 router = APIRouter(prefix="/watchlists", tags=["watchlists"])
 
@@ -43,9 +44,35 @@ def list_watchlists(db: Session = Depends(get_db), workspace_id: int = Depends(c
     return out
 
 
+def _enforce(current: int, allowed: int, plan: str, noun: str) -> None:
+    """Block the creation that would cross a plan limit.
+
+    402 rather than 403: the caller is authenticated and permitted, the plan simply
+    does not cover it. The message names the plan and the number because a limit the
+    user cannot act on is just a wall.
+
+    Enforced on creation only. A workspace already over a limit — created before this
+    existed, or downgraded — keeps everything it has. Deleting a customer's data to
+    punish a downgrade is not our call.
+    """
+    if current >= allowed:
+        raise HTTPException(
+            402,
+            f"the {plan} plan allows {allowed} {noun}; you have {current}. Upgrade to add more.",
+        )
+
+
 @router.post("", response_model=s.WatchlistDetail, status_code=201)
-def create_watchlist(body: s.WatchlistCreate, db: Session = Depends(get_db), workspace_id: int = Depends(current_workspace_id)):
+def create_watchlist(
+    body: s.WatchlistCreate,
+    db: Session = Depends(get_db),
+    workspace_id: int = Depends(current_workspace_id),
+    plan: str = Depends(current_plan),
+):
     ensure_workspace(db, workspace_id)
+    limits = plan_for(plan)
+    existing = db.scalar(select(func.count(m.Watchlist.id)).where(m.Watchlist.workspace_id == workspace_id)) or 0
+    _enforce(existing, limits.watchlists, limits.key, "watchlists")
     w = m.Watchlist(workspace_id=workspace_id, name=body.name, vertical=body.vertical, geo=body.geo or "US", location=(body.location or None))
     db.add(w)
     db.commit()
@@ -79,7 +106,18 @@ def get_one(w: m.Watchlist = Depends(get_watchlist), db: Session = Depends(get_d
 
 
 @router.post("/{watchlist_id}/competitors", response_model=s.CompetitorOut, status_code=201)
-def add_competitor(body: s.CompetitorCreate, w: m.Watchlist = Depends(get_watchlist), db: Session = Depends(get_db)):
+def add_competitor(
+    body: s.CompetitorCreate,
+    w: m.Watchlist = Depends(get_watchlist),
+    db: Session = Depends(get_db),
+    plan: str = Depends(current_plan),
+):
+    limits = plan_for(plan)
+    # is_self is the customer's own domain, already excluded from user-facing counts.
+    existing = db.scalar(
+        select(func.count(m.Competitor.id)).where(m.Competitor.watchlist_id == w.id, m.Competitor.is_self.is_(False))
+    ) or 0
+    _enforce(existing, limits.competitors_per_watchlist, limits.key, "competitors per watchlist")
     c = m.Competitor(watchlist_id=w.id, name=body.name, domain=body.domain.lower().removeprefix("www."), advertiser_id=body.advertiser_id)
     db.add(c)
     db.commit()
@@ -110,7 +148,20 @@ def delete_watchlist(w: m.Watchlist = Depends(get_watchlist), db: Session = Depe
 
 
 @router.post("/{watchlist_id}/keywords", response_model=s.KeywordOut, status_code=201)
-def add_keyword(body: s.KeywordCreate, w: m.Watchlist = Depends(get_watchlist), db: Session = Depends(get_db)):
+def add_keyword(
+    body: s.KeywordCreate,
+    w: m.Watchlist = Depends(get_watchlist),
+    db: Session = Depends(get_db),
+    plan: str = Depends(current_plan),
+):
+    limits = plan_for(plan)
+    # Brand terms are provisioned by the collector from the competitor list, not chosen
+    # by the customer. Charging a slot for them would make adding a competitor
+    # silently consume a keyword.
+    existing = db.scalar(
+        select(func.count(m.Keyword.id)).where(m.Keyword.watchlist_id == w.id, m.Keyword.kind == "keyword")
+    ) or 0
+    _enforce(existing, limits.keywords_per_watchlist, limits.key, "keywords per watchlist")
     k = m.Keyword(watchlist_id=w.id, term=body.term.strip())
     db.add(k)
     db.commit()

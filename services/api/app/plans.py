@@ -102,3 +102,14 @@ def plan_dict(p: Plan) -> dict:
     d = asdict(p)
     d["cadence"] = asdict(p.cadence)
     return d
+
+
+def plan_for(key: str | None) -> Plan:
+    """Resolve a plan key to its limits.
+
+    An unrecognised key falls back to the most restrictive plan rather than the most
+    permissive. The key comes from the control plane, so an unknown value means the
+    two sides disagree about what plans exist — and guessing generously there would
+    hand out limits nobody is paying for.
+    """
+    return PLANS.get((key or "").strip().lower(), PLANS["free"])
