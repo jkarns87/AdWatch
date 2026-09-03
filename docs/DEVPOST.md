@@ -11,7 +11,7 @@ Full story copy to paste into Devpost: **`docs/devpost_story.md`** (rewritten 20
 - [x] Elevator pitch (≤ 200 chars) — below, 186 chars
 - [x] Full story — `docs/devpost_story.md`, real numbers, no placeholders
 - [x] Built with (tags): `python`, `fastapi`, `postgresql`, `nextjs`, `typescript`, `tailwindcss`, `docker`, `github-actions`, `fly-io`, `serpapi`, `xano`, `claude`, `anthropic`
-- [ ] Screenshots ≥ 4 from the **deployed** app — *the gap*; `docs/screenshots/` has only 2 and they predate the brand pass, dashboard, onboarding and config pages
+- [x] Screenshots: 8 captured from the **deployed** app, signed in as the demo account — `docs/screenshots/01..08`
 - [x] Project URL: **https://adwatch.dev** (200, TLS, custom domain)
 - [x] API URL: **https://api.adwatch.dev/api/v1/health** (200)
 - [x] Repo URL: **https://github.com/jkarns87/AdWatch** — public
@@ -22,25 +22,44 @@ Full story copy to paste into Devpost: **`docs/devpost_story.md`** (rewritten 20
 - [ ] Accept terms → **Submit to Hackathon** → confirm status shows *Submitted*
 - [ ] Nobody edits after 9:30 AM
 
-## Verified numbers (pulled from production 2026-09-03 06:22Z)
+## Verified numbers (pulled from production 2026-09-03 06:47Z)
+
+Real, SerpApi-backed workspaces only — the synthetic demo workspace is excluded so
+nothing here is inflated by seeded data.
 
 | | |
 |---|---|
-| Runs / SerpApi searches spent | 11 / 76 |
+| Runs / SerpApi searches spent | 12 / 94 |
 | Creatives tracked | 29 |
 | Paid-block placements captured | 38 |
-| Trend points | 1,153 |
-| Typed changes detected | 72 |
-| AI insights written | 18 |
-| SerpApi spend to date | $0.72 |
+| Trend points | 1,618 |
+| Typed changes detected | 75 |
+| Insights written | 21 |
+| Claude calls that reached the model | 10 (9,824 in / 6,658 out tokens, $0.0862) |
+| SerpApi spend to date | $0.94 |
 | Projected month — naive cadence | $21.60 |
-| Projected month — plan cadence | $4.41 (~5× saving) |
+| Projected month — plan cadence | $4.41 (~5x saving) |
 | XanoScript files | 26 (15 api, 6 table, 2 function, 2 task) |
-| Python modules / passing tests | 57 / 238 |
+| Python modules / passing tests | 57 / 246 |
 | Web routes / Playwright specs | 11 / 6 |
-| Commits | 47 |
+| Commits | 50 |
 
-Re-pull before submitting if more runs happen: `GET /api/v1/usage` and the counts in `docs/DEVPOST.md`.
+Re-pull before submitting if more runs happen: `GET /api/v1/usage`.
+
+## Demo account for judges
+
+Created off the public signup endpoint and seeded with **synthetic** data — fictitious
+advertisers (RoastNest, BeanLoop, DripCrate, Grindhaus), no real brands, no quota spent.
+The insights in it are genuine Claude output over that synthetic diff.
+
+```
+https://adwatch.dev
+demo@adwatch.dev / AdWatchDemo2026!
+```
+
+Worth adding to the Devpost "Try it out" notes so judges can sign in rather than only
+watch the video. Re-seed any time with `POST /api/v1/demo/reset` then `/api/v1/demo/seed`
+using that account's token.
 
 ## Elevator pitch (186 chars)
 

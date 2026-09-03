@@ -54,13 +54,15 @@ Quota is treated as a product constraint, not an afterthought. Each call is one 
 
 **Generalising beyond the demo vertical.** The keyword engine's guard against drifting into an adjacent market ("espresso machine" must not drag it into "machine learning") was originally five hand-curated term lists, which covered the seeded verticals and nothing else — a watchlist created from onboarding had no guard at all. It now derives its vocabulary from the watchlist's own keywords, so a mattress company fences itself without borrowing a coffee company's words.
 
-**Trusting the right evidence.** Several bugs were invisible to passing assertions and only showed up when we looked at production directly: a scheduled task that had never once run, a reset-link invalidation that silently matched no rows because an unset timestamp column stores `0` rather than SQL `NULL`, and a badge that read correctly in the DOM while CSS uppercased it on screen. Screenshots and live probes caught what green tests could not.
+**Trusting the right evidence.** Our worst bugs were all silent — no error, no failing assertion, just a feature quietly doing nothing. A scheduled task that had never once run. A reset-link invalidation that matched no rows because an unset timestamp column stores `0` rather than SQL `NULL`. A badge that read correctly in the DOM while CSS uppercased it on screen.
+
+The sharpest one: the AI analyst passed `temperature=0.2`, which the current Anthropic SDK no longer accepts, so every call raised `TypeError`, a broad `except` caught it, and a deterministic fallback wrote the insight instead. Insights appeared, cards rendered, runs succeeded — and Claude had never once been reached. The only trace was a `fallback` status in the token ledger and a "0 tokens" figure that looked like a metering glitch. We found it while taking submission screenshots. Fixing it exposed a second one immediately: with real answers finally arriving, three of seven briefs were being truncated at the token cap and rendered as raw JSON on the card. Both are now covered by tests that check the call against the *installed* SDK signature, because a permissive stub would have passed the whole time.
 
 ## Accomplishments that we're proud of
 
-A real change feed over real public data, with an analyst that recommends actions instead of describing charts. Live in production on a custom domain, with **11 runs, 76 SerpApi searches spent, 29 creatives tracked, 38 paid-block placements captured, 1,153 trend points, 72 typed changes detected and 18 AI insights written** — and $0.72 of actual SerpApi spend to show the cost model is real, not theoretical.
+A real change feed over real public data, with an analyst that recommends actions instead of describing charts. Live in production on a custom domain, with **12 runs, 94 SerpApi searches spent, 29 creatives tracked, 38 paid-block placements captured, 1,618 trend points, 75 typed changes detected and 21 insights written** — and $0.94 of actual SerpApi spend against $0.09 of Claude tokens, so the cost model is measured rather than estimated.
 
-A clean control-plane / data-plane split where each half does what it's best at. 238 tests, CI green on every push, and a scheduler we verified by watching it fire rather than by assuming it did.
+A clean control-plane / data-plane split where each half does what it's best at. 246 tests, CI green on every push, and a scheduler we verified by watching it fire rather than by assuming it did.
 
 ## What we learned
 
