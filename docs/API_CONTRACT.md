@@ -297,6 +297,29 @@ Audience-tailored AI executive summary (headline, paragraphs, decisions, watch-n
 
 `GET /watchlists/{id}/report/data?audience=&days=` → the assembled JSON payload (for previews/tests).
 
+## Maintenance (machine-to-machine only — `X-Dataplane-Secret`, no workspace scope)
+
+These sweep every workspace in one pass, so they authenticate on the shared secret alone
+and reject user tokens: a tenant able to prune all workspaces is a tenant deleting other
+people's data. Called by the Xano `prune_snapshots` task, daily.
+
+`GET /maintenance/snapshots` → `{ "snapshots": 412, "with_payload": 96, "by_kind": [{"kind":"search_ads","rows":300}] }`
+What the table currently costs, so the decision to prune is measured rather than guessed.
+
+`POST /maintenance/prune-snapshots?keep_runs=20` (default 20, min 2, max 200)
+→ `{ "watchlists_examined": 3, "keep_runs": 20, "snapshots_pruned": 316, "bytes_freed": 8123402 }`
+
+20 runs is about five days at the 6-hourly collect cadence. Counted in runs rather than
+days so a watchlist on a slower cadence keeps the same number of comparable snapshots.
+
+Drops `Snapshot.raw` for all but the most recent `keep_runs` **successful** runs per
+watchlist. The row survives — kind, subject, `fetched_at`, `serpapi_search_id` and
+`from_cache` are the audit trail for a fetch and cost a few bytes against roughly 27 kB
+for a Google Search payload. Idempotent, and the floor of 2 exists because the diff
+engine compares run N to N-1.
+
+`snapshots` is the only table with unbounded per-run growth; before this, nothing pruned it.
+
 ## Demo helpers (disabled when `ENV=prod` unless `DEMO_ENDPOINTS=true`)
 
 `POST /demo/seed` body `{ "mode": "synthetic" | "live", "vertical"?: "meal kits" }`

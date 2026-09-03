@@ -105,7 +105,12 @@ class Snapshot(Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     serpapi_search_id: Mapped[str | None] = mapped_column(String(100))
     from_cache: Mapped[bool] = mapped_column(Boolean, default=False)
-    raw: Mapped[dict] = mapped_column(JSON)
+    # Nullable so retention can drop the payload and keep the row: the metadata above is
+    # the audit trail for a fetch, and it costs a few bytes against ~27 kB for `raw`.
+    # none_as_null because JSON otherwise stores Python None as the JSON literal `null`,
+    # which still occupies the column and still satisfies IS NOT NULL — retention would
+    # free nothing and re-prune the same rows on every pass.
+    raw: Mapped[dict | None] = mapped_column(JSON(none_as_null=True))
 
 
 class Creative(Base):

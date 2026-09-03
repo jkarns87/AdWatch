@@ -13,6 +13,7 @@ from .routers import (
     alerts,
     demo,
     history,
+    maintenance,
     onboarding,
     providers,
     reads,
@@ -54,6 +55,7 @@ app.include_router(workspace_keys.router, prefix=API)
 app.include_router(onboarding.router, prefix=API)
 app.include_router(history.router, prefix=API)
 app.include_router(reports.router, prefix=API)
+app.include_router(maintenance.router, prefix=API)
 app.include_router(coffee_router, prefix=API)
 
 

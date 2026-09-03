@@ -50,3 +50,6 @@ def init_db() -> None:
         conn.execute(text("ALTER TABLE watchlists ADD COLUMN IF NOT EXISTS company_description TEXT"))
         conn.execute(text("ALTER TABLE watchlists ADD COLUMN IF NOT EXISTS market_terms JSON"))
         conn.execute(text("ALTER TABLE competitors ADD COLUMN IF NOT EXISTS is_self BOOLEAN NOT NULL DEFAULT FALSE"))
+        # Retention drops the payload and keeps the row, which the original NOT NULL
+        # forbids. DROP NOT NULL is idempotent, so this is safe on every boot.
+        conn.execute(text("ALTER TABLE snapshots ALTER COLUMN raw DROP NOT NULL"))
