@@ -14,7 +14,9 @@ query "auth/reset_password" verb=POST {
     }
   }
   stack {
-    var $now { value = "now" }
+    // "now" on its own is the literal string; |to_timestamp makes it a number that
+    // can be compared against a timestamp column.
+    var $now { value = "now"|to_timestamp }
 
     db.query "password_reset" {
       where = $db.password_reset.selector == $input.selector

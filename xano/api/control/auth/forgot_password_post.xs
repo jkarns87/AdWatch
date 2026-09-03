@@ -26,7 +26,9 @@ query "auth/forgot_password" verb=POST {
           require_symbol = false
         } as $verifier
 
-        var $now { value = "now" }
+        // "now" on its own is the literal string; |to_timestamp makes it a number that
+    // can be compared against a timestamp column.
+    var $now { value = "now"|to_timestamp }
         var $expires { value = $now|add_secs_to_timestamp:3600 }
 
         // Outstanding tokens for this user are spent, so a second request invalidates
