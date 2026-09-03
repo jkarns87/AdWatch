@@ -234,6 +234,39 @@ the company does not advertise; the watchlist is still created.
 
 ---
 
+## History
+
+Every other read pins to the latest run. These do not.
+
+`GET /watchlists/{id}/history/creatives?competitor_id=&limit=200`
+
+```json
+[{ "creative_id": "CR0123", "competitor_id": 11, "competitor_name": "Blue Bottle",
+   "is_self": false, "format": "video", "first_shown": "2026-08-20",
+   "last_shown": "2026-09-02", "days_live": 14, "active": false,
+   "first_seen_run_id": 1, "last_seen_run_id": 4, "details_url": "…" }]
+```
+
+Includes creatives that have **stopped** — the whole point, since the latest-run view
+shows only what is live now. `days_live` counts both ends, so a creative seen on one
+day ran for one day. Your own creatives are included and flagged `is_self`.
+
+`GET /watchlists/{id}/history/serp?keyword_id=21&runs=12`
+
+```json
+{ "keyword": { "id": 21, "term": "coffee subscription" },
+  "runs": [{ "run_id": 3, "finished_at": "…", "searches_used": 19 }],
+  "series": [{ "advertiser_domain": "bluebottlecoffee.com", "tracked": true,
+               "is_self": false, "competitor_id": 11, "appearances": 3,
+               "points": [{ "run_id": 1, "position": 4, "block": "top" }] }] }
+```
+
+Runs are oldest-first so a series reads left to right. An advertiser absent from a run
+simply has **no point** for it — emitting a zero would draw a drop to the top of the
+page rather than a gap. Series are ordered by appearances, then average position.
+
+---
+
 ## Alerts
 
 `GET /alerts?limit=50` — workspace-wide notification feed, newest first. One call;

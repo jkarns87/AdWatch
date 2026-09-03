@@ -9,7 +9,19 @@ from .coffee.router import router as coffee_router
 from .config import get_settings
 from .crypto import available as crypto_available
 from .db import get_engine, init_db
-from .routers import alerts, demo, onboarding, providers, reads, reports, runs, usage, watchlists, workspace_keys
+from .routers import (
+    alerts,
+    demo,
+    history,
+    onboarding,
+    providers,
+    reads,
+    reports,
+    runs,
+    usage,
+    watchlists,
+    workspace_keys,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -40,6 +52,7 @@ app.include_router(alerts.router, prefix=API)
 app.include_router(providers.router, prefix=API)
 app.include_router(workspace_keys.router, prefix=API)
 app.include_router(onboarding.router, prefix=API)
+app.include_router(history.router, prefix=API)
 app.include_router(reports.router, prefix=API)
 app.include_router(coffee_router, prefix=API)
 
