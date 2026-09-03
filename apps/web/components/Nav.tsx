@@ -40,7 +40,11 @@ export function Nav() {
   return (
     <header className="border-b" style={{ borderColor: "var(--line)" }}>
       <div className="mx-auto max-w-6xl px-5 py-3 flex items-center gap-5">
-        <Link href="/" aria-label="AdWatch — dashboard" className="flex items-center shrink-0">
+        {/* Accessible name is the brand alone. Naming the destination here ("…—
+            dashboard") collides with the Dashboard nav tab: getByRole matches names
+            by substring, so the logo answered to it too and the nav-tab and
+            signed-out assertions both broke. */}
+        <Link href="/" aria-label="AdWatch" className="flex items-center shrink-0">
           {/* Outlined lockups, swapped by CSS in globals.css. alt must name the
               brand: the image is now the header's only accessible name. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
