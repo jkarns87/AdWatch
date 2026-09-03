@@ -97,6 +97,7 @@ export const test = base.extend({
           { domain: "sightglasscoffee.com", name: "Sightglass", reason: "SF roaster" },
         ],
         assets: [{ kind: "brand", key: "primary_color", value: "#B5121B" }],
+        market_terms: ["coffee", "espresso", "roaster"],
         site_read: true,
       },
       "/onboarding/create": { watchlist_id: 1, competitors: [{ domain: "bluebottlecoffee.com", verified: true }], skipped: [], searches_used: 1 },

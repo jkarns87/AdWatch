@@ -68,6 +68,9 @@ export default function Onboarding() {
         keywords: keywords.split(/[\n,]/).map((k) => k.trim()).filter(Boolean),
         competitors: kept,
         assets: proposal?.assets ?? [],
+        // Carried straight through: the user never edits the drift guard, but a
+        // watchlist without it has no fence on keyword scans.
+        market_terms: proposal?.market_terms ?? [],
       });
       if (r.skipped.length) {
         // Say what was dropped rather than quietly persisting less than they confirmed.

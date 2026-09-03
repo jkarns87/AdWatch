@@ -77,6 +77,7 @@ export const api = {
   createFromOnboarding: (body: {
     name: string; domain: string; description: string;
     vertical_id: number | null; keywords: string[]; competitors: string[]; assets: CompanyAssetIn[];
+    market_terms: string[];
   }) => req<OnboardingResult>("/onboarding/create", { method: "POST", body: JSON.stringify(body) }),
   searchVerticals: (q: string) =>
     req<TrendsCategory[]>(`/onboarding/verticals?q=${encodeURIComponent(q)}&limit=8`),

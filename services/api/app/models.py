@@ -46,6 +46,10 @@ class Watchlist(Base):
     company_domain: Mapped[str | None] = mapped_column(String(255))
     # What Claude was given at onboarding, kept so a re-analysis is reproducible.
     company_description: Mapped[str | None] = mapped_column(Text)
+    # Drift guard for keyword scans (app/market.py). Different from
+    # trends_category_id: that scopes cat= on demand, these decide whether a
+    # keyword belongs to this market at all.
+    market_terms: Mapped[list | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     competitors: Mapped[list[Competitor]] = relationship(back_populates="watchlist", cascade="all, delete-orphan")

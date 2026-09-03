@@ -331,6 +331,8 @@ export interface OnboardingProposal {
   keywords: string[];
   competitors: ProposedCompetitor[];
   assets: CompanyAssetIn[];
+  /** vocabulary that marks a search as being in this market; stops a keyword scan drifting */
+  market_terms: string[];
   /** false when the site could not be fetched; the answer came from the description alone */
   site_read: boolean;
 }

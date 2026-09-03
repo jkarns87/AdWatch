@@ -14,8 +14,8 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from .. import market, taxonomy
 from .. import models as m
-from .. import taxonomy
 from ..auth import current_workspace_id, ensure_workspace
 from ..collectors.serpapi_client import SerpApiClient
 from ..config import get_settings
@@ -47,6 +47,7 @@ class CreateIn(AnalyzeIn):
     keywords: list[str] = []
     competitors: list[str] = []
     assets: list[AssetIn] = []
+    market_terms: list[str] = []  # drift guard for keyword scans; see app/market.py
 
 
 @router.get("/verticals", summary="Search the Google Trends taxonomy")
@@ -100,6 +101,7 @@ def create(
         trends_category_id=body.vertical_id,
         company_domain=own,
         company_description=body.description or None,
+        market_terms=market.clean_terms(body.market_terms) or None,
     )
     db.add(watchlist)
     db.flush()

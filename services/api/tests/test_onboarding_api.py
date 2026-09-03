@@ -179,3 +179,26 @@ def test_vertical_search_is_bounded(client):
 def test_an_empty_query_returns_nothing_rather_than_everything(client):
     c, _ = client
     assert c.get("/api/v1/onboarding/verticals", params={"q": ""}).json() == []
+
+
+def test_create_stores_the_market_vocabulary(client, monkeypatch):
+    """Without it a watchlist has no drift guard and a keyword scan can wander."""
+    c, s = client
+    _stub_verification(monkeypatch, set())
+    body = c.post("/api/v1/onboarding/create", json={
+        "name": "Casper", "domain": "casper.com", "description": "mattresses",
+        "vertical_id": 71, "keywords": [], "competitors": [], "assets": [],
+        "market_terms": ["mattress", "memory foam"],
+    }).json()
+    w = s.get(m.Watchlist, body["watchlist_id"])
+    assert w.market_terms == ["mattress", "memory foam"]
+
+
+def test_junk_market_terms_do_not_reach_the_database(client, monkeypatch):
+    c, s = client
+    _stub_verification(monkeypatch, set())
+    body = c.post("/api/v1/onboarding/create", json={
+        "name": "X", "domain": "x.com", "description": "d", "vertical_id": 71,
+        "keywords": [], "competitors": [], "assets": [], "market_terms": ["mattress", "a", "  "],
+    }).json()
+    assert s.get(m.Watchlist, body["watchlist_id"]).market_terms == ["mattress"]
