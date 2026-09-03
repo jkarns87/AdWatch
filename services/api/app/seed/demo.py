@@ -29,34 +29,27 @@ def reset(db: Session, *, workspace_id: int) -> None:
     """Delete one workspace's data. Scoped deliberately: this previously issued an
     unqualified DELETE against every table, so any caller wiped every tenant.
 
-    Order follows the foreign keys — children before parents. Changes go before
-    Insights (Change.insight_id references them), and LlmCall before Run and
-    Watchlist. Everything reaches the workspace through Watchlist except LlmCall,
-    which carries workspace_id directly.
-    """
-    watchlists = select(m.Watchlist.id).where(m.Watchlist.workspace_id == workspace_id)
-    competitors = select(m.Competitor.id).where(m.Competitor.watchlist_id.in_(watchlists))
-    keywords = select(m.Keyword.id).where(m.Keyword.watchlist_id.in_(watchlists))
-    insights = select(m.Insight.id).where(m.Insight.watchlist_id.in_(watchlists))
+    The per-watchlist chain lives in app/purge.py and is shared with the delete
+    endpoints. It used to be spelled out here as well and the two drifted:
+    product_listings was added to the schema and not to this copy, and reset returned
+    500 in production until it was found. One chain, one place, one test asserting it
+    covers every table reachable from a watchlist.
 
-    statements = (
-        delete(m.Alert).where(m.Alert.insight_id.in_(insights)),
-        delete(m.Change).where(m.Change.watchlist_id.in_(watchlists)),
-        delete(m.Insight).where(m.Insight.watchlist_id.in_(watchlists)),
-        delete(m.RelatedQuery).where(m.RelatedQuery.keyword_id.in_(keywords)),
-        delete(m.TrendPoint).where(m.TrendPoint.keyword_id.in_(keywords)),
-        delete(m.SerpAd).where(m.SerpAd.keyword_id.in_(keywords)),
-        delete(m.ProductListing).where(m.ProductListing.keyword_id.in_(keywords)),
-        delete(m.Creative).where(m.Creative.competitor_id.in_(competitors)),
-        delete(m.Snapshot).where(m.Snapshot.watchlist_id.in_(watchlists)),
+    LlmCall carries workspace_id directly rather than reaching it through a watchlist,
+    so workspace-wide rows are swept here after the per-watchlist passes.
+    """
+    from ..purge import delete_watchlist_data
+
+    for wl_id in db.scalars(select(m.Watchlist.id).where(m.Watchlist.workspace_id == workspace_id)).all():
+        delete_watchlist_data(db, wl_id)
+    db.execute(
         delete(m.LlmCall).where(m.LlmCall.workspace_id == workspace_id),
-        delete(m.Run).where(m.Run.watchlist_id.in_(watchlists)),
-        delete(m.Keyword).where(m.Keyword.watchlist_id.in_(watchlists)),
-        delete(m.Competitor).where(m.Competitor.watchlist_id.in_(watchlists)),
-        delete(m.Watchlist).where(m.Watchlist.workspace_id == workspace_id),
+        execution_options={"synchronize_session": False},
     )
-    for stmt in statements:
-        db.execute(stmt, execution_options={"synchronize_session": False})
+    db.execute(
+        delete(m.Watchlist).where(m.Watchlist.workspace_id == workspace_id),
+        execution_options={"synchronize_session": False},
+    )
     db.commit()
 
 

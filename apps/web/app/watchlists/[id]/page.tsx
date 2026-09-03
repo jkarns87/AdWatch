@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import type { BrandsOut, Change, Creative, Insight, SerpOut, TrendsOut, WatchlistDetail } from "@/lib/types";
 import { fmtTime } from "@/components/Badges";
@@ -18,6 +19,7 @@ type Tab = "insights" | "changes" | "brands" | "competitors" | "keywords";
 export default function WatchlistPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: idStr } = use(params);
   const id = Number(idStr);
+  const router = useRouter();
 
   const [w, setW] = useState<WatchlistDetail | null>(null);
   const [insights, setInsights] = useState<Insight[]>([]);
@@ -81,6 +83,21 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
     if (domain.length < 4) return;
     try { await api.addCompetitor(id, { name: newComp.name.trim() || domain.split(".")[0], domain }); setNewComp({ name: "", domain: "" }); await load(); } catch (e: any) { setErr(String(e.message ?? e)); }
   };
+  // Destructive and not recoverable — snapshots hold raw SerpApi payloads that cost
+  // real quota — so each of these confirms first and names what goes with it.
+  const removeComp = async (cid: number, name: string) => {
+    if (!confirm(`Delete ${name}? Its creatives and brand term go too. This cannot be undone.`)) return;
+    try { await api.deleteCompetitor(id, cid); await load(); } catch (e: any) { setErr(String(e.message ?? e)); }
+  };
+  const removeKw = async (kid: number, term: string) => {
+    if (!confirm(`Delete the keyword "${term}"? Its collected ads, products and demand history go too.`)) return;
+    try { await api.deleteKeyword(id, kid); setKwId(null); await load(); } catch (e: any) { setErr(String(e.message ?? e)); }
+  };
+  const removeWatchlist = async () => {
+    if (!confirm(`Delete the whole watchlist "${w?.name}"? Every run, creative, ad and insight under it is deleted. This cannot be undone.`)) return;
+    try { await api.deleteWatchlist(id); router.push("/watchlists"); } catch (e: any) { setErr(String(e.message ?? e)); }
+  };
+
   const addKw = async () => {
     if (!newKw.trim()) return;
     try { await api.addKeyword(id, newKw.trim()); setNewKw(""); await load(); } catch (e: any) { setErr(String(e.message ?? e)); }
@@ -104,6 +121,7 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
         <div className="flex items-center gap-2">
           <ExportMenu watchlistId={id} />
           <button className="btn btn-primary" onClick={collect} disabled={busy}>{busy ? "Collecting…" : "Collect now"}</button>
+          <button className="btn text-sm" onClick={removeWatchlist} disabled={busy}>Delete watchlist</button>
         </div>
       </div>
       {status && <div className="panel-2 p-2 mt-3 text-sm">{status}</div>}
@@ -174,6 +192,7 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
                 <div className="flex items-baseline gap-3">
                   <h2 className="font-medium text-lg">{c.name}</h2>
                   <span className="muted text-sm">{c.domain} · {c.active_creatives} active creatives · showing {mine.length}</span>
+                  <button className="btn text-xs ml-auto" onClick={() => removeComp(c.id, c.name)}>Delete</button>
                 </div>
                 <div className="grid gap-3 mt-2 sm:grid-cols-2 lg:grid-cols-4">
                   {mine.slice(0, 12).map((cr) => <CreativeCard key={cr.id} c={cr} isNew={newIds.has(cr.creative_id)} />)}
@@ -194,7 +213,12 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
           </div>
           <div className="flex flex-wrap gap-2">
             {w.keywords.map((k) => (
-              <button key={k.id} className="btn" style={kwId === k.id ? { borderColor: "var(--accent)" } : {}} onClick={() => setKwId(k.id)}>{k.term}</button>
+              <span key={k.id} className="inline-flex items-center">
+                <button className="btn" style={kwId === k.id ? { borderColor: "var(--accent)" } : {}} onClick={() => setKwId(k.id)}>
+                  {k.term}
+                </button>
+                <button className="btn text-xs ml-1" aria-label={`Delete keyword ${k.term}`} onClick={() => removeKw(k.id, k.term)}>×</button>
+              </span>
             ))}
           </div>
           <div className="grid gap-4 mt-4 lg:grid-cols-2">

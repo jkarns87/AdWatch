@@ -5,6 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from .. import models as m
+from .. import purge
 from .. import schemas as s
 from ..auth import current_workspace_id, ensure_workspace, get_watchlist
 from ..db import get_db
@@ -90,7 +91,20 @@ def delete_competitor(competitor_id: int, w: m.Watchlist = Depends(get_watchlist
     c = db.get(m.Competitor, competitor_id)
     if c is None or c.watchlist_id != w.id:
         raise HTTPException(404, "competitor not found")
-    db.delete(c)
+    purge.delete_competitor(db, c)
+    db.commit()
+    return Response(status_code=204)
+
+
+@router.delete("/{watchlist_id}", status_code=204)
+def delete_watchlist(w: m.Watchlist = Depends(get_watchlist), db: Session = Depends(get_db)):
+    """Delete a watchlist and everything collected under it.
+
+    Not recoverable: snapshots hold the raw SerpApi payloads that cost real quota,
+    and nothing here is soft-deleted. The chain lives in app/purge.py so this and the
+    demo reset cannot drift apart — they already did once.
+    """
+    purge.delete_watchlist(db, w)
     db.commit()
     return Response(status_code=204)
 
