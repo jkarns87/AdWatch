@@ -23,9 +23,8 @@ churns between draws, so presence and absence would fire constantly. Emitting on
 what was measured to be stable is the difference between a signal and a rumour.
 """
 
-from app.collectors.normalize import products_from_google, serp_ads_from_google, creatives_from_ads_transparency
+from app.collectors.normalize import creatives_from_ads_transparency, products_from_google, serp_ads_from_google
 from app.engine import diff
-
 
 # ---- capturing the fields ---------------------------------------------------------------------
 
