@@ -8,6 +8,13 @@ from datetime import UTC, date, datetime
 from typing import Any
 from urllib.parse import urlparse
 
+# Creative formats dropped at normalization. Filtering server-side with
+# `creative_format` works, but the parameter takes exactly one value, so keeping text
+# and image would cost two searches per competitor per run instead of one. Dropping
+# the rows here costs nothing and leaves `snapshots.raw` complete, so video can be
+# re-derived later without spending quota.
+EXCLUDED_CREATIVE_FORMATS = {"video"}
+
 
 def _to_date(v: Any) -> date | None:
     """SerpApi returns first_shown/last_shown as unix ts (int) or ISO-ish strings depending on engine version."""
@@ -50,6 +57,8 @@ def creatives_from_ads_transparency(raw: dict[str, Any]) -> list[dict[str, Any]]
         if not cid:
             continue
         fmt = (ad.get("format") or "text").lower()
+        if fmt in EXCLUDED_CREATIVE_FORMATS:
+            continue
         out.append(
             {
                 "creative_id": str(cid),

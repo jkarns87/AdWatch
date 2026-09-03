@@ -25,7 +25,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.collectors.normalize import creatives_from_ads_transparency, domain_of, serp_ads_from_google
+from app.collectors.normalize import (
+    EXCLUDED_CREATIVE_FORMATS,
+    creatives_from_ads_transparency,
+    domain_of,
+    serp_ads_from_google,
+)
 from app.collectors.serpapi_client import SerpApiClient
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -38,18 +43,26 @@ def _load(name: str) -> dict:
 # ---- Ads Transparency Center ------------------------------------------------------------------
 
 
+def _kept(raw: dict) -> list[dict]:
+    """The creatives we expect to survive normalization — everything but the formats
+    deliberately excluded. The fixture holds 3 text, 2 video and 1 image."""
+    return [c for c in raw["ad_creatives"] if (c.get("format") or "").lower() not in EXCLUDED_CREATIVE_FORMATS]
+
+
 def test_creatives_are_extracted_from_a_real_response():
     """The bug: 40 creatives in, 0 out. Nothing raised, nothing logged."""
     raw = _load("serpapi_ads_transparency.json")
     assert raw["ad_creatives"], "fixture is empty; recapture it"
     out = creatives_from_ads_transparency(raw)
-    assert len(out) == len(raw["ad_creatives"])
+    assert out, "nothing survived normalization"
+    assert len(out) == len(_kept(raw))
 
 
 def test_the_creative_id_comes_from_the_field_serpapi_actually_sends():
     raw = _load("serpapi_ads_transparency.json")
     out = creatives_from_ads_transparency(raw)
-    expected = {str(c["ad_creative_id"]) for c in raw["ad_creatives"]}
+    expected = {str(c["ad_creative_id"]) for c in _kept(raw)}
+    assert expected, "fixture has no non-excluded creatives; recapture it"
     assert {c["creative_id"] for c in out} == expected
 
 

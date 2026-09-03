@@ -204,3 +204,37 @@ def test_a_new_promotion_is_reported():
 
 def test_the_first_run_reports_nothing():
     assert diff.diff_products(None, [_p("M", "T", 10.0)], keyword_id=1, label="k") == []
+
+
+# ---- video exclusion --------------------------------------------------------------------------
+
+
+def test_video_creatives_are_excluded():
+    """Video ads are dropped at normalization, not at the API.
+
+    `creative_format` filters server-side but accepts exactly one value, so keeping
+    text and image would cost two searches per competitor per run instead of one.
+    Dropping the rows here costs nothing and leaves `snapshots.raw` complete, so
+    video can be re-derived later without spending quota.
+    """
+    raw = {"ad_creatives": [
+        {"ad_creative_id": "T", "format": "text"},
+        {"ad_creative_id": "V", "format": "video"},
+        {"ad_creative_id": "I", "format": "image"},
+    ]}
+    out = creatives_from_ads_transparency(raw)
+    assert [c["creative_id"] for c in out] == ["T", "I"]
+
+
+def test_the_format_filter_is_case_insensitive():
+    """Observed values are lowercase, but the API rejects `TEXT` as a request param,
+    so it clearly normalises case somewhere and the response may too."""
+    raw = {"ad_creatives": [{"ad_creative_id": "V", "format": "VIDEO"}]}
+    assert creatives_from_ads_transparency(raw) == []
+
+
+def test_an_unknown_format_is_kept_rather_than_silently_dropped():
+    """Unknown formats already collapse to "text". A new format Google introduces
+    should show up as a creative, not vanish."""
+    raw = {"ad_creatives": [{"ad_creative_id": "X", "format": "carousel"}]}
+    assert len(creatives_from_ads_transparency(raw)) == 1
