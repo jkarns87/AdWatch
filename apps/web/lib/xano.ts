@@ -30,7 +30,31 @@ async function req<T>(path: string, init: RequestInit = {}): Promise<T> {
   return r.json();
 }
 
+/** For the unauthenticated auth endpoints. req() redirects to /login on 401/403,
+ *  which is exactly wrong on the pages someone reaches *because* they cannot sign in. */
+async function publicReq<T>(path: string, body: unknown): Promise<T> {
+  if (!xanoEnabled) throw new Error("Xano control plane is not enabled (NEXT_PUBLIC_AUTH_PROVIDER != xano)");
+  const r = await fetch(`${BASE}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+    cache: "no-store",
+  });
+  if (!r.ok) {
+    let message = r.statusText;
+    try {
+      message = (await r.json()).message ?? message;
+    } catch {}
+    throw new Error(message);
+  }
+  return r.json();
+}
+
 export const xano = {
+  forgotPassword: (email: string) =>
+    publicReq<{ ok: boolean; message: string }>("/auth/forgot_password", { email }),
+  resetPassword: (token: string, password: string) =>
+    publicReq<{ ok: boolean; message: string }>("/auth/reset_password", { token, password }),
   me: () => req<XanoMe>("/auth/me"),
   alerts: () => req<XanoAlertsOut>("/alerts"),
   markRead: (id: number) => req(`/alerts/${id}/read`, { method: "POST", body: "{}" }),

@@ -104,3 +104,30 @@ xano static_host build push adwatch -d ./apps/web/.next -n "v1"   # only if the 
 - **AI tools used:** Claude (Cowork + Code) for planning, scaffolding, the diff engine and the analyst model; Xano Developer MCP for XanoScript docs + validation.
 - **Time:** ~22 hours, team of 3.
 - **What would have taken longer without AI + Xano:** the entire control plane — auth, tenancy, alert preferences, fan-out with delivery logging, and the scheduler — is 16 XanoScript files written and validated in under an hour; the diff engine, analyst prompt, and dashboard were scaffolded by Claude in the first two hours.
+
+
+## Password reset
+
+`POST /auth/forgot_password` `{email}` → always `{ok:true, message}`, whether or not the
+address has an account. A different answer for a known email turns the form into an
+account-enumeration oracle.
+
+`POST /auth/reset_password` `{token, password}` → `{ok:true, message}`.
+
+The emailed token is a **split token**, `selector.verifier`:
+
+- `selector` is stored in clear and uniquely indexed, so the row is found by lookup
+  rather than by comparing secrets.
+- `verifier` is stored in a Xano `password` field, so it is hashed. A leak of
+  `password_reset` yields no usable reset link.
+
+Tokens expire after an hour, are single-use (`used_at`), and issuing a new one spends
+any outstanding tokens for that user, so only the newest link works. Every failure —
+unknown, spent, expired, wrong verifier — returns the same message, so the endpoint
+cannot be used to probe which links exist.
+
+`DASHBOARD_URL` builds the link, so it must be set on the Xano side too or the email
+points nowhere.
+
+**Not handled here:** rate limiting. Xano applies its own per-instance limits; if you
+need per-address throttling on `forgot_password`, that is a separate change.

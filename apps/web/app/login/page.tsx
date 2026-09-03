@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { setToken, xanoLogin } from "@/lib/auth";
@@ -49,6 +51,10 @@ export default function Login() {
         <input className="panel-2 w-full p-2 text-sm" type="password" placeholder="Password (8+ chars)" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} required />
         {err && <div className="text-sm" style={{ color: "var(--high)" }}>{err}</div>}
         <button className="btn btn-primary w-full" disabled={busy}>{busy ? "…" : mode === "login" ? "Sign in" : "Sign up"}</button>
+        {mode === "login" && (
+          <Link href="/forgot-password" className="muted text-xs text-center block">Forgot your password?</Link>
+        )}
+
         <button type="button" className="muted text-xs w-full" onClick={() => setMode(mode === "login" ? "signup" : "login")}>
           {mode === "login" ? "No account? Create one" : "Have an account? Sign in"}
         </button>

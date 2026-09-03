@@ -102,6 +102,8 @@ export const test = base.extend({
         workspace: { id: 1, name: "Acme", plan: "team" },
       },
       "/alerts": { alerts: [], unread: 0 },
+      "/auth/forgot_password": { ok: true, message: "If that address has an account, a reset link is on its way." },
+      "/auth/reset_password": { ok: true, message: "Your password has been changed." },
     };
 
     // /watchlists/{id} needs its own match: it does not end with "/watchlists", and

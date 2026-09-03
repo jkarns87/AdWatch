@@ -19,7 +19,9 @@ export function Nav() {
   const path = usePathname();
   const [unread, setUnread] = useState<number>(0);
   const [me, setMe] = useState<XanoMe | null>(null);
-  const onLogin = path.startsWith("/login");
+  // Every route someone reaches while signed out. Showing the app nav — and the
+  // workspace name beside it — to an unauthenticated visitor is both odd and leaky.
+  const onLogin = ["/login", "/forgot-password", "/reset-password"].some((p) => path.startsWith(p));
 
   useEffect(() => {
     if (!xanoEnabled || onLogin) return;
