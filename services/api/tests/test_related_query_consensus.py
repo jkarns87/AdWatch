@@ -166,7 +166,7 @@ def test_every_consensus_draw_is_requested_fresh():
 
             return _R()
 
-    first, draws = _related_query_draws(_Client(), q="x", geo="US", fresh=False)
+    first, draws = _related_query_draws(_Client(), q="x", geo="US")
     assert len(calls) == RELATED_QUERY_DRAWS
     assert all(calls), "a draw was served from cache; consensus over it is circular"
     assert len(draws) == RELATED_QUERY_DRAWS

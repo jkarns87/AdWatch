@@ -33,7 +33,7 @@ RELATED_QUERY_DRAWS = 3
 RELATED_QUERY_MIN_DRAWS = 2
 
 
-def _related_query_draws(client, *, q: str, geo: str, fresh: bool):
+def _related_query_draws(client, *, q: str, geo: str):
     """Take RELATED_QUERY_DRAWS independent samples of one keyword's rising queries.
 
     Every draw is requested fresh, regardless of the run's own `fresh` flag. A draw
@@ -189,6 +189,7 @@ def upsert_creatives(db: Session, competitor: m.Competitor, run: m.Run, rows: li
                 first_shown=r.get("first_shown"),
                 last_shown=r.get("last_shown"),
                 text=r.get("text"),
+                total_days_shown=r.get("total_days_shown"),
                 first_seen_run_id=run.id,
                 last_seen_run_id=run.id,
                 active=True,
@@ -198,6 +199,9 @@ def upsert_creatives(db: Session, competitor: m.Competitor, run: m.Run, rows: li
             c.last_seen_run_id = run.id
             c.last_shown = r.get("last_shown") or c.last_shown
             c.image_url = r.get("image_url") or c.image_url
+            # Grows while a creative keeps running, so refresh it rather than
+            # freezing the value captured on the run that first saw the creative.
+            c.total_days_shown = r.get("total_days_shown") or c.total_days_shown
             c.active = True
     for cid, c in existing.items():
         if cid not in seen and c.active:
