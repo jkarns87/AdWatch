@@ -31,19 +31,19 @@ test.describe("password reset", () => {
   });
 
   test("the app nav is hidden from a signed-out visitor", async ({ page }) => {
-    await page.goto("/reset-password?token=sel.ver");
+    await page.goto("/reset-password?s=sel&v=ver");
     await expect(page.getByRole("link", { name: "Dashboard" })).toBeHidden();
     await expect(page.getByRole("link", { name: "Integrations" })).toBeHidden();
   });
 
   test("both password fields are masked", async ({ page }) => {
-    await page.goto("/reset-password?token=sel.ver");
+    await page.goto("/reset-password?s=sel&v=ver");
     await expect(page.getByLabel("New password", { exact: true })).toHaveAttribute("type", "password");
     await expect(page.getByLabel("Confirm new password")).toHaveAttribute("type", "password");
   });
 
   test("mismatched passwords block submission", async ({ page }) => {
-    await page.goto("/reset-password?token=sel.ver");
+    await page.goto("/reset-password?s=sel&v=ver");
     await page.getByLabel("New password", { exact: true }).fill("correcthorse");
     await page.getByLabel("Confirm new password").fill("batterystaple");
     await expect(page.locator("main")).toContainText("do not match");
@@ -51,14 +51,14 @@ test.describe("password reset", () => {
   });
 
   test("a short password is refused before it reaches the API", async ({ page }) => {
-    await page.goto("/reset-password?token=sel.ver");
+    await page.goto("/reset-password?s=sel&v=ver");
     await page.getByLabel("New password", { exact: true }).fill("short");
     await expect(page.locator("main")).toContainText("At least 8 characters");
     await expect(page.getByRole("button", { name: "Set new password" })).toBeDisabled();
   });
 
   test("a valid reset confirms and sends you to sign in", async ({ page }) => {
-    await page.goto("/reset-password?token=sel.ver");
+    await page.goto("/reset-password?s=sel&v=ver");
     await page.getByLabel("New password", { exact: true }).fill("correcthorsebattery");
     await page.getByLabel("Confirm new password").fill("correcthorsebattery");
     await page.getByRole("button", { name: "Set new password" }).click();

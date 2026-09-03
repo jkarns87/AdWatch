@@ -9,7 +9,10 @@ const MIN_LENGTH = 8;
 
 function ResetForm() {
   const router = useRouter();
-  const token = useSearchParams().get("token") ?? "";
+  const params = useSearchParams();
+  const selector = params.get("s") ?? "";
+  const verifier = params.get("v") ?? "";
+  const hasToken = selector !== "" && verifier !== "";
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
@@ -18,14 +21,14 @@ function ResetForm() {
 
   const tooShort = password.length > 0 && password.length < MIN_LENGTH;
   const mismatch = confirm.length > 0 && password !== confirm;
-  const ready = password.length >= MIN_LENGTH && password === confirm && token !== "";
+  const ready = password.length >= MIN_LENGTH && password === confirm && hasToken;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     setErr(null);
     try {
-      await xano.resetPassword(token, password);
+      await xano.resetPassword(selector, verifier, password);
       setDone(true);
       setTimeout(() => router.push("/login"), 2000);
     } catch (e: unknown) {
@@ -43,7 +46,7 @@ function ResetForm() {
     );
   }
 
-  if (!token) {
+  if (!hasToken) {
     return (
       <div className="panel p-5">
         <p className="text-sm" style={{ color: "var(--high)" }}>

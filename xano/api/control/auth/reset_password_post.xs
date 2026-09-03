@@ -2,8 +2,11 @@ query "auth/reset_password" verb=POST {
   api_group = "control"
   description = "Redeem a reset link and set a new password. Tokens are single-use and expire after an hour."
   input {
-    text token filters=trim {
-      description = "selector.verifier, as issued in the email link"
+    text selector filters=trim {
+      description = "Public half of the token, from the s= query parameter"
+    }
+    text verifier filters=trim {
+      description = "Secret half, from the v= query parameter"
       sensitive = true
     }
     text password filters=min:8|max:128 {
@@ -11,23 +14,15 @@ query "auth/reset_password" verb=POST {
     }
   }
   stack {
-    var $parts { value = $input.token|split:"." }
-
-    precondition ($parts|count == 2) {
-      error_type = "inputerror"
-      error = "That reset link is not valid"
-    }
-
-    var $selector { value = $parts[0] }
-    var $verifier { value = $parts[1] }
+    var $now { value = "now" }
 
     db.query "password_reset" {
-      where = $db.password_reset.selector == $selector
-      output = { type: "single" }
+      where = $db.password_reset.selector == $input.selector
+      return = { type: "single" }
     } as $reset
 
-    // One message for every failure mode — unknown, spent and expired are not
-    // distinguished, so the endpoint cannot be used to probe which links exist.
+    // One message for every failure mode — unknown, spent, expired and wrong verifier
+    // are not distinguished, so this cannot be used to probe which links exist.
     precondition ($reset != null) {
       error_type = "inputerror"
       error = "That reset link is not valid or has expired"
@@ -38,13 +33,13 @@ query "auth/reset_password" verb=POST {
       error = "That reset link is not valid or has expired"
     }
 
-    precondition ($reset.expires_at > "now") {
+    precondition ($reset.expires_at > $now) {
       error_type = "inputerror"
       error = "That reset link is not valid or has expired"
     }
 
     security.check_password {
-      text_password = $verifier
+      text_password = $input.verifier
       hash_password = $reset.verifier
     } as $ok
 
@@ -73,11 +68,12 @@ query "auth/reset_password" verb=POST {
     db.patch "password_reset" {
       field_name = "id"
       field_value = $reset.id
-      data = { used_at: "now" }
+      data = { used_at: $now }
     }
   }
   response = {
     ok: true,
     message: "Your password has been changed. Sign in with the new one."
   }
+  guid = "AJnVDderY3UxcsuiCNaOpjjkwlc"
 }

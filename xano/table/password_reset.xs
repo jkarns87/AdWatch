@@ -25,4 +25,5 @@ table "password_reset" {
     {type: "btree|unique", field: [{name: "selector"}]}
     {type: "btree", field: [{name: "user_id"}]}
   ]
+  guid = "0xn9spRqAPqHVUSVM7N9aHJx91s"
 }

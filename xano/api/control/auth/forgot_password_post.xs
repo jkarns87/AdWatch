@@ -7,7 +7,7 @@ query "auth/forgot_password" verb=POST {
   stack {
     db.query "user" {
       where = $db.user.email == $input.email
-      output = { type: "single" }
+      return = { type: "single" }
     } as $user
 
     // No precondition on $user: a different response for a known address would let
@@ -15,7 +15,8 @@ query "auth/forgot_password" verb=POST {
     conditional {
       if ($user != null) {
         // Split token. The selector is the lookup key and is stored in clear; the
-        // verifier proves possession and is hashed by the password field type.
+        // verifier proves possession and is hashed by the password field type. They
+        // travel as two query parameters so no string splitting is needed on redemption.
         security.create_uuid as $selector
         security.create_password {
           character_count = 48
@@ -25,18 +26,23 @@ query "auth/forgot_password" verb=POST {
           require_symbol = false
         } as $verifier
 
+        var $now { value = "now" }
+        var $expires { value = $now|add_secs_to_timestamp:3600 }
+
         // Outstanding tokens for this user are spent, so a second request invalidates
         // the first link rather than leaving several live at once.
         db.query "password_reset" {
           where = $db.password_reset.user_id == $user.id && $db.password_reset.used_at == null
-          output = { type: "list" }
+          return = { type: "list" }
         } as $outstanding
 
-        foreach ($outstanding as $old) {
-          db.patch "password_reset" {
-            field_name = "id"
-            field_value = $old.id
-            data = { used_at: "now" }
+        foreach ($outstanding) {
+          each as $old {
+            db.patch "password_reset" {
+              field_name = "id"
+              field_value = $old.id
+              data = { used_at: $now }
+            }
           }
         }
 
@@ -45,12 +51,12 @@ query "auth/forgot_password" verb=POST {
             user_id: $user.id,
             selector: $selector,
             verifier: $verifier,
-            expires_at: "now+1 hour"
+            expires_at: $expires
           }
         }
 
         var $link {
-          value = $env.DASHBOARD_URL ~ "/reset-password?token=" ~ $selector ~ "." ~ $verifier
+          value = $env.DASHBOARD_URL ~ "/reset-password?s=" ~ $selector ~ "&v=" ~ $verifier
         }
 
         util.send_email {
@@ -65,4 +71,5 @@ query "auth/forgot_password" verb=POST {
     ok: true,
     message: "If that address has an account, a reset link is on its way."
   }
+  guid = "tNDUNeM8EqM29p1T81Wz1d7m-Dc"
 }

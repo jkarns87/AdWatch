@@ -53,8 +53,10 @@ async function publicReq<T>(path: string, body: unknown): Promise<T> {
 export const xano = {
   forgotPassword: (email: string) =>
     publicReq<{ ok: boolean; message: string }>("/auth/forgot_password", { email }),
-  resetPassword: (token: string, password: string) =>
-    publicReq<{ ok: boolean; message: string }>("/auth/reset_password", { token, password }),
+  /** The link carries the two halves as separate query parameters, so neither the
+   *  client nor XanoScript has to split a compound token. */
+  resetPassword: (selector: string, verifier: string, password: string) =>
+    publicReq<{ ok: boolean; message: string }>("/auth/reset_password", { selector, verifier, password }),
   me: () => req<XanoMe>("/auth/me"),
   alerts: () => req<XanoAlertsOut>("/alerts"),
   markRead: (id: number) => req(`/alerts/${id}/read`, { method: "POST", body: "{}" }),
