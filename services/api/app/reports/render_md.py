@@ -33,6 +33,25 @@ def render_md(data: dict[str, Any]) -> str:
     out += [f"| {c['severity']} | {c['label']} | {c['subject']} | {c['description']} |" for c in data["changes"]] or ["| — | No changes detected | | |"]
     out += ["", "## Competitor activity", "", "| Competitor | Domain | Active | Launched | Dropped | Formats |", "|---|---|---|---|---|---|"]
     out += [f"| {c['name']} | {c['domain']} | {c['active_creatives']} | {c['launched']} | {c['dropped']} | {', '.join(f'{a} {b}' for a, b in sorted(c['formats'].items()))} |" for c in data["competitors"]]
+    if data.get("brand_defence"):
+        # First, because a rival on your own name is the most actionable thing on the
+        # page: they are paying to intercept people who already asked for you.
+        out += ["", "## Brand defence", "", "| Brand | Owner bidding | Who else is bidding |", "|---|---|---|"]
+        for b in data["brand_defence"]:
+            owner = f"yes (#{b['owner_position']})" if b["owner_present"] else ("**no**" if b["undefended"] else "no")
+            others = ", ".join(b["conquerors"]) or "nobody"
+            out += [f"| {b['brand']}{' (you)' if b['is_self'] else ''} | {owner} | {others} |"]
+
+    if data.get("proven_creatives"):
+        # Ranked by days actually served, not by recency. An advertiser does not keep
+        # paying to run a creative that is not working, which makes longevity the
+        # closest thing to a performance signal that public ad-library data offers.
+        out += ["", "## Proven creatives", "",
+                "*Longest-running ads still live. Days served is the strongest performance proxy public data offers.*",
+                "", "| Days live | Competitor | Format | First shown |", "|---|---|---|---|"]
+        for c in data["proven_creatives"]:
+            out += [f"| {c['days'] if c['days'] is not None else '—'} | {c['competitor']} | {c['format']} | {c['first_shown'] or '—'} |"]
+
     out += ["", "## Keywords", ""]
     for kw in data["keywords"]:
         block = ", ".join(f"{'↓' if a['block'] == 'bottom' else ''}#{a['position']} {a['domain']}{' *' if a['tracked'] else ''}" for a in kw["paid_block"]) or "no paid results captured"

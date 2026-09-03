@@ -16,10 +16,13 @@ from sqlalchemy.orm import Session
 
 from .. import models as m
 from ..config import get_settings
+from ..engine import brand as brand_engine
 from ..engine.analyst import _extract_json
 from ..metering import record_call
 
 log = logging.getLogger(__name__)
+
+PROVEN_LIMIT = 10
 
 AUDIENCES = {
     "cfo": {
@@ -54,6 +57,14 @@ KIND_LABEL = {
     "trend_spike": "Demand spike",
     "trend_decline": "Demand decline",
     "rising_query": "Rising query",
+    "ad_copy_changed": "Ad copy rewritten",
+    "ad_sitelinks_changed": "Sitelinks changed",
+    "product_price_changed": "Price changed",
+    "product_promo_appeared": "Promotion started",
+    "brand_conquest": "Bidding on brand",
+    "brand_conquest_ended": "Stopped bidding on brand",
+    "brand_undefended": "Brand undefended",
+    "brand_defended": "Brand defended",
 }
 
 
@@ -82,6 +93,24 @@ def describe_change(c: m.Change) -> str:
         return f"Interest in \"{c.subject_label}\" fell to {p.get('ratio')}× its 4-week average"
     if k == "rising_query":
         return f"\"{p.get('query')}\" is {p.get('value_text')} for \"{c.subject_label}\""
+    if k == "ad_copy_changed":
+        return f"{p.get('advertiser_domain')} rewrote its ad on \"{c.subject_label}\": \"{p.get('from_title')}\" → \"{p.get('to_title')}\""
+    if k == "ad_sitelinks_changed":
+        added, removed = p.get("added") or [], p.get("removed") or []
+        parts = [f"added {', '.join(added)}" if added else "", f"removed {', '.join(removed)}" if removed else ""]
+        return f"{p.get('advertiser_domain')} changed sitelinks on \"{c.subject_label}\" — " + "; ".join(x for x in parts if x)
+    if k == "product_price_changed":
+        return f"{p.get('merchant')} moved \"{p.get('title')}\" from {p.get('from_price')} to {p.get('to_price')} ({p.get('delta_pct')}%)"
+    if k == "product_promo_appeared":
+        return f"{p.get('merchant')} started a promotion on \"{p.get('title')}\": {p.get('promo')}"
+    if k == "brand_conquest":
+        return f"{p.get('advertiser_domain')} is bidding on the {p.get('brand')} brand term (#{p.get('position')})"
+    if k == "brand_conquest_ended":
+        return f"{p.get('advertiser_domain')} stopped bidding on the {p.get('brand')} brand term"
+    if k == "brand_undefended":
+        return f"{p.get('brand')} is absent from its own brand term while {', '.join(p.get('conquerors') or [])} bid on it"
+    if k == "brand_defended":
+        return f"{p.get('brand')} is defending its own brand term again (#{p.get('position')})"
     return k
 
 
@@ -135,7 +164,13 @@ def build_report_data(db: Session, w: m.Watchlist, *, audience: str = "marketing
     # keywords: share of voice (latest run) + demand
     tracked = {c.domain.lower() for c in w.competitors}
     keywords = []
-    for kw in w.keywords:
+    # Brand terms live in the keywords table. Their paid block answers "who is bidding
+    # on this company's name", not "who competes on this market term", so listing them
+    # here would put a competitor's brand in share of voice as though the customer had
+    # chosen to target it.
+    market_keywords = [k for k in w.keywords if getattr(k, "kind", "keyword") == "keyword"]
+    brand_keywords = [k for k in w.keywords if getattr(k, "kind", "keyword") == "brand"]
+    for kw in market_keywords:
         ads = db.scalars(select(m.SerpAd).where(m.SerpAd.keyword_id == kw.id, m.SerpAd.run_id == (last_run.id if last_run else -1))).all()
         sov_all: dict[str, list[int]] = defaultdict(list)
         for r in db.scalars(select(m.SerpAd).where(m.SerpAd.keyword_id == kw.id)).all():
@@ -171,6 +206,56 @@ def build_report_data(db: Session, w: m.Watchlist, *, audience: str = "marketing
             }
         )
 
+    # Days actually served is the strongest performance proxy an ad library offers: an
+    # advertiser does not keep paying to run a creative that is not working. The field
+    # is on every creative the transparency engine returns and was stored and never
+    # surfaced, so the report showed what changed this week and nothing about what is
+    # proven. Active only — a retired creative's run is history, not a current bet.
+    by_comp = {c.id: c for c in w.competitors}
+    proven_rows = db.scalars(
+        select(m.Creative).where(
+            m.Creative.competitor_id.in_(list(by_comp) or [-1]),
+            m.Creative.active.is_(True),
+        )
+    ).all()
+    proven_creatives = [
+        {
+            "creative_id": r.creative_id,
+            "competitor": by_comp[r.competitor_id].name if r.competitor_id in by_comp else "",
+            "format": r.format,
+            "days": r.total_days_shown,
+            "first_shown": r.first_shown.isoformat() if r.first_shown else None,
+            "last_shown": r.last_shown.isoformat() if r.last_shown else None,
+        }
+        # A null day count is unknown, not "longest running", so it sorts last rather
+        # than leading the ranking with the least evidenced creative.
+        for r in sorted(proven_rows, key=lambda r: (r.total_days_shown is None, -(r.total_days_shown or 0)))
+    ][:PROVEN_LIMIT]
+
+    # Conquesting fires as an event only when it starts or stops, so a weekly brief
+    # would otherwise never mention a rival that has been camped on the brand all week.
+    brand_defence = []
+    for kw in brand_keywords:
+        owner = by_comp.get(kw.owner_competitor_id)
+        if owner is None:
+            continue
+        brand_ads = [
+            {"advertiser_domain": r.advertiser_domain, "position": r.position, "block": r.block, "title": r.title}
+            for r in db.scalars(
+                select(m.SerpAd).where(m.SerpAd.keyword_id == kw.id, m.SerpAd.run_id == (last_run.id if last_run else -1))
+            ).all()
+        ]
+        state = brand_engine.assess(brand_ads, owner_domain=owner.domain)
+        brand_defence.append({
+            "brand": kw.term,
+            "owner_domain": owner.domain,
+            "is_self": owner.is_self,
+            "owner_present": state["owner_present"],
+            "owner_position": state["owner_position"],
+            "undefended": state["undefended"],
+            "conquerors": [a["advertiser_domain"] for a in state["conquerors"]],
+        })
+
     data: dict[str, Any] = {
         "audience": audience,
         "title": AUDIENCES[audience]["title"],
@@ -179,7 +264,7 @@ def build_report_data(db: Session, w: m.Watchlist, *, audience: str = "marketing
         "generated_at": datetime.now(UTC).isoformat(timespec="minutes"),
         "kpis": {
             "competitors": len(w.competitors),
-            "keywords": len(w.keywords),
+            "keywords": len(market_keywords),
             "runs_in_period": len(runs_in_period),
             "searches_used": sum(r.searches_used for r in runs_in_period),
             "changes": len(changes),
@@ -201,6 +286,8 @@ def build_report_data(db: Session, w: m.Watchlist, *, audience: str = "marketing
         "actions": actions[:10],
         "competitors": competitors,
         "keywords": keywords,
+        "proven_creatives": proven_creatives,
+        "brand_defence": brand_defence,
     }
     summary = executive_summary(data)
     # This call site produces no Insight and no Run — the reason spend is tracked in a

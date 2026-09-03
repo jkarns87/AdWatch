@@ -55,6 +55,10 @@ class CompetitorOut(ORM):
 class KeywordOut(ORM):
     id: int
     term: str
+    # "keyword" is a market term the customer chose; "brand" is a competitor's name,
+    # provisioned by the collector. Consumers that iterate keywords need to tell them
+    # apart — mixing them put brand terms in the keyword list and in share of voice.
+    kind: str = "keyword"
 
 
 class WatchlistSummary(BaseModel):

@@ -55,6 +55,9 @@ export interface Competitor {
 export interface Keyword {
   id: number;
   term: string;
+  /** "keyword" is a market term the customer chose; "brand" is a competitor's name,
+   *  provisioned by the collector and shown on the Brands tab instead. */
+  kind?: "keyword" | "brand";
 }
 
 export interface WatchlistDetail {

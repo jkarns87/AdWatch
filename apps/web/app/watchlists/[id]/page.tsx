@@ -47,7 +47,7 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
       setW(d); setInsights(ins); setChanges(ch); setCreatives(cr); setBrands(br);
       // Pick a default keyword without reading kwId. Depending on it here recreated
       // `load`, which re-fired the effect below and fetched the whole page twice.
-      setKwId((prev) => prev ?? d.keywords[0]?.id ?? null);
+      setKwId((prev) => prev ?? d.keywords.find((k) => (k.kind ?? "keyword") === "keyword")?.id ?? null);
     } catch (e: any) { setErr(String(e.message ?? e)); }
   }, [id]);
 
@@ -115,7 +115,7 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{w.name}</h1>
           <div className="muted text-sm mt-1">
-            {w.vertical} · {w.geo}{w.location ? ` · ${w.location}` : ""} · {w.competitors.length} competitors · {w.keywords.length} keywords · last run {fmtTime(w.last_run?.finished_at)}{w.last_run ? ` (${w.last_run.searches_used} searches)` : ""}
+            {w.vertical} · {w.geo}{w.location ? ` · ${w.location}` : ""} · {w.competitors.length} competitors · {w.keywords.filter((k) => (k.kind ?? "keyword") === "keyword").length} keywords · last run {fmtTime(w.last_run?.finished_at)}{w.last_run ? ` (${w.last_run.searches_used} searches)` : ""}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -212,7 +212,7 @@ export default function WatchlistPage({ params }: { params: Promise<{ id: string
             <button className="btn text-sm" onClick={addKw}>Add</button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {w.keywords.map((k) => (
+            {w.keywords.filter((k) => (k.kind ?? "keyword") === "keyword").map((k) => (
               <span key={k.id} className="inline-flex items-center">
                 <button className="btn" style={kwId === k.id ? { borderColor: "var(--accent)" } : {}} onClick={() => setKwId(k.id)}>
                   {k.term}
