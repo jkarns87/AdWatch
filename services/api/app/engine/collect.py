@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from .. import models as m
 from ..collectors.normalize import (
+    consensus_rising,
     creatives_from_ads_transparency,
     related_queries_from_trends,
     serp_ads_from_google,
@@ -22,6 +23,12 @@ from ..workspace_secrets import resolve_key
 from . import diff
 
 log = logging.getLogger(__name__)
+
+# Rising related-queries are a sample, not a census, so a query has to show up in a
+# majority of draws before it counts as a signal. Three draws costs 2 extra searches
+# per keyword per run and is what turns `rising_query` from noise into evidence.
+RELATED_QUERY_DRAWS = 3
+RELATED_QUERY_MIN_DRAWS = 2
 
 
 def _previous_run(db: Session, watchlist_id: int, before_run_id: int) -> m.Run | None:
@@ -201,11 +208,20 @@ def run_collect(db: Session, watchlist: m.Watchlist, *, client: SerpApiClient | 
             for ch in diff.diff_trends(pts, keyword_id=kw.id, label=kw.term, had_previous_run=prev_id is not None):
                 changes.append(m.Change(watchlist_id=watchlist.id, run_id=run.id, **ch))
 
+            # Google samples the rising bucket, so one draw is not evidence: four
+            # uncached calls for one term gave pairwise Jaccard 0.10-0.25, with 13 of
+            # 23 queries appearing exactly once. Diffing a single draw against a
+            # single draw reported that churn as demand. Take RELATED_QUERY_DRAWS
+            # samples and keep only what a majority of them agree on.
             prev_rel = related_view(db, kw.id, prev_id)
             res = client.trends_related_queries(q=kw.term, geo=watchlist.geo or "US", fresh=fresh)
             _snapshot(db, run, "related_queries", "keyword", kw.id, res)
             n_snapshots += 1
-            rel = related_queries_from_trends(res.data)
+            rel_draws = [related_queries_from_trends(res.data)]
+            for _ in range(RELATED_QUERY_DRAWS - 1):
+                extra = client.trends_related_queries(q=kw.term, geo=watchlist.geo or "US", fresh=True)
+                rel_draws.append(related_queries_from_trends(extra.data))
+            rel = consensus_rising(rel_draws, min_draws=RELATED_QUERY_MIN_DRAWS)
             for r in rel:
                 db.add(m.RelatedQuery(keyword_id=kw.id, run_id=run.id, **r))
             for ch in diff.diff_related_queries(prev_rel, rel, keyword_id=kw.id, label=kw.term):

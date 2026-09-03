@@ -25,6 +25,12 @@ def domain_of(url_or_display: str | None) -> str:
     if not url_or_display:
         return ""
     s = url_or_display.strip()
+    # Google renders displayed_link as a breadcrumb — "https://www.foodandwine.com ›
+    # sep-reviews › espresso-makers". There is no "/" to terminate the netloc, so
+    # urlparse hands back the entire breadcrumb as the host. This is the diff key for
+    # SERP ads, so a changed breadcrumb read as a different advertiser and produced a
+    # matched pair of false new/disappeared events for one unchanged company.
+    s = re.split(r"[\s›]", s, maxsplit=1)[0]
     if not s.startswith("http"):
         s = "https://" + s
     host = urlparse(s).netloc.lower()
@@ -37,7 +43,10 @@ def domain_of(url_or_display: str | None) -> str:
 def creatives_from_ads_transparency(raw: dict[str, Any]) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     for ad in raw.get("ad_creatives") or []:
-        cid = ad.get("id") or ad.get("creative_id")
+        # `ad_creative_id` is what the engine actually sends. Looking only for `id`/
+        # `creative_id` meant every creative failed the guard below and a 40-creative
+        # response normalized to []. Silent: no error, just an empty diff forever.
+        cid = ad.get("ad_creative_id") or ad.get("id") or ad.get("creative_id")
         if not cid:
             continue
         fmt = (ad.get("format") or "text").lower()
@@ -122,4 +131,51 @@ def related_queries_from_trends(raw: dict[str, Any]) -> list[dict[str, Any]]:
             if value_num is None and value_text.replace("+", "").replace("%", "").replace(",", "").isdigit():
                 value_num = float(value_text.replace("+", "").replace("%", "").replace(",", ""))
             out.append({"query": q, "bucket": bucket, "value_text": value_text, "value_num": value_num})
+    return out
+
+
+def consensus_rising(draws: list[list[dict[str, Any]]], *, min_draws: int = 2) -> list[dict[str, Any]]:
+    """Collapse repeated RELATED_QUERIES draws into the entries they agree on.
+
+    Google samples the rising bucket, so a single draw is not evidence. Measured
+    2026-09-03 across four genuinely uncached calls for one term: pairwise Jaccard
+    0.10-0.25, and of 23 unique queries 13 appeared in exactly one draw while only
+    one appeared in all four. Diffing one draw against one draw therefore reported
+    sampling noise as demand.
+
+    An entry is kept when its (bucket, query) appears in at least `min_draws` draws.
+    The breakout flag has to clear the same bar on its own — it was the least stable
+    field observed (0 of 2 survived all four draws, and one draw reported none at
+    all) and it short-circuits the percentage threshold downstream.
+    """
+    if not draws:
+        return []
+    seen: dict[tuple[str, str], dict[str, Any]] = {}
+    hits: dict[tuple[str, str], int] = {}
+    breakouts: dict[tuple[str, str], int] = {}
+    for draw in draws:
+        for key in {(r.get("bucket") or "", (r.get("query") or "").lower()) for r in draw}:
+            hits[key] = hits.get(key, 0) + 1
+        for r in draw:
+            key = (r.get("bucket") or "", (r.get("query") or "").lower())
+            seen.setdefault(key, r)
+            if "breakout" in str(r.get("value_text", "")).lower():
+                breakouts[key] = breakouts.get(key, 0) + 1
+
+    out: list[dict[str, Any]] = []
+    for key, n in hits.items():
+        if n < min_draws:
+            continue
+        row = dict(seen[key])
+        if "breakout" in str(row.get("value_text", "")).lower() and breakouts.get(key, 0) < min_draws:
+            # Seen as a breakout in a minority of draws: keep the query, drop the claim.
+            numeric = [
+                r["value_num"]
+                for d in draws
+                for r in d
+                if (r.get("bucket") or "", (r.get("query") or "").lower()) == key and r.get("value_num") is not None
+            ]
+            row["value_num"] = max(numeric) if numeric else None
+            row["value_text"] = f"+{int(row['value_num'])}%" if numeric else "rising"
+        out.append(row)
     return out

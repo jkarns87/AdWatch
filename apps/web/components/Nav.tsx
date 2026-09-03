@@ -40,7 +40,7 @@ export function Nav() {
   return (
     <header className="border-b" style={{ borderColor: "var(--line)" }}>
       <div className="mx-auto max-w-6xl px-5 py-3 flex items-center gap-5">
-        <Link href="/watchlists" aria-label="AdWatch — home" className="flex items-center shrink-0">
+        <Link href="/" aria-label="AdWatch — dashboard" className="flex items-center shrink-0">
           {/* Outlined lockups, swapped by CSS in globals.css. alt must name the
               brand: the image is now the header's only accessible name. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -70,9 +70,7 @@ export function Nav() {
             </>
           ) : xanoEnabled && !onLogin ? (
             <Link href="/login" className="btn">Sign in</Link>
-          ) : (
-            <span className="muted text-xs">competitor ads · keyword SERPs · demand — diffed, explained, alerted</span>
-          )}
+          ) : null}
         </div>
       </div>
     </header>

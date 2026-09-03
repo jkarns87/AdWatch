@@ -1,0 +1,90 @@
+{
+ "ad_creatives": [
+  {
+   "advertiser_id": "AR10284041500824174593",
+   "advertiser": "Breville Group Limited",
+   "ad_creative_id": "CR00494653960460697601",
+   "format": "text",
+   "target_domain": "breville.com",
+   "image": "https://tpc.googlesyndication.com/archive/simgad/1445062403078331197",
+   "width": 348,
+   "height": 414,
+   "total_days_shown": 24,
+   "first_shown": 1700575383,
+   "last_shown": 1788446496,
+   "details_link": "https://adstransparency.google.com/advertiser/AR10284041500824174593/creative/CR00494653960460697601?region=anywhere&domain=breville.com",
+   "serpapi_details_link": "https://serpapi.com/search.json?advertiser_id=AR10284041500824174593&creative_id=CR00494653960460697601&engine=google_ads_transparency_center_ad_details"
+  },
+  {
+   "advertiser_id": "AR10284041500824174593",
+   "advertiser": "Breville Group Limited",
+   "ad_creative_id": "CR16945786534290784257",
+   "format": "video",
+   "link": "https://displayads-formats.googleusercontent.com/ads/preview/content.js?client=ads-integrity-transparency&obfuscatedCustomerId=9045839057&creativeId=799745156595&uiFeatures=12,54&adGroupId=193514847723&sig=ACiVB_xefgVt2jPETRZDxeYKmTTE32I_kQ&htmlParentId=fletch-render-1349448342214692981&responseCallback=fletchCallback1349448342214692981",
+   "target_domain": "breville.com",
+   "total_days_shown": 149,
+   "first_shown": 1773346718,
+   "last_shown": 1788446222,
+   "details_link": "https://adstransparency.google.com/advertiser/AR10284041500824174593/creative/CR16945786534290784257?region=anywhere&domain=breville.com",
+   "serpapi_details_link": "https://serpapi.com/search.json?advertiser_id=AR10284041500824174593&creative_id=CR16945786534290784257&engine=google_ads_transparency_center_ad_details"
+  },
+  {
+   "advertiser_id": "AR14500276342571925505",
+   "advertiser": "Fastable INC",
+   "ad_creative_id": "CR03277009134305673217",
+   "format": "text",
+   "target_domain": "breville.com",
+   "image": "https://tpc.googlesyndication.com/archive/simgad/16783880504519832887",
+   "width": 348,
+   "height": 468,
+   "total_days_shown": 13,
+   "first_shown": 1787459143,
+   "last_shown": 1788444620,
+   "details_link": "https://adstransparency.google.com/advertiser/AR14500276342571925505/creative/CR03277009134305673217?region=anywhere&domain=breville.com",
+   "serpapi_details_link": "https://serpapi.com/search.json?advertiser_id=AR14500276342571925505&creative_id=CR03277009134305673217&engine=google_ads_transparency_center_ad_details"
+  },
+  {
+   "advertiser_id": "AR16917816650697277441",
+   "advertiser": "\u5218\u4f2f\u541b",
+   "ad_creative_id": "CR07547042607554101249",
+   "format": "text",
+   "target_domain": "breville.com",
+   "image": "https://tpc.googlesyndication.com/archive/simgad/10499857674705797535",
+   "width": 364,
+   "height": 314,
+   "total_days_shown": 252,
+   "first_shown": 1731299151,
+   "last_shown": 1788444296,
+   "details_link": "https://adstransparency.google.com/advertiser/AR16917816650697277441/creative/CR07547042607554101249?region=anywhere&domain=breville.com",
+   "serpapi_details_link": "https://serpapi.com/search.json?advertiser_id=AR16917816650697277441&creative_id=CR07547042607554101249&engine=google_ads_transparency_center_ad_details"
+  },
+  {
+   "advertiser_id": "AR03573525885350838273",
+   "advertiser": "Breville USA Inc",
+   "ad_creative_id": "CR00485572312242847745",
+   "format": "video",
+   "target_domain": "breville.com",
+   "image": "https://tpc.googlesyndication.com/archive/simgad/15353702449016496736",
+   "width": 367,
+   "height": 377,
+   "total_days_shown": 73,
+   "first_shown": 1775317219,
+   "last_shown": 1788443832,
+   "details_link": "https://adstransparency.google.com/advertiser/AR03573525885350838273/creative/CR00485572312242847745?region=anywhere&domain=breville.com",
+   "serpapi_details_link": "https://serpapi.com/search.json?advertiser_id=AR03573525885350838273&creative_id=CR00485572312242847745&engine=google_ads_transparency_center_ad_details"
+  },
+  {
+   "advertiser_id": "AR03573525885350838273",
+   "advertiser": "Breville USA Inc",
+   "ad_creative_id": "CR17445726293822799873",
+   "format": "image",
+   "link": "https://displayads-formats.googleusercontent.com/ads/preview/content.js?client=ads-integrity-transparency&obfuscatedCustomerId=3851178032&creativeId=803312835038&uiFeatures=12,54&adGroupId=198019586347&versionId=2&assets=%3DH4sIAAAAAAAAAAEuANH_CiwKCQixy9fjhQoQBQoJCNCK4eSFChADCgkI2IX_voQKEAEKCQiVzNS-1QgQBtU9sdcuAAAA&sig=ACiVB_xNcLgM0br7F6UcEEsvhv_5uv9kcA&htmlParentId=fletch-render-17359524114427000974&responseCallback=fletchCallback17359524114427000974",
+   "target_domain": "breville.com",
+   "total_days_shown": 78,
+   "first_shown": 1775116545,
+   "last_shown": 1788440740,
+   "details_link": "https://adstransparency.google.com/advertiser/AR03573525885350838273/creative/CR17445726293822799873?region=anywhere&domain=breville.com",
+   "serpapi_details_link": "https://serpapi.com/search.json?advertiser_id=AR03573525885350838273&creative_id=CR17445726293822799873&engine=google_ads_transparency_center_ad_details"
+  }
+ ]
+}

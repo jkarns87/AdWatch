@@ -57,6 +57,14 @@ class SerpApiClient:
         digest = hashlib.sha256(key.encode()).hexdigest()[:24]
         return self.cache_dir / f"{params.get('engine', 'x')}-{digest}.json"
 
+    def _get(self, params: dict[str, Any]) -> dict[str, Any]:
+        """The HTTP boundary, isolated so tests can assert on what we send."""
+        with httpx.Client(timeout=self.timeout_s) as client:
+            r = client.get(SERPAPI_URL, params=params)
+        if r.status_code != 200:
+            raise SerpApiError(f"SerpApi {r.status_code}: {r.text[:300]}")
+        return r.json()
+
     def search(self, params: dict[str, Any], *, fresh: bool = False) -> SerpResult:
         if not self.api_key:
             raise SerpApiError("SERPAPI_API_KEY is not set")
@@ -65,12 +73,14 @@ class SerpApiClient:
             log.info("serpapi cache hit %s", path.name)
             return SerpResult(json.loads(path.read_text()), from_cache=True)
 
+        # SerpApi replays an identical stored response for an hour on matching params,
+        # so bypassing only our disk cache still yields the same record byte for byte.
+        # Repeated sampling (see consensus_rising) is circular without this flag.
+        # It stays out of `params` so the local cache key is unchanged by it.
         q = {**params, "api_key": self.api_key}
-        with httpx.Client(timeout=self.timeout_s) as client:
-            r = client.get(SERPAPI_URL, params=q)
-        if r.status_code != 200:
-            raise SerpApiError(f"SerpApi {r.status_code}: {r.text[:300]}")
-        data = r.json()
+        if fresh:
+            q["no_cache"] = "true"
+        data = self._get(q)
         if data.get("error"):
             # SerpApi returns 200 with {"error": "..."} for empty results in some engines — keep it, it's still a search.
             log.warning("serpapi soft error for %s: %s", params.get("engine"), data["error"])
@@ -107,12 +117,32 @@ class SerpApiClient:
             params["platform"] = platform
         return self.search(params, fresh=fresh)
 
+    # `engine=google` omits the paid block on commercial queries: measured 2026-09-03,
+    # 0 ads on 6 of 6 high-intent queries where `google_ads` returned 2-6 for the same
+    # query, location and minute. Same cost, and the response is a superset — organic
+    # results, related searches and AI overview all still come back.
+    #
+    # `google_ads` also *requires* `location`; without it the API returns
+    # "Missing `location` parameter" and zero ads. A keyword collected with no location
+    # yields no competitors at all, so fall back to the country rather than omit it.
+    _COUNTRY_FOR_GL = {"us": "United States", "gb": "United Kingdom", "ca": "Canada", "au": "Australia", "de": "Germany", "fr": "France"}
+
     def google_search(
         self, *, q: str, gl: str = "us", hl: str = "en", device: str = "desktop", location: str | None = None, fresh: bool = False
     ) -> SerpResult:
-        params: dict[str, Any] = {"engine": "google", "q": q, "gl": gl, "hl": hl, "device": device, "google_domain": "google.com", "num": 10}
-        if location:
-            params["location"] = location  # e.g. "San Francisco, California, United States" — geo-targets the paid block
+        if not location:
+            location = self._COUNTRY_FOR_GL.get(gl.lower(), "United States")
+            log.info("no location for %r; defaulting to %r so the paid block is populated", q, location)
+        params: dict[str, Any] = {
+            "engine": "google_ads",
+            "q": q,
+            "gl": gl,
+            "hl": hl,
+            "device": device,
+            "google_domain": "google.com",
+            "num": 10,
+            "location": location,  # e.g. "San Francisco, California, United States" — geo-targets the paid block
+        }
         return self.search(params, fresh=fresh)
 
     def trends_timeseries(self, *, q: str, geo: str = "US", date: str = "today 3-m", fresh: bool = False) -> SerpResult:
