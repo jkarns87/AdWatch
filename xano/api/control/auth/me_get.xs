@@ -20,6 +20,7 @@ query "auth/me" verb=GET {
     email: $user.email,
     workspace_id: $auth.extras.workspace_id,
     role: $auth.extras.role,
+    is_platform_admin: $auth.extras.is_platform_admin,
     workspace: { id: $workspace.id, name: $workspace.name, plan: $workspace.plan }
   }
   guid = "FKw5aKvGQPd7Dmr5RWmgVD8ctJA"

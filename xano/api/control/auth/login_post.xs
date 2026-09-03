@@ -54,7 +54,8 @@ query "auth/login" verb=POST {
       input = {
         user_id: $user.id,
         workspace_id: $workspace.id,
-        role: $role
+        role: $role,
+        is_platform_admin: $user.is_platform_admin
       }
     } as $token
   }

@@ -13,6 +13,23 @@ query "workspace/plan" verb=POST {
       error = "only the workspace owner can change the plan"
     }
 
+    db.get "workspace" {
+      field_name = "id"
+      field_value = $auth.extras.workspace_id
+    } as $before
+
+    // Audited on the same table as the platform-admin path, so "who changed this
+    // plan" has one answer regardless of which door the change came through.
+    db.add "plan_change" {
+      data = {
+        workspace_id: $before.id,
+        actor_user_id: $auth.id,
+        from_plan: $before.plan,
+        to_plan: $input.plan,
+        reason: ""
+      }
+    } as $audit
+
     db.patch "workspace" {
       field_name = "id"
       field_value = $auth.extras.workspace_id

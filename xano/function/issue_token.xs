@@ -4,6 +4,7 @@ function "issue_token" {
     int user_id
     int workspace_id
     text role
+    bool is_platform_admin?=false
   }
   stack {
     security.create_auth_token {
@@ -11,7 +12,8 @@ function "issue_token" {
       id = $input.user_id
       extras = {
         workspace_id: $input.workspace_id,
-        role: $input.role
+        role: $input.role,
+        is_platform_admin: $input.is_platform_admin
       }
       expiration = 604800
     } as $token
