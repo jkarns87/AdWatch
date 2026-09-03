@@ -1,55 +1,75 @@
 # Devpost submission — checklist + copy
 
-**RULE: no third-party company or brand names anywhere in the pitch, tags, or story.** Use category language for competitors, incumbents, and example advertisers. **Google** (Google Ads, Ads Transparency Center, Google Trends) and **hackathon sponsors** (SerpApi, Xano) are safe to name — confirmed by Joey.
+**RULE: no third-party company or brand names as competitors, incumbents, or example advertisers.** Use category language for those. **Google** (Google Ads, Ads Transparency Center, Google Trends), **hackathon sponsors** (SerpApi, Xano), our own stack, and integration destinations (Slack, Microsoft Teams, Discord) are safe to name — confirmed by Joey.
 
-## Checklist (target submit 9:00 AM Thu)
+Full story copy to paste into Devpost: **`docs/devpost_story.md`** (rewritten 2026-09-03 against verified production numbers).
 
-- [ ] Every team member registered on Devpost and added to the project (editing rights)
-- [ ] Project name: **AdWatch**
-- [ ] Elevator pitch (≤ 200 chars) — below
-- [ ] Full story — below, filled in with real numbers
-- [ ] Built with (tags): `python`, `fastapi`, `postgresql`, `nextjs`, `typescript`, `tailwindcss`, `docker`, `github-actions`, `serpapi`, `xano`, `claude`, `anthropic`
-- [ ] Screenshots: watchlist overview, insight card, creative grid, **Alerts inbox**, **Usage & plan (budget guard)**, **Integrations**, Xano dashboard (tables + API group + task) — ≥ 4, taken from the *deployed* app; `docs/screenshots/` has local ones as fallback
-- [ ] Project URL: deployed dashboard
-- [ ] Repo URL: public GitHub repo, README has setup steps that work from a clean clone
-- [ ] Video 2–4 min (SerpApi: "end-to-end"; Xano: build story) — script in `DEMO_SCRIPT.md`
-- [ ] Sponsor challenges ticked: **SerpApi – Best AI Use Case**, **Xano – Rebuild a SaaS Tool You Hate** (only if the control plane shipped)
-- [ ] SerpApi line: "where SerpApi performs core work and why"
-- [ ] Xano build story answers (see `XANO.md`) — mention: auth + tenancy + **alert inbox + destinations + plan** are 21 XanoScript files pushed with the CLI
-- [ ] Accept terms → **Submit to Hackathon** → confirm the status shows *Submitted*
+## Checklist (target submit 9:00 AM Thu 2026-09-03 local)
+
+- [ ] Every team member registered on Devpost and added to the project (editing rights) — *only you can do this*
+- [x] Project name: **AdWatch**
+- [x] Elevator pitch (≤ 200 chars) — below, 186 chars
+- [x] Full story — `docs/devpost_story.md`, real numbers, no placeholders
+- [x] Built with (tags): `python`, `fastapi`, `postgresql`, `nextjs`, `typescript`, `tailwindcss`, `docker`, `github-actions`, `fly-io`, `serpapi`, `xano`, `claude`, `anthropic`
+- [ ] Screenshots ≥ 4 from the **deployed** app — *the gap*; `docs/screenshots/` has only 2 and they predate the brand pass, dashboard, onboarding and config pages
+- [x] Project URL: **https://adwatch.dev** (200, TLS, custom domain)
+- [x] API URL: **https://api.adwatch.dev/api/v1/health** (200)
+- [x] Repo URL: **https://github.com/jkarns87/AdWatch** — public
+- [ ] Video 2–4 min (SerpApi: "end-to-end"; Xano: build story) — script in `DEMO_SCRIPT.md`; *only you can do this*
+- [x] Sponsor challenges: **SerpApi – Best AI Use Case**, **Xano – Rebuild a SaaS Tool You Hate** (control plane shipped: 26 XanoScript files)
+- [x] SerpApi line: "where SerpApi performs core work and why" — in the story, with live cost numbers
+- [x] Xano build story answers — in the story
+- [ ] Accept terms → **Submit to Hackathon** → confirm status shows *Submitted*
 - [ ] Nobody edits after 9:30 AM
 
-## Elevator pitch
+## Verified numbers (pulled from production 2026-09-03 06:22Z)
 
-> AdWatch is an always-on competitive-intelligence analyst for paid-search teams: it watches every ad your competitors run, every keyword they bid on, and every shift in category demand — then tells you what changed, why it matters, and what to do next.
+| | |
+|---|---|
+| Runs / SerpApi searches spent | 11 / 76 |
+| Creatives tracked | 29 |
+| Paid-block placements captured | 38 |
+| Trend points | 1,153 |
+| Typed changes detected | 72 |
+| AI insights written | 18 |
+| SerpApi spend to date | $0.72 |
+| Projected month — naive cadence | $21.60 |
+| Projected month — plan cadence | $4.41 (~5× saving) |
+| XanoScript files | 26 (15 api, 6 table, 2 function, 2 task) |
+| Python modules / passing tests | 57 / 238 |
+| Web routes / Playwright specs | 11 / 6 |
+| Commits | 47 |
 
-## Story (draft — replace bracketed bits)
+Re-pull before submitting if more runs happen: `GET /api/v1/usage` and the counts in `docs/DEVPOST.md`.
 
-**Inspiration.** Every paid-search team does the same ritual: once a week, someone opens the ad transparency pages for a handful of competitors, searches their own keywords in an incognito window, checks a trends chart, and pastes screenshots into a deck. It's slow, it's retrospective, and it has no concept of *change* — you see a snapshot, not a signal. Incumbent competitive-intelligence suites cost hundreds of dollars a seat and still hand you a report, not an alert. We wanted the thing we actually needed: a monitor with an analyst attached.
+## Elevator pitch (186 chars)
 
-**What it does.** You give AdWatch a watchlist — competitor domains and the keywords you care about. On a schedule (or on demand) it collects three live signals through SerpApi: every creative each competitor is currently running in Google Ads (via the Ads Transparency Center), the paid results on each of your keywords in Google Search, and Google Trends interest-over-time plus rising related queries for the category. Each run is diffed against the last. The diff engine emits typed changes — a creative launched or dropped, a new advertiser appearing on your keyword, a position shift, a demand spike, a breakout query. An AI analyst (Claude) reads the structured diff and writes a plain-English insight: what happened, why it matters, and two or three concrete actions with effort and urgency. Every insight lands in the workspace's alert inbox inside AdWatch; the control plane also fans it out to any destinations the team adds — Slack, Microsoft Teams, Discord, email or a plain webhook — at or above the severity each destination asks for, and logs every delivery.
-
-**How we built it.** Control plane on Xano — auth, workspaces, watchlist configuration, alert preferences, and dispatch. Data plane in Python (FastAPI + Postgres): SerpApi collectors with response caching, a pure-function diff engine with unit tests, a Claude analyst with a strict JSON contract, and a Next.js dashboard. Cost is a first-class object: every run records the SerpApi searches it spent, the plan (Free / Team / Agency) lives in the control plane and comes back with every token, and the Usage page projects month-end spend at the naive cadence versus the plan's per-source cadence — so the customer's ceiling is their plan, never an invoice. Everything ships as containers with CI on every push and a one-command deploy, so it runs on any cloud. [N] people, [22] hours.
-
-**Where SerpApi performs core work and why.** SerpApi *is* the sensor. Three engines feed the product: the Google Ads Transparency Center engine (every live creative per advertiser, with first/last-shown dates), the Google Search engine (the live paid block per keyword — who's bidding, in what position), and the Google Trends engine (interest over time + rising queries). Without structured, real-time access to that public data there is no diff, and without the diff there is nothing for the AI to analyze — the "AI experience" here is only as good as the freshness of the signal.
-
-**Challenges.** Quota discipline (250 free searches → local response cache + synthetic seed data for development, live calls only for real runs); making the AI useful rather than chatty (structured diff in, strict JSON out, no invented numbers); making first-run baselines not look like "everything changed."
-
-**Accomplishments.** [Real numbers: X creatives tracked across Y competitors, Z changes detected, N insights, deployed URL, CI green.]
-
-**What we learned.** [1–2 honest sentences.]
-
-**What's next.** Hard budget enforcement in the scheduler (pause at 100 %, 402 → upgrade nudge), cross-tenant dedupe of SerpApi calls (two workspaces watching the same competitor cost one search), own-account performance overlay (import your campaign reports to see your spend against competitor moves), dayparting reports from hourly SERP samples, Terraform module, and per-seat pricing at a fraction of incumbent suites.
-
-## Pitch additions (2026-09-02) — talking points for the video + story
-
-- **Data stays in the platform.** Alerts are a first-class object in the product — the inbox is served by the control plane (`alert_log`), with read state, severity filters and deep links back to the watchlist. Chat integrations are an *extension* of that, not the product.
-- **Integrations, without a middleware bill.** One destination model covers in-app, Slack, Microsoft Teams (Adaptive Card), Discord, email and generic JSON webhooks; each has its own minimum severity; every delivery is logged. Adding a destination is one row in Xano — no code.
-- **Budgeting is built in.** Each SerpApi call is one search; each run records what it spent; `GET /usage` prices the month; plans map limits to a search budget; the Usage page shows the naive cost ($42/watchlist/month at "everything every 6 h") next to the plan cadence ($8.50) — a 5× saving with the same alerts, because creatives change daily and demand moves weekly. Full numbers in `docs/COST_MODEL.md`.
-- **Unit economics are honest.** Team $79 → ~61 % gross margin; Agency $299 → ~49 % at list SerpApi prices, improving with volume and cross-tenant caching. The knob between tiers (SERP samples per day) is exactly the thing that costs money.
-- **Multi-tenant from day one.** Workspaces, roles (owner / member / viewer), per-workspace destinations and plan — all in the control plane, all pushed from code (21 XanoScript files).
-- **One-click upgrade.** Owners switch plans on the Usage page; the control plane updates `workspace.plan`; the data plane sees the new budget on the next token introspection.
+> An always-on competitive-intelligence analyst for paid search. AdWatch tracks every ad your rivals run and every keyword they bid on, then tells you what changed and what to do about it.
 
 ## SerpApi one-liner
 
 > SerpApi is the sensor layer: its Google Ads Transparency Center, Google Search, and Google Trends engines are the only source of every change AdWatch detects — the AI analyst reasons *exclusively* over diffs of SerpApi data.
+
+## Screenshot shot list (what judges should see)
+
+Capture from **https://adwatch.dev** signed in, at 1440×900, light theme unless noted:
+
+1. **Dashboard (`/`)** — ops overview: SerpApi health card showing a valid key and remaining quota, Anthropic burn, alert cards. This is the "cost is a first-class object" shot.
+2. **Watchlist detail (`/watchlists/[id]`)** — insight feed with an AI insight expanded, showing what changed → why it matters → recommended actions.
+3. **Creative grid** — per-competitor creatives with first/last-shown dates, including one that has stopped.
+4. **Usage & plan (`/usage`)** — the naive-vs-plan cadence projection side by side. The 5× saving is the whole cost story in one image.
+5. **Alerts inbox (`/alerts`)** — severity filters and read state, proving alerts are a product object not just a webhook.
+6. **Onboarding (`/onboarding`)** — the review screen after Claude reads a company site and proposes category, keywords and competitors.
+7. **Integrations (`/settings/integrations`)** — destinations with per-destination severity thresholds.
+8. *(optional)* Dark theme of the dashboard, to show theming.
+9. *(optional)* Xano UI — tables + API group + the two scheduled tasks, for the Xano challenge.
+
+## Talking points for the video
+
+- **Onboarding is the hook.** Company name and website in; Claude reads the site and proposes the whole watchlist. Show this first — it's the fastest path from nothing to value.
+- **The diff is the product.** Not a dashboard of charts: typed change events with severity, which is what makes AI analysis, alerting and scheduling all simple downstream.
+- **Data stays in the platform.** The inbox is served by the control plane with read state, severity filters and deep links. Chat integrations extend it; they aren't the product.
+- **Budgeting is built in.** Every SerpApi call is one search; every run records what it spent; the Usage page prices the month and projects it two ways. $21.60 naive vs $4.41 at plan cadence, live.
+- **Bring your own keys.** Per-workspace Anthropic and SerpApi keys, encrypted at rest, validated on save — the customer's spend is theirs.
+- **Multi-tenant from day one.** Workspaces, roles, per-workspace destinations and plan, all pushed from code.
+- **Verified, not assumed.** The scheduler was confirmed by watching it fire in production; the cost numbers come from the live ledger.

@@ -100,10 +100,13 @@ class Analyst:
             return self._fallback(changes, reason="ANTHROPIC_API_KEY not set")
         prompt = build_user_prompt(context, changes)
         try:
+            # No temperature: anthropic 1.x removed it from Messages.create(), and
+            # passing it raised TypeError on every single call — which the except below
+            # swallowed into the fallback, so the analyst never once reached Claude in
+            # production while the product looked like it was working.
             msg = self.client.messages.create(
                 model=self.model,
                 max_tokens=900,
-                temperature=0.2,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
             )
